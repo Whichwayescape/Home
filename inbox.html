@@ -3,56 +3,311 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inbox — Outlook Express</title>
+  <title>Office — Whichway Escape</title>
+ 
+  <!-- XP.css: open-source (MIT) recreation of the authentic Windows XP UI by Jordan Scales -->
+  <!-- https://botoxparty.github.io/XP.css/ — included from public CDN, no attribution stripped -->
   <link rel="stylesheet" href="https://unpkg.com/xp.css" />
-  <link rel="stylesheet" href="email.css" />
+  <link rel="stylesheet" href="office-style.css" />
 </head>
 <body class="xp-desktop">
-  <div class="window email-window">
+ 
+  <!-- Top status bar / pass tracker -->
+  <div id="top-bar">
+    <button id="multiPassBtn" class="xp-button">🔓 Unlock Office Pass</button>
+    <span id="passStatus">Solved: 0 / 3</span>
+    <a href="index.html" class="xp-button" style="margin-left:auto;">↩ Return to Parlour</a>
+  </div>
+ 
+  <!-- Desktop icons -->
+  <div class="desktop-icon" style="top: 80px; left: 30px;" id="iconGames">
+    <div class="icon-img">🎮</div>
+    <div class="icon-label">Games</div>
+  </div>
+  <div class="desktop-icon" style="top: 80px; left: 130px;" id="iconEmails">
+    <div class="icon-img">✉️</div>
+    <div class="icon-label">Emails</div>
+  </div>
+  <div class="desktop-icon" style="top: 80px; left: 230px;" id="iconMeetings">
+    <div class="icon-img">📋</div>
+    <div class="icon-label">Meetings</div>
+  </div>
+  <div class="desktop-icon" style="top: 80px; left: 330px;" id="iconConference">
+    <div class="icon-img">📞</div>
+    <div class="icon-label">Conference</div>
+  </div>
+ 
+  <!-- Sticky note (post-it) -->
+  <div id="postit-note">
+    <div class="postit-task strikethrough">Get Top Score in Snake</div>
+    <div class="postit-task">Crack Top 3 in Brick Breaker</div>
+  </div>
+ 
+  <!-- Games window (XP-styled) -->
+  <div class="window xp-popup" id="gamesPopup" style="width: 280px;">
     <div class="title-bar">
-      <div class="title-bar-text">📥 Inbox — Outlook Express</div>
+      <div class="title-bar-text">Games</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize"></button>
-        <button aria-label="Maximize"></button>
-        <button aria-label="Close" onclick="window.close()"></button>
+        <button aria-label="Close" onclick="closePopups()"></button>
       </div>
     </div>
     <div class="window-body">
-
-      <div class="email-toolbar">
-        <button>📨 New</button>
-        <button>↩ Reply</button>
-        <button>↪ Forward</button>
-        <button>🗑 Delete</button>
-      </div>
-
-      <div class="email-meta">
-        <div><strong>From:</strong> Fez@Smartlad</div>
-        <div><strong>To:</strong> Frex@Hellothere</div>
-        <div><strong>Subject:</strong> You Won't Find What You Are Looking for Here</div>
-        <div><strong>Date:</strong> Tuesday, August 02, 2005 9:14 AM</div>
-      </div>
-
-      <hr />
-
-      <div class="email-body">
-        <p>Hi Team,</p>
-        <p>Just a quick note to clarify that the information you may have been expecting in this thread is not available at this time. If you were hoping for documentation, deliverables, or project updates, you won't find what you are looking for here.</p>
-        <p>Please redirect all inquiries related to this initiative to the Boss. Future updates, if any, will be sent by the boss. It is your responsibility to keep track.</p>
-        <p>Let me know if there's anything else I can support with—but again, to reiterate: you won't find what you are looking for here.</p>
-        <p>
-          Thanks,<br />
-          [Your Name]<br />
-          Project Manager of Special Projects and Products
-        </p>
-        <p><em>Post script: Do not ask for help.</em></p>
-      </div>
-    </div>
-    <div class="status-bar">
-      <p class="status-bar-field">© 2002 Microsoft Outlook Express</p>
-      <p class="status-bar-field">1 message</p>
-      <p class="status-bar-field">Online</p>
+      <p>Select a game to play:</p>
+      <ul class="tree-view">
+        <li><a href="snake.html" target="_blank">🐍 Snake</a></li>
+        <li><a href="ballbreaker/ballbreaker.html" target="_blank">🧱 Ball Breaker</a></li>
+      </ul>
     </div>
   </div>
+ 
+  <!-- Emails window -->
+  <div class="window xp-popup" id="emailsPopup" style="width: 280px;">
+    <div class="title-bar">
+      <div class="title-bar-text">Outlook Express</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closePopups()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>Mailboxes:</p>
+      <ul class="tree-view">
+        <li><a href="inbox.html" target="_blank">📥 Inbox</a></li>
+        <li><a href="sent.html" target="_blank">📤 Sent Items</a></li>
+      </ul>
+    </div>
+  </div>
+ 
+  <!-- Meetings window -->
+  <div class="window xp-popup" id="meetingsPopup" style="width: 280px;">
+    <div class="title-bar">
+      <div class="title-bar-text">Calendar</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closePopups()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>Recent records:</p>
+      <ul class="tree-view">
+        <li><a href="history.html" target="_blank">📝 Meeting Notes — Aug 2, 2005</a></li>
+      </ul>
+    </div>
+  </div>
+ 
+  <!-- Conference window -->
+  <div class="window xp-popup" id="conferencePopup" style="width: 280px;">
+    <div class="title-bar">
+      <div class="title-bar-text">NetMeeting — Conference Call</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closePopups()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>Scheduled call:</p>
+      <ul class="tree-view">
+        <!-- TODO: Replace this URL with your Render deployment URL once you deploy the animal-ranking puzzle. -->
+        <li><a href="https://YOUR-ANIMAL-PUZZLE-URL.onrender.com/gm" target="_blank">📞 Join Team Conference</a></li>
+      </ul>
+      <p style="font-size: 11px; color: #555; margin-top: 8px;">
+        The team is waiting on the line. Pick up.
+      </p>
+    </div>
+  </div>
+ 
+  <!-- Password modal -->
+  <div class="window" id="passwordModal" style="display:none; width: 380px;">
+    <div class="title-bar">
+      <div class="title-bar-text">🔐 Solve a Password</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="closePasswordModal()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div id="passwordOptions"></div>
+      <section class="field-row" style="justify-content: flex-end; margin-top: 1rem;">
+        <button onclick="closePasswordModal()">Close</button>
+      </section>
+    </div>
+  </div>
+ 
+  <!-- Taskbar -->
+  <div id="taskbar">
+    <button id="start-btn">
+      <span class="start-flag">⊞</span>
+      <span class="start-text">start</span>
+    </button>
+    <div id="start-menu" class="window">
+      <div class="start-menu-header">
+        <span>👤</span>
+        <span>Office Worker</span>
+      </div>
+      <div class="start-menu-body">
+        <div class="start-menu-option" id="gamesOption">🎮 Games</div>
+        <div class="start-menu-option" id="emailsOption">✉️ Emails</div>
+        <div class="start-menu-option" id="meetingsOption">📋 Meetings</div>
+        <div class="start-menu-option" id="conferenceOption">📞 Conference</div>
+      </div>
+    </div>
+    <div id="systray">
+      <span id="clock">9:42 AM</span>
+    </div>
+  </div>
+ 
+  <!-- ===========================================================
+       PUZZLE LOGIC — solutions preserved exactly from original
+       =========================================================== -->
+  <script>
+    // ---- Puzzle solutions: DO NOT CHANGE without updating the puzzles to match ----
+    const requiredPasswords = [
+      { key: "gamesPass",      label: "Games Password",      value: "RATLOL" },
+      { key: "emailPass",      label: "Email Password",      value: "IS" },
+      { key: "meetingPass",    label: "Meeting Password",    value: "7543ing111" },
+      { key: "conferencePass", label: "Conference Password", value: "PLACEHOLDER" }
+    ];
+ 
+    function getSolved() {
+      return requiredPasswords.map(p => localStorage.getItem(p.key) === "solved");
+    }
+ 
+    function updateStatus() {
+      const solved = getSolved();
+      document.getElementById("passStatus").textContent =
+        `Solved: ${solved.filter(Boolean).length} / 4`;
+    }
+ 
+    document.getElementById("multiPassBtn").onclick = function () {
+      const solved = getSolved();
+      if (solved.every(Boolean)) {
+        window.location.href = "officepass.html";
+        return;
+      }
+      showPasswordModal();
+    };
+ 
+    function showPasswordModal() {
+      const solved = getSolved();
+      const optionsDiv = document.getElementById('passwordOptions');
+      optionsDiv.innerHTML = '';
+      requiredPasswords.forEach((p, i) => {
+        if (solved[i]) {
+          optionsDiv.innerHTML += `
+            <div class="pw-row pw-row--solved">
+              <strong>${p.label}:</strong> <span>✓ Solved</span>
+            </div>`;
+        } else {
+          optionsDiv.innerHTML += `
+            <div class="pw-row">
+              <label><strong>${p.label}:</strong></label>
+              <input type="password" id="input_${p.key}" />
+              <button onclick="solvePassword('${p.key}')">Submit</button>
+            </div>`;
+        }
+      });
+      document.getElementById('passwordModal').style.display = 'block';
+    }
+ 
+    function solvePassword(key) {
+      const pwObj = requiredPasswords.find(p => p.key === key);
+      const input = document.getElementById(`input_${key}`).value;
+      if (input === pwObj.value) {
+        localStorage.setItem(key, "solved");
+        alert(`Correct for ${pwObj.label}!`);
+        updateStatus();
+        showPasswordModal();
+        if (getSolved().every(Boolean)) {
+          closePasswordModal();
+          window.location.href = "officepass.html";
+        }
+      } else {
+        alert("Incorrect.");
+      }
+    }
+ 
+    function closePasswordModal() {
+      document.getElementById('passwordModal').style.display = 'none';
+    }
+ 
+    updateStatus();
+  </script>
+ 
+  <!-- UI behaviour -->
+  <script>
+    const startBtn   = document.getElementById('start-btn');
+    const startMenu  = document.getElementById('start-menu');
+    const gamesPopup      = document.getElementById('gamesPopup');
+    const emailsPopup     = document.getElementById('emailsPopup');
+    const meetingsPopup   = document.getElementById('meetingsPopup');
+    const conferencePopup = document.getElementById('conferencePopup');
+ 
+    function closePopups() {
+      gamesPopup.style.display = 'none';
+      emailsPopup.style.display = 'none';
+      meetingsPopup.style.display = 'none';
+      conferencePopup.style.display = 'none';
+    }
+ 
+    startBtn.onclick = (e) => {
+      e.stopPropagation();
+      startMenu.classList.toggle('active');
+      closePopups();
+    };
+ 
+    function showPopup(popup, anchorEl) {
+      closePopups();
+      popup.style.display = 'block';
+    }
+ 
+    function bindMenuItem(optionId, popup) {
+      const option = document.getElementById(optionId);
+      option.onclick = (e) => {
+        e.stopPropagation();
+        showPopup(popup);
+      };
+      option.onmouseenter = () => showPopup(popup);
+    }
+ 
+    bindMenuItem('gamesOption',      gamesPopup);
+    bindMenuItem('emailsOption',     emailsPopup);
+    bindMenuItem('meetingsOption',   meetingsPopup);
+    bindMenuItem('conferenceOption', conferencePopup);
+ 
+    // Desktop icons also open windows
+    document.getElementById('iconGames').onclick      = () => showPopup(gamesPopup);
+    document.getElementById('iconEmails').onclick     = () => showPopup(emailsPopup);
+    document.getElementById('iconMeetings').onclick   = () => showPopup(meetingsPopup);
+    document.getElementById('iconConference').onclick = () => showPopup(conferencePopup);
+    document.getElementById('iconGames').ondblclick      = () => showPopup(gamesPopup);
+    document.getElementById('iconEmails').ondblclick     = () => showPopup(emailsPopup);
+    document.getElementById('iconMeetings').ondblclick   = () => showPopup(meetingsPopup);
+    document.getElementById('iconConference').ondblclick = () => showPopup(conferencePopup);
+ 
+    // Click outside to close
+    document.body.addEventListener('click', (e) => {
+      const inside =
+        startBtn.contains(e.target) ||
+        startMenu.contains(e.target) ||
+        gamesPopup.contains(e.target) ||
+        emailsPopup.contains(e.target) ||
+        meetingsPopup.contains(e.target) ||
+        conferencePopup.contains(e.target) ||
+        e.target.closest('.desktop-icon') ||
+        e.target.closest('#top-bar');
+      if (!inside) {
+        startMenu.classList.remove('active');
+        closePopups();
+      }
+    });
+ 
+    // Live clock
+    function updateClock() {
+      const d = new Date();
+      let h = d.getHours();
+      const m = d.getMinutes().toString().padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      document.getElementById('clock').textContent = `${h}:${m} ${ampm}`;
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+  </script>
 </body>
 </html>
