@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake — Microsoft Games</title>
+  <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+  <link rel="stylesheet" href="email.css" />
+  <style>
+    body { padding: 24px; }
+    .game-window {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    #gameCanvas {
+      background: #f3f3f3;
+      border: 2px inset #aca899;
+      display: block;
+      margin: 8px auto;
+    }
+    .scoreboard {
+      padding: 8px;
+      background: #ece9d8;
+      border: 1px inset #aca899;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .highscores {
+      padding: 8px;
+      background: #ffffe1;
+      border: 1px solid #aca899;
+      margin-bottom: 8px;
+    }
+    .highscores h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: #245edb;
+    }
+    .highscores-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+    }
+    .highscores-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 4px;
+    }
+    .highscores-list li:nth-child(odd) { background: #fff7d6; }
+    #initialsPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      width: 280px;
+    }
+    #initialsPopup input {
+      width: 36px;
+      font-size: 18px;
+      text-transform: uppercase;
+      margin: 0 4px;
+      text-align: center;
+      border: 1px inset #aca899;
+      padding: 4px;
+    }
+    .game-controls {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    /* On-screen D-pad for iPad / touch */
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 56px);
+      grid-template-rows: repeat(3, 56px);
+      gap: 4px;
+      justify-content: center;
+      margin: 12px auto 4px;
+      user-select: none;
+    }
+    .dpad button {
+      font-size: 22px;
+      font-weight: bold;
+      padding: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .dpad-up    { grid-column: 2; grid-row: 1; }
+    .dpad-left  { grid-column: 1; grid-row: 2; }
+    .dpad-down  { grid-column: 2; grid-row: 3; }
+    .dpad-right { grid-column: 3; grid-row: 2; }
+    .dpad-center {
+      grid-column: 2; grid-row: 2;
+      background: #ece9d8;
+      border: 1px inset #aca899;
+    }
+    .dpad-hint {
+      text-align: center;
+      font-size: 11px;
+      color: #555;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body class="xp-desktop">
+  <button id="showScoresBtn" style="display:none; position:fixed; top:24px; right:24px; z-index:1000;">
+    Show High Scores
+  </button>
+
+  <div class="window game-window">
+    <div class="title-bar">
+      <div class="title-bar-text">🐍 Snake</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize"></button>
+        <button aria-label="Maximize"></button>
+        <button aria-label="Close" onclick="window.close()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+      <div class="scoreboard">Score: <span id="score">0</span></div>
+      <div class="highscores" id="highscoresSection" style="display:none;">
+        <h3>🏆 High Scores</h3>
+        <ul class="highscores-list" id="highscoresList"></ul>
+      </div>
+      <div class="game-controls">
+        <button onclick="window.close()">Close</button>
+      </div>
+
+      <!-- On-screen D-pad (works on iPad and desktop) -->
+      <div class="dpad" aria-label="On-screen game controls">
+        <button class="dpad-up"    data-dir="UP"    aria-label="Up">▲</button>
+        <button class="dpad-left"  data-dir="LEFT"  aria-label="Left">◀</button>
+        <div    class="dpad-center"></div>
+        <button class="dpad-right" data-dir="RIGHT" aria-label="Right">▶</button>
+        <button class="dpad-down"  data-dir="DOWN"  aria-label="Down">▼</button>
+      </div>
+      <div class="dpad-hint">Use arrow keys or tap the buttons</div>
+    </div>
+    <div class="status-bar">
+      <p class="status-bar-field">Use arrow keys to play</p>
+      <p class="status-bar-field">v1.0</p>
+    </div>
+  </div>
+
+  <div class="window" id="initialsPopup">
+    <div class="title-bar">
+      <div class="title-bar-text">New High Score!</div>
+    </div>
+    <div class="window-body" style="text-align:center;">
+      <p>Enter your initials:</p>
+      <div>
+        <input type="text" maxlength="1" id="init1" autofocus>
+        <input type="text" maxlength="1" id="init2">
+        <input type="text" maxlength="1" id="init3">
+      </div>
+      <br>
+      <button onclick="saveInitials()">Save</button>
+    </div>
+  </div>
+
+  <script>
+    // ====================================================
+    // PUZZLE: top high scores spell clues for password RATLOL
+    // DO NOT CHANGE these initial high scores.
+    // ====================================================
+    let highscores = [
+      { initials: "RAT", score: 10 },
+      { initials: "CAT", score: 8 },
+      { initials: "LAT", score: 6 },
+      { initials: "MAT", score: 0 },
+      { initials: "HAT", score: 0 },
+      { initials: "FAT", score: 0 }
+    ];
+
+    function renderHighscores() {
+      const list = document.getElementById('highscoresList');
+      list.innerHTML = '';
+      highscores.slice(0, 6).forEach((entry) => {
+        list.innerHTML += `<li><span>${entry.initials}</span><span>${entry.score}</span></li>`;
+      });
+    }
+    renderHighscores();
+
+    // ---- Snake game ----
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let score = 0;
+    let snake = [{ x: 200, y: 200 }];
+    let direction = 'RIGHT';
+    let nextDirection = 'RIGHT';
+    let food = { x: 120, y: 120 };
+    const cellSize = 20;
+    let gameOver = false, awaitingInitials = false;
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp"    && direction !== "DOWN")  nextDirection = "UP";
+      if (e.key === "ArrowDown"  && direction !== "UP")    nextDirection = "DOWN";
+      if (e.key === "ArrowLeft"  && direction !== "RIGHT") nextDirection = "LEFT";
+      if (e.key === "ArrowRight" && direction !== "LEFT")  nextDirection = "RIGHT";
+    });
+
+    // ---- On-screen D-pad ----
+    function setDir(dir) {
+      if (dir === "UP"    && direction !== "DOWN")  nextDirection = "UP";
+      if (dir === "DOWN"  && direction !== "UP")    nextDirection = "DOWN";
+      if (dir === "LEFT"  && direction !== "RIGHT") nextDirection = "LEFT";
+      if (dir === "RIGHT" && direction !== "LEFT")  nextDirection = "RIGHT";
+    }
+    document.querySelectorAll('.dpad button[data-dir]').forEach(btn => {
+      const dir = btn.getAttribute('data-dir');
+      const handler = (e) => { e.preventDefault(); setDir(dir); };
+      btn.addEventListener('click', handler);
+      btn.addEventListener('touchstart', handler, { passive: false });
+    });
+
+    function drawSnake() {
+      ctx.fillStyle = "#7ec850";
+      snake.forEach((segment) => {
+        ctx.fillRect(segment.x, segment.y, cellSize, cellSize);
+        ctx.strokeStyle = "#245edb";
+        ctx.strokeRect(segment.x, segment.y, cellSize, cellSize);
+      });
+    }
+    function drawFood() {
+      ctx.fillStyle = "#d9534f";
+      ctx.fillRect(food.x, food.y, cellSize, cellSize);
+      ctx.strokeStyle = "#245edb";
+      ctx.strokeRect(food.x, food.y, cellSize, cellSize);
+    }
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawSnake();
+      drawFood();
+      document.getElementById('score').textContent = score;
+    }
+    function placeFood() {
+      food.x = Math.floor(Math.random() * (canvas.width / cellSize)) * cellSize;
+      food.y = Math.floor(Math.random() * (canvas.height / cellSize)) * cellSize;
+      if (snake.some(seg => seg.x === food.x && seg.y === food.y)) placeFood();
+    }
+
+    function checkHighscore() {
+      let minScore = highscores[2].score;
+      if (score > minScore) {
+        awaitingInitials = true;
+        document.getElementById('initialsPopup').style.display = 'block';
+        document.getElementById('init1').focus();
+      }
+    }
+
+    const showScoresBtn = document.getElementById('showScoresBtn');
+    showScoresBtn.onclick = function () {
+      document.getElementById('highscoresSection').style.display = 'block';
+      showScoresBtn.style.display = 'none';
+    };
+
+    function saveInitials() {
+      const initials =
+        (document.getElementById('init1').value || 'X').toUpperCase() +
+        (document.getElementById('init2').value || 'X').toUpperCase() +
+        (document.getElementById('init3').value || 'X').toUpperCase();
+      highscores.push({ initials, score });
+      highscores.sort((a, b) => b.score - a.score);
+      highscores = highscores.slice(0, 6);
+      renderHighscores();
+      document.getElementById('initialsPopup').style.display = 'none';
+      awaitingInitials = false;
+      showScoresBtn.style.display = 'block';
+      resetGame();
+    }
+
+    function resetGame() {
+      score = 0;
+      snake = [{ x: 200, y: 200 }];
+      direction = 'RIGHT';
+      nextDirection = 'RIGHT';
+      placeFood();
+      gameOver = false;
+    }
+
+    function gameLoop() {
+      if (!gameOver && !awaitingInitials) {
+        direction = nextDirection;
+        let head = { ...snake[0] };
+        if (direction === "UP")    head.y -= cellSize;
+        if (direction === "DOWN")  head.y += cellSize;
+        if (direction === "LEFT")  head.x -= cellSize;
+        if (direction === "RIGHT") head.x += cellSize;
+
+        if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+          gameOver = true;
+          setTimeout(() => {
+            checkHighscore();
+            if (!awaitingInitials) resetGame();
+          }, 800);
+        }
+        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+          gameOver = true;
+          setTimeout(() => {
+            checkHighscore();
+            if (!awaitingInitials) resetGame();
+          }, 800);
+        }
+        if (head.x === food.x && head.y === food.y) {
+          score++;
+          snake.unshift(head);
+          placeFood();
+        } else {
+          snake.unshift(head);
+          snake.pop();
+        }
+        draw();
+      }
+      setTimeout(gameLoop, 92);
+    }
+    placeFood();
+    gameLoop();
+  </script>
+</body>
+</html>

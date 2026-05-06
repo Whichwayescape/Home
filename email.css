@@ -1,0 +1,60 @@
+/* Email pages — pairs with xp.css */
+
+html, body {
+  margin: 0;
+  padding: 24px;
+  font-family: 'Tahoma', 'Verdana', sans-serif;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(255,255,255,0.15), transparent 50%),
+    linear-gradient(180deg,
+      #4a90d9 0%,
+      #6caee0 25%,
+      #88c270 55%,
+      #5fa84a 80%,
+      #4a8d3a 100%);
+}
+
+.email-window {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.email-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+  border-bottom: 1px solid #aca899;
+  margin-bottom: 12px;
+}
+.email-toolbar button {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+.email-meta {
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 8px 4px;
+  background: #ece9d8;
+  border: 1px solid #aca899;
+}
+.email-meta div { margin-bottom: 2px; }
+
+.email-body {
+  padding: 16px 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #000;
+  background: #fff;
+  font-family: 'Tahoma', 'Verdana', sans-serif;
+}
+.email-body p {
+  margin: 0 0 12px;
+}
+
+@media (max-width: 600px) {
+  body { padding: 8px; }
+  .email-toolbar { flex-wrap: wrap; }
+}

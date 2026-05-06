@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whichway Escape — A Society of Curious Minds</title>
+  <meta name="description" content="Whichway Escape — bespoke escape room experiences crafted for the discerning puzzler. Step into the parlour." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+/* =========================================================================
+   Whichway Escape — Main Stylesheet
+   Aesthetic: Sherlock Holmes parlour. Velvet, oxblood, oxidised brass, oak.
+   ========================================================================= */
+
+:root {
+  /* Palette */
+  --ink:        #1a1411;        /* near-black brown */
+  --ink-soft:   #2a221d;
+  --paper:      #f3ead7;        /* warm cream */
+  --paper-2:    #ebdfc5;
+  --oxblood:    #6b1e1e;        /* deep wine */
+  --oxblood-2:  #8a2828;
+  --brass:      #b6904b;        /* aged brass */
+  --brass-2:    #d4ae6a;
+  --moss:       #3a4a36;
+  --shadow:     0 30px 60px -20px rgba(20, 10, 5, 0.35);
+
+  /* Type */
+  --display: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --serif:   'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+  --small-caps: 'EB Garamond', Georgia, serif;
+
+  --maxw: 1180px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--paper);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107, 30, 30, 0.35), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(182, 144, 75, 0.18), transparent 60%),
+    linear-gradient(180deg, #1f1813 0%, #15100c 60%, #0e0a07 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Subtle paper grain over everything for texture */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* ============ Header ============ */
+
+.site-header {
+  position: relative;
+  z-index: 5;
+  border-bottom: 1px solid rgba(182, 144, 75, 0.18);
+  background: linear-gradient(180deg, rgba(20, 14, 10, 0.6), transparent);
+}
+.header-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.brandmark {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: var(--paper);
+}
+.brandmark__monogram {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--brass-2);
+  border: 1px solid var(--brass);
+  padding: 0.15rem 0.55rem 0.05rem;
+  border-radius: 2px;
+  line-height: 1;
+}
+.amp {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--oxblood-2);
+  margin: 0 0.05em;
+}
+.brandmark__name {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+.primary-nav ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.primary-nav a {
+  color: var(--paper);
+  text-decoration: none;
+  font-family: var(--small-caps);
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, color 0.3s;
+}
+.primary-nav a:hover {
+  color: var(--brass-2);
+  border-bottom-color: var(--brass);
+}
+
+/* ============ Hero ============ */
+
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 7rem 2rem 6rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.hero__ornament {
+  color: var(--brass);
+  width: 200px;
+  margin: 0 auto 2rem;
+  opacity: 0.7;
+}
+.hero__ornament--bottom { margin: 3rem auto 0; }
+.hero__ornament svg { width: 100%; height: auto; }
+
+.hero__eyebrow {
+  font-family: var(--small-caps);
+  font-size: 0.85rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+  margin: 0 0 1.5rem;
+}
+.hero__title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(3rem, 8vw, 6.2rem);
+  line-height: 1;
+  margin: 0 0 1.5rem;
+  color: var(--paper);
+  letter-spacing: -0.01em;
+}
+.hero__title .line { display: block; }
+.hero__title .line-2 {
+  font-style: italic;
+  color: var(--brass-2);
+  font-size: 0.55em;
+  margin: 0.4rem 0;
+}
+.hero__title .line-3 { color: var(--paper); }
+
+.hero__subtitle {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: rgba(243, 234, 215, 0.78);
+  max-width: 620px;
+  margin: 0 auto 2.5rem;
+  font-style: italic;
+}
+.hero__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============ Buttons ============ */
+
+.btn {
+  display: inline-block;
+  font-family: var(--small-caps);
+  font-size: 0.85rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 1px;
+}
+.btn--primary {
+  background: var(--oxblood);
+  color: var(--paper);
+  border-color: var(--oxblood);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+}
+.btn--primary:hover {
+  background: var(--oxblood-2);
+  border-color: var(--brass);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--brass-2);
+  border-color: var(--brass);
+}
+.btn--ghost:hover {
+  background: rgba(182, 144, 75, 0.1);
+  color: var(--paper);
+}
+
+/* ============ Parlour section ============ */
+
+.parlour {
+  background:
+    linear-gradient(180deg, transparent, rgba(243, 234, 215, 0.04) 30%, rgba(243, 234, 215, 0.04) 70%, transparent),
+    radial-gradient(ellipse at 30% 50%, rgba(107, 30, 30, 0.15), transparent 60%);
+  padding: 6rem 2rem;
+  border-top: 1px solid rgba(182, 144, 75, 0.15);
+  border-bottom: 1px solid rgba(182, 144, 75, 0.15);
+}
+.parlour__grid {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 5rem;
+  align-items: center;
+}
+.parlour__plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.seal {
+  width: 280px;
+  height: 280px;
+  color: var(--brass-2);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+.seal svg { width: 100%; height: 100%; }
+
+.parlour__copy h2 {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  margin: 0.5rem 0 1.5rem;
+  color: var(--paper);
+}
+.kicker {
+  font-family: var(--small-caps);
+  font-size: 0.78rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+  margin: 0;
+}
+.lede {
+  font-size: 1.2rem;
+  color: rgba(243, 234, 215, 0.92);
+  margin-top: 0;
+}
+.parlour__copy p {
+  color: rgba(243, 234, 215, 0.78);
+}
+.signature {
+  font-family: var(--display);
+  font-style: italic;
+  color: var(--brass-2);
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}
+
+/* ============ Section heads ============ */
+
+.section-head {
+  max-width: 720px;
+  margin: 0 auto 4rem;
+}
+.section-head--center { text-align: center; }
+.section-head h2 {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0.5rem 0 1rem;
+  color: var(--paper);
+}
+.section-head__sub {
+  color: rgba(243, 234, 215, 0.7);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ============ Chambers (room cards) ============ */
+
+.chambers {
+  padding: 7rem 2rem;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+.chambers__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.chamber {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(243, 234, 215, 0.06), rgba(243, 234, 215, 0.02));
+  border: 1px solid rgba(182, 144, 75, 0.25);
+  padding: 3rem 2rem 2.5rem;
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+}
+.chamber::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(182, 144, 75, 0.15);
+  pointer-events: none;
+}
+.chamber:hover {
+  border-color: var(--brass);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.chamber--featured {
+  background:
+    linear-gradient(180deg, rgba(107, 30, 30, 0.25), rgba(107, 30, 30, 0.08));
+  border-color: rgba(182, 144, 75, 0.5);
+}
+.chamber__ribbon {
+  position: absolute;
+  top: 1rem;
+  right: -8px;
+  background: var(--brass);
+  color: var(--ink);
+  font-family: var(--small-caps);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.9rem;
+  font-weight: 600;
+}
+.chamber__plate {
+  font-family: var(--display);
+  font-size: 2.4rem;
+  color: var(--brass-2);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+.chamber__title {
+  font-family: var(--display);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0 0 0.2rem;
+}
+.chamber__tag {
+  font-family: var(--small-caps);
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+  margin: 0 0 1.5rem;
+}
+.chamber__body {
+  color: rgba(243, 234, 215, 0.78);
+  margin: 0 0 1.5rem;
+  flex-grow: 1;
+}
+.chamber__meta {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(182, 144, 75, 0.2);
+  font-family: var(--small-caps);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: rgba(243, 234, 215, 0.7);
+}
+.chamber__meta li { padding: 0.25rem 0; }
+.chamber__link {
+  font-family: var(--small-caps);
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--brass);
+  padding-bottom: 0.3rem;
+  align-self: flex-start;
+  transition: all 0.3s;
+}
+.chamber__link:hover {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+.chamber__link--muted {
+  color: rgba(243, 234, 215, 0.55);
+  border-color: rgba(182, 144, 75, 0.4);
+}
+
+/* ============ Dossier ============ */
+
+.dossier {
+  background: linear-gradient(180deg, transparent, rgba(20, 14, 10, 0.6));
+  padding: 7rem 2rem;
+  border-top: 1px solid rgba(182, 144, 75, 0.15);
+}
+.dossier__inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.dossier__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+}
+.dossier__steps li {
+  position: relative;
+  padding-left: 4rem;
+}
+.dossier__steps .num {
+  position: absolute;
+  left: 0;
+  top: -0.4rem;
+  font-family: var(--display);
+  font-size: 2.5rem;
+  font-style: italic;
+  color: var(--brass-2);
+  line-height: 1;
+}
+.dossier__steps h4 {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin: 0 0 0.5rem;
+  color: var(--paper);
+}
+.dossier__steps p {
+  margin: 0;
+  color: rgba(243, 234, 215, 0.78);
+}
+
+/* ============ Quote ============ */
+
+.quote {
+  padding: 6rem 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(182, 144, 75, 0.15);
+  border-bottom: 1px solid rgba(182, 144, 75, 0.15);
+  background: radial-gradient(ellipse at center, rgba(107, 30, 30, 0.18), transparent 70%);
+}
+.quote blockquote {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.quote p {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  line-height: 1.3;
+  color: var(--paper);
+  margin: 0 0 1.5rem;
+  position: relative;
+}
+.quote p::before, .quote p::after {
+  content: '"';
+  font-size: 3rem;
+  color: var(--brass);
+  font-family: var(--display);
+  vertical-align: -0.4em;
+}
+.quote p::before { margin-right: 0.2em; }
+.quote p::after { margin-left: 0.1em; }
+.quote cite {
+  font-family: var(--small-caps);
+  font-style: normal;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+}
+
+/* ============ Enquire ============ */
+
+.enquire {
+  padding: 7rem 2rem;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+.enquire__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+.enquire__copy h2 {
+  font-family: var(--display);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0.5rem 0 1.5rem;
+  color: var(--paper);
+}
+.enquire__copy p {
+  color: rgba(243, 234, 215, 0.78);
+}
+.enquire__details {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(182, 144, 75, 0.2);
+}
+.enquire__details li {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(182, 144, 75, 0.12);
+  color: rgba(243, 234, 215, 0.85);
+}
+.enquire__details span {
+  display: inline-block;
+  width: 140px;
+  font-family: var(--small-caps);
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+}
+
+.enquire__form {
+  background: rgba(243, 234, 215, 0.04);
+  border: 1px solid rgba(182, 144, 75, 0.25);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.enquire__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.enquire__form span {
+  font-family: var(--small-caps);
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--brass-2);
+}
+.enquire__form input,
+.enquire__form textarea {
+  background: rgba(20, 14, 10, 0.4);
+  border: 1px solid rgba(182, 144, 75, 0.3);
+  padding: 0.75rem 1rem;
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 1rem;
+  border-radius: 1px;
+  transition: border-color 0.3s;
+}
+.enquire__form input:focus,
+.enquire__form textarea:focus {
+  outline: none;
+  border-color: var(--brass-2);
+  background: rgba(20, 14, 10, 0.55);
+}
+.enquire__form button { margin-top: 0.5rem; }
+
+/* ============ Footer ============ */
+
+.site-footer {
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(182, 144, 75, 0.2);
+  padding: 3rem 2rem 2.5rem;
+}
+.site-footer__inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  text-align: center;
+}
+.site-footer__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.2rem;
+  font-family: var(--display);
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+.site-footer__motto {
+  color: var(--brass-2);
+  margin: 0 0 1rem;
+  font-family: var(--display);
+  font-size: 1rem;
+}
+.site-footer__legal {
+  font-family: var(--small-caps);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(243, 234, 215, 0.45);
+  margin: 0;
+}
+
+/* ============ Responsive ============ */
+
+@media (max-width: 900px) {
+  body { font-size: 17px; }
+  .header-inner { flex-direction: column; gap: 1rem; padding: 1.25rem; }
+  .primary-nav ul { gap: 1.25rem; flex-wrap: wrap; justify-content: center; }
+  .hero { padding: 4rem 1.5rem 3rem; }
+  .parlour__grid { grid-template-columns: 1fr; gap: 3rem; }
+  .seal { width: 200px; height: 200px; }
+  .chambers { padding: 4rem 1.5rem; }
+  .chambers__grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .dossier { padding: 4rem 1.5rem; }
+  .dossier__steps { grid-template-columns: 1fr; gap: 2rem; }
+  .enquire { padding: 4rem 1.5rem; }
+  .enquire__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .enquire__form { padding: 1.5rem; }
+  .quote { padding: 4rem 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .primary-nav a { font-size: 0.75rem; letter-spacing: 0.15em; }
+  .hero__title { font-size: clamp(2.5rem, 12vw, 4rem); }
+  .hero__subtitle { font-size: 1rem; }
+  .btn { padding: 0.85rem 1.5rem; font-size: 0.78rem; }
+  .hero__actions { flex-direction: column; align-items: stretch; }
+  .enquire__details span { width: 100%; display: block; margin-bottom: 0.2rem; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- Texture overlay -->
+  <div class="grain"></div>
+
+  <!-- Navigation -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brandmark">
+        <span class="brandmark__monogram">W<span class="amp">&amp;</span>E</span>
+        <span class="brandmark__name">Whichway Escape</span>
+      </a>
+      <nav class="primary-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#parlour">The Parlour</a></li>
+          <li><a href="#chambers">The Chambers</a></li>
+          <li><a href="#dossier">Dossier</a></li>
+          <li><a href="#enquire">Enquire</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__ornament hero__ornament--top">
+      <svg viewBox="0 0 200 30" aria-hidden="true"><path d="M0 15 L80 15 M120 15 L200 15 M100 5 L100 25 M90 15 L100 5 L110 15 L100 25 Z" stroke="currentColor" fill="none" stroke-width="0.6"/></svg>
+    </div>
+
+    <p class="hero__eyebrow">— Est. by Appointment Only —</p>
+    <h1 class="hero__title">
+      <span class="line line-1">A Society</span>
+      <span class="line line-2"><em>of</em></span>
+      <span class="line line-3">Curious Minds</span>
+    </h1>
+    <p class="hero__subtitle">
+      An after-hours establishment where puzzles are poured neat, mysteries are aged in oak,<br/>and clever company is the only price of admission.
+    </p>
+
+    <div class="hero__actions">
+      <a href="#chambers" class="btn btn--primary">Enter the Parlour</a>
+      <a href="#dossier" class="btn btn--ghost">Read the Dossier</a>
+    </div>
+
+    <div class="hero__ornament hero__ornament--bottom">
+      <svg viewBox="0 0 200 30" aria-hidden="true"><path d="M0 15 L80 15 M120 15 L200 15 M100 5 L100 25 M90 15 L100 5 L110 15 L100 25 Z" stroke="currentColor" fill="none" stroke-width="0.6"/></svg>
+    </div>
+  </section>
+
+  <!-- Parlour intro -->
+  <section id="parlour" class="parlour">
+    <div class="parlour__grid">
+      <div class="parlour__plate">
+        <div class="seal" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="0.8"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="0.4"/>
+            <text x="50" y="54" text-anchor="middle" font-family="Playfair Display" font-size="20" fill="currentColor">W&amp;E</text>
+            <text x="50" y="22" text-anchor="middle" font-family="EB Garamond" font-size="6" letter-spacing="2" fill="currentColor">SOCIETAS · CURIOSORUM</text>
+            <text x="50" y="84" text-anchor="middle" font-family="EB Garamond" font-size="6" letter-spacing="2" fill="currentColor">— ANNO MMXXV —</text>
+          </svg>
+        </div>
+      </div>
+      <div class="parlour__copy">
+        <p class="kicker">A note from the proprietor</p>
+        <h2>Welcome, friend.<br/>Hang your coat.</h2>
+        <p class="lede">
+          Whichway Escape is not, strictly speaking, a game. It is an evening — the kind one tells stories
+          about for years afterward. Our chambers are designed in the manner of a fine library: every detail
+          chosen, every clue set with intent.
+        </p>
+        <p>
+          Whether you arrive in a party of two or a confederacy of eight, you will find no flashing lights
+          nor frantic timers shouting at you. Only a low fire, a curious puzzle, and the quiet pride of
+          having figured the thing out yourselves.
+        </p>
+        <p class="signature">— The Proprietor</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chambers / Rooms -->
+  <section id="chambers" class="chambers">
+    <header class="section-head">
+      <p class="kicker">The Chambers</p>
+      <h2>Three rooms. Three reputations.</h2>
+      <p class="section-head__sub">Each chamber is a self-contained world. Choose your evening.</p>
+    </header>
+
+    <div class="chambers__grid">
+
+      <article class="chamber">
+        <div class="chamber__plate">I</div>
+        <h3 class="chamber__title">The Office</h3>
+        <p class="chamber__tag">— A Tuesday in 2003 —</p>
+        <p class="chamber__body">
+          A corner cubicle. A humming CRT monitor. A boss who has gone suspiciously missing and a desktop
+          full of secrets. Recover three passwords from the company network and walk out before the
+          fluorescent lights flicker once more.
+        </p>
+        <ul class="chamber__meta">
+          <li>2 — 6 players</li>
+          <li>60 minutes</li>
+          <li>Difficulty: Moderate</li>
+        </ul>
+        <a href="office.html" class="chamber__link">Enter the Office →</a>
+      </article>
+
+      <article class="chamber chamber--featured">
+        <div class="chamber__ribbon">Signature</div>
+        <div class="chamber__plate">II</div>
+        <h3 class="chamber__title">The Study</h3>
+        <p class="chamber__tag">— Coming Soon —</p>
+        <p class="chamber__body">
+          A gentleman's library, the door bolted from the inside. Tobacco smoke still curling from the
+          ashtray. The case, of course, is yours. The deductions, of course, are also yours.
+        </p>
+        <ul class="chamber__meta">
+          <li>3 — 8 players</li>
+          <li>75 minutes</li>
+          <li>Difficulty: Devilish</li>
+        </ul>
+        <a href="#enquire" class="chamber__link chamber__link--muted">Reserve early access →</a>
+      </article>
+
+      <article class="chamber">
+        <div class="chamber__plate">III</div>
+        <h3 class="chamber__title">The Conservatory</h3>
+        <p class="chamber__tag">— Coming Soon —</p>
+        <p class="chamber__body">
+          Glass, ferns, and a dinner party that ended rather badly. Sift through the guest list, the
+          gossip, and the greenhouse to discover what — and who — was really on the menu.
+        </p>
+        <ul class="chamber__meta">
+          <li>4 — 8 players</li>
+          <li>60 minutes</li>
+          <li>Difficulty: Stiff</li>
+        </ul>
+        <a href="#enquire" class="chamber__link chamber__link--muted">Join the waitlist →</a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Dossier / How it works -->
+  <section id="dossier" class="dossier">
+    <div class="dossier__inner">
+      <header class="section-head section-head--center">
+        <p class="kicker">The Dossier</p>
+        <h2>How an evening unfolds.</h2>
+      </header>
+
+      <ol class="dossier__steps">
+        <li>
+          <span class="num">i.</span>
+          <h4>Reserve your chamber</h4>
+          <p>Choose a room and a time. We seat one party at a time — you'll never share a chamber with strangers.</p>
+        </li>
+        <li>
+          <span class="num">ii.</span>
+          <h4>Arrive at the parlour</h4>
+          <p>A short brief by the fire. A drink, if you like. Then the doors are closed behind you.</p>
+        </li>
+        <li>
+          <span class="num">iii.</span>
+          <h4>Solve the matter</h4>
+          <p>Sixty minutes on the clock. No jump-scares, no timer alarms. Just three puzzles and your wits.</p>
+        </li>
+        <li>
+          <span class="num">iv.</span>
+          <h4>Take your portrait</h4>
+          <p>Win or lose, every party leaves with their photograph in our book. The best names go on the wall.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Testimonial / Pull quote -->
+  <section class="quote">
+    <blockquote>
+      <p>“Best thing we've done in this city. We didn't escape. We're already booked to come back.”</p>
+      <cite>— The Wexler Party of Six, March</cite>
+    </blockquote>
+  </section>
+
+  <!-- Enquire -->
+  <section id="enquire" class="enquire">
+    <div class="enquire__grid">
+      <div class="enquire__copy">
+        <p class="kicker">Make an enquiry</p>
+        <h2>Reserve a chamber.<br/>Or simply ask a question.</h2>
+        <p>
+          We answer every note personally, usually within a day. Tell us what evening you have in mind,
+          how many will join you, and any peculiarities of the occasion.
+        </p>
+        <ul class="enquire__details">
+          <li><span>By post</span> hello@whichwayescape.com</li>
+          <li><span>By telephone</span> By appointment</li>
+          <li><span>The premises</span> Address upon booking</li>
+        </ul>
+      </div>
+      <form class="enquire__form" onsubmit="event.preventDefault(); alert('Thank you. We will be in touch shortly.');">
+        <label>
+          <span>Your name</span>
+          <input type="text" name="name" required />
+        </label>
+        <label>
+          <span>Your post</span>
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          <span>Party size</span>
+          <input type="text" name="party" placeholder="e.g. four" />
+        </label>
+        <label>
+          <span>The matter at hand</span>
+          <textarea name="message" rows="4" required></textarea>
+        </label>
+        <button type="submit" class="btn btn--primary">Send the enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__mark">
+        <span class="brandmark__monogram">W<span class="amp">&amp;</span>E</span>
+        <span>Whichway Escape</span>
+      </div>
+      <p class="site-footer__motto"><em>Solvitur ambulando — it is solved by walking around.</em></p>
+      <p class="site-footer__legal">© 2025 Whichway Escape. All rights reserved. By appointment only.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Subtle smooth scroll for in-page links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        if (id.length > 1) {
+          const target = document.querySelector(id);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

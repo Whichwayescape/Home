@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Office Pass — Granted</title>
+  <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+  <link rel="stylesheet" href="email.css" />
+  <style>
+    body { padding: 24px; }
+    .pass-window {
+      width: 100%;
+      max-width: 520px;
+      margin: 40px auto;
+    }
+    .ascii-gerbil {
+      font-family: 'Courier New', monospace;
+      color: #b71c1c;
+      font-size: 14px;
+      white-space: pre;
+      display: block;
+      background: #fff;
+      border: 2px inset #aca899;
+      padding: 16px;
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    .pass-message h2 {
+      margin: 0 0 12px;
+      color: #245edb;
+      font-size: 18px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body class="xp-desktop">
+  <div class="window pass-window">
+    <div class="title-bar">
+      <div class="title-bar-text">⚠ System Notice — Office Pass Granted</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" onclick="window.location.href='index.html'"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <div class="pass-message">
+        <h2>The Gerbil has died.</h2>
+        <p><strong>You have killed it.</strong></p>
+
+<div class="ascii-gerbil">  (x_x)     &lt;-- Gerbil #1 (RIP squeaky)
+   /)__)
+  "  "
+
+   (X_X)     &lt;-- Gerbil #2 (Gone but not forgotten)
+  c(   )
+   " "</div>
+
+        <p>Congratulations, agent. All three passwords have been recovered. The Office is yours.</p>
+
+        <div class="actions">
+          <button onclick="resetPuzzles()">🔄 Reset Puzzles</button>
+          <button onclick="window.location.href='index.html'">↩ Return to Parlour</button>
+        </div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <p class="status-bar-field">Status: 3 / 3 solved</p>
+      <p class="status-bar-field">Whichway Escape</p>
+    </div>
+  </div>
+
+  <script>
+    function resetPuzzles() {
+      if (confirm('Reset all puzzle progress? You will need to solve them again.')) {
+        ['gamesPass', 'emailPass', 'meetingPass'].forEach(k => localStorage.removeItem(k));
+        window.location.href = 'office.html';
+      }
+    }
+  </script>
+</body>
+</html>

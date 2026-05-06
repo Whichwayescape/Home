@@ -1,0 +1,277 @@
+/* =========================================================================
+   Office Escape — Windows XP themed overlay styling
+   Pairs with xp.css (MIT License) for authentic XP window chrome.
+   ========================================================================= */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Tahoma', 'Verdana', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Bliss-style XP desktop wallpaper (procedural, no external image needed) */
+.xp-desktop {
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(255,255,255,0.15), transparent 50%),
+    linear-gradient(180deg,
+      #4a90d9 0%,
+      #6caee0 25%,
+      #88c270 55%,
+      #5fa84a 80%,
+      #4a8d3a 100%);
+  height: 100vh;
+  position: relative;
+}
+
+/* ---- Top status bar ---- */
+#top-bar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 44px;
+  background: rgba(243, 243, 243, 0.92);
+  border-bottom: 1px solid #245edb;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  z-index: 200;
+  backdrop-filter: blur(4px);
+  font-size: 11px;
+}
+#top-bar .xp-button,
+#top-bar a.xp-button {
+  background: linear-gradient(180deg, #fff 0%, #ece9d8 100%);
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  padding: 4px 10px;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+}
+#top-bar .xp-button:hover,
+#top-bar a.xp-button:hover {
+  background: linear-gradient(180deg, #fff 0%, #d6eaff 100%);
+}
+#passStatus {
+  font-weight: bold;
+  color: #245edb;
+  font-size: 11px;
+}
+
+/* ---- Desktop icons ---- */
+.desktop-icon {
+  position: absolute;
+  width: 80px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  font-size: 11px;
+}
+.desktop-icon:hover .icon-img {
+  background: rgba(49, 106, 197, 0.3);
+  border: 1px dotted #fff;
+}
+.icon-img {
+  font-size: 38px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  margin: 0 auto;
+  width: 56px;
+}
+.icon-label {
+  margin-top: 4px;
+  padding: 1px 4px;
+  display: inline-block;
+}
+
+/* ---- Post-it note ---- */
+#postit-note {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  width: 200px;
+  background: #fff59d;
+  border: 1px solid #fbc02d;
+  padding: 16px 14px;
+  box-shadow: 2px 6px 16px rgba(0,0,0,0.3);
+  z-index: 50;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+  color: #333;
+  font-size: 13px;
+  transform: rotate(2deg);
+}
+.postit-task {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 14px;
+}
+.postit-task:before {
+  content: '☐';
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.strikethrough {
+  text-decoration: line-through;
+  color: #777;
+}
+.strikethrough:before {
+  content: '☑';
+}
+
+/* ---- XP popups (windows) ---- */
+.xp-popup {
+  position: fixed !important;
+  top: 140px;
+  left: 60px;
+  display: none;
+  z-index: 150;
+}
+.tree-view a {
+  color: #0000ff;
+  text-decoration: none;
+  display: block;
+  padding: 4px 8px;
+}
+.tree-view a:hover {
+  background: #316ac5;
+  color: #fff;
+}
+
+/* ---- Password modal ---- */
+#passwordModal {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+.pw-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.pw-row label { min-width: 130px; }
+.pw-row input {
+  flex: 1;
+  padding: 3px 6px;
+  border: 1px solid #7f9db9;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 12px;
+}
+.pw-row button {
+  padding: 3px 12px;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+.pw-row--solved {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 6px 10px;
+  border: 1px solid #a5d6a7;
+}
+
+/* ---- Taskbar (XP green) ---- */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(180deg, #245edb 0%, #3f8cf3 8%, #245edb 100%);
+  border-top: 1px solid #0a246a;
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+}
+#start-btn {
+  height: 30px;
+  padding: 0 18px 0 12px;
+  background: linear-gradient(180deg, #5eac56 0%, #3c873a 50%, #2c6e2a 100%);
+  border: none;
+  border-right: 1px solid #1a4d18;
+  color: #fff;
+  font-family: 'Tahoma', sans-serif;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 0 14px 14px 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+#start-btn:hover { filter: brightness(1.1); }
+.start-flag { font-size: 14px; }
+
+#start-menu {
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  width: 280px;
+  background: #fff;
+  border: 1px solid #0a246a;
+  display: none;
+  z-index: 110;
+  box-shadow: 4px -4px 16px rgba(0,0,0,0.3);
+}
+#start-menu.active { display: block; }
+.start-menu-header {
+  background: linear-gradient(180deg, #245edb 0%, #3f8cf3 100%);
+  color: #fff;
+  padding: 10px 14px;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.start-menu-body { padding: 6px 0; }
+.start-menu-option {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.start-menu-option:hover {
+  background: #316ac5;
+  color: #fff;
+}
+
+#systray {
+  margin-left: auto;
+  padding: 0 12px;
+  color: #fff;
+  font-size: 11px;
+  background: linear-gradient(180deg, #1941a5 0%, #183a8a 100%);
+  height: 30px;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid #0a246a;
+}
+
+/* ---- Mobile fallback ---- */
+@media (max-width: 700px) {
+  .desktop-icon { width: 64px; }
+  .icon-img { font-size: 30px; }
+  #postit-note { width: 160px; right: 8px; }
+  .xp-popup { left: 10px !important; right: 10px; width: auto !important; max-width: calc(100% - 20px); }
+  #passwordModal { width: 90vw !important; max-width: 360px; }
+}
