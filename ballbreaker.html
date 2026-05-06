@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ball Breaker — Microsoft Games</title>
+  <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+  <link rel="stylesheet" href="../email.css" />
+  <style>
+    body { padding: 24px; }
+    .game-window {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    #gameCanvas {
+      background: #f3f3f3;
+      border: 2px inset #aca899;
+      display: block;
+      margin: 8px auto;
+    }
+    .scoreboard {
+      padding: 8px;
+      background: #ece9d8;
+      border: 1px inset #aca899;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .highscores {
+      padding: 8px;
+      background: #ffffe1;
+      border: 1px solid #aca899;
+      margin-bottom: 8px;
+    }
+    .highscores h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: #245edb;
+    }
+    .highscores-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+    }
+    .highscores-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 4px;
+    }
+    .highscores-list li:nth-child(odd) { background: #fff7d6; }
+    #initialsPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      width: 280px;
+    }
+    #initialsPopup input {
+      width: 36px;
+      font-size: 18px;
+      text-transform: uppercase;
+      margin: 0 4px;
+      text-align: center;
+      border: 1px inset #aca899;
+      padding: 4px;
+    }
+    .game-controls {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    /* On-screen paddle controls for iPad / touch */
+    .pad-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 12px 0 4px;
+      user-select: none;
+    }
+    .pad-controls button {
+      font-size: 22px;
+      font-weight: bold;
+      padding: 14px 36px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .pad-hint {
+      text-align: center;
+      font-size: 11px;
+      color: #555;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body class="xp-desktop">
+  <button id="showScoresBtn" style="display:none; position:fixed; top:24px; right:24px; z-index:1000;">
+    Show High Scores
+  </button>
+
+  <div class="window game-window">
+    <div class="title-bar">
+      <div class="title-bar-text">🧱 Ball Breaker</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize"></button>
+        <button aria-label="Maximize"></button>
+        <button aria-label="Close" onclick="window.close()"></button>
+      </div>
+    </div>
+    <div class="window-body">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+      <div class="scoreboard">Score: <span id="score">0</span></div>
+      <div class="highscores" id="highscoresSection" style="display:none;">
+        <h3>🏆 High Scores</h3>
+        <ul class="highscores-list" id="highscoresList"></ul>
+      </div>
+      <div class="game-controls">
+        <button onclick="window.close()">Close</button>
+      </div>
+
+      <!-- On-screen paddle controls (works on iPad and desktop) -->
+      <div class="pad-controls" aria-label="On-screen paddle controls">
+        <button id="padLeft"  aria-label="Move left">◀ Left</button>
+        <button id="padRight" aria-label="Move right">Right ▶</button>
+      </div>
+      <div class="pad-hint">Use arrow keys, or tap and hold the buttons</div>
+    </div>
+    <div class="status-bar">
+      <p class="status-bar-field">Use ← and → arrow keys</p>
+      <p class="status-bar-field">v1.0</p>
+    </div>
+  </div>
+
+  <div class="window" id="initialsPopup">
+    <div class="title-bar">
+      <div class="title-bar-text">New High Score!</div>
+    </div>
+    <div class="window-body" style="text-align:center;">
+      <p>Enter your initials:</p>
+      <div>
+        <input type="text" maxlength="1" id="init1" autofocus>
+        <input type="text" maxlength="1" id="init2">
+        <input type="text" maxlength="1" id="init3">
+      </div>
+      <br>
+      <button onclick="saveInitials()">Save</button>
+    </div>
+  </div>
+
+  <script>
+    // ====================================================
+    // PUZZLE: top 3 high scores spell clue letters → RATLOL
+    // DO NOT CHANGE these initial high scores.
+    // ====================================================
+    let highscores = [
+      { initials: "RAT", score: 10 },
+      { initials: "WOW", score: 8 },
+      { initials: "LOL", score: 6 },
+      { initials: "ZAP", score: 4 },
+      { initials: "FUN", score: 2 },
+      { initials: "DOG", score: 0 }
+    ];
+
+    function renderHighscores() {
+      const list = document.getElementById('highscoresList');
+      list.innerHTML = '';
+      highscores.slice(0, 6).forEach((entry) => {
+        list.innerHTML += `<li><span>${entry.initials}</span><span>${entry.score}</span></li>`;
+      });
+    }
+    renderHighscores();
+
+    // ---- Ball Breaker game ----
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let score = 0;
+    let ball = { x: 200, y: 300, dx: 2.4, dy: -2.4, radius: 8 };
+    let paddle = { x: 160, y: 380, width: 56, height: 12, speed: 6 };
+    let bricks = [];
+    const brickRows = 3, brickCols = 7, brickWidth = 50, brickHeight = 18, brickPadding = 8, brickOffsetTop = 40, brickOffsetLeft = 10;
+    let rightPressed = false, leftPressed = false;
+    let gameOver = false, awaitingInitials = false;
+
+    function initBricks() {
+      bricks = [];
+      for (let r = 0; r < brickRows; r++) {
+        for (let c = 0; c < brickCols; c++) {
+          bricks.push({
+            x: brickOffsetLeft + c * (brickWidth + brickPadding),
+            y: brickOffsetTop + r * (brickHeight + brickPadding),
+            status: 1
+          });
+        }
+      }
+    }
+    initBricks();
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
+      if (e.key === "Left"  || e.key === "ArrowLeft")  leftPressed = true;
+    });
+    document.addEventListener("keyup", (e) => {
+      if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
+      if (e.key === "Left"  || e.key === "ArrowLeft")  leftPressed = false;
+    });
+
+    // ---- On-screen paddle controls (press & hold) ----
+    function bindHold(btn, setter) {
+      const start = (e) => { e.preventDefault(); setter(true);  };
+      const end   = (e) => { e.preventDefault(); setter(false); };
+      btn.addEventListener('mousedown',  start);
+      btn.addEventListener('touchstart', start, { passive: false });
+      btn.addEventListener('mouseup',    end);
+      btn.addEventListener('mouseleave', end);
+      btn.addEventListener('touchend',   end);
+      btn.addEventListener('touchcancel', end);
+    }
+    bindHold(document.getElementById('padLeft'),  (v) => leftPressed  = v);
+    bindHold(document.getElementById('padRight'), (v) => rightPressed = v);
+
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#245edb";
+      ctx.fill();
+      ctx.closePath();
+    }
+    function drawPaddle() {
+      ctx.beginPath();
+      ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+      ctx.fillStyle = "#7ec850";
+      ctx.fill();
+      ctx.closePath();
+    }
+    function drawBricks() {
+      bricks.forEach(brick => {
+        if (brick.status) {
+          ctx.beginPath();
+          ctx.rect(brick.x, brick.y, brickWidth, brickHeight);
+          ctx.fillStyle = "#d9534f";
+          ctx.fill();
+          ctx.strokeStyle = "#245edb";
+          ctx.strokeRect(brick.x, brick.y, brickWidth, brickHeight);
+          ctx.closePath();
+        }
+      });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBricks();
+      drawBall();
+      drawPaddle();
+      document.getElementById('score').textContent = score;
+    }
+    function collisionDetection() {
+      bricks.forEach(brick => {
+        if (brick.status &&
+            ball.x > brick.x && ball.x < brick.x + brickWidth &&
+            ball.y - ball.radius < brick.y + brickHeight &&
+            ball.y + ball.radius > brick.y) {
+          ball.dy = -ball.dy;
+          brick.status = 0;
+          score++;
+        }
+      });
+    }
+    function checkHighscore() {
+      const minScore = highscores[2].score;
+      if (score > minScore) {
+        awaitingInitials = true;
+        document.getElementById('initialsPopup').style.display = 'block';
+        document.getElementById('init1').focus();
+      }
+    }
+
+    const showScoresBtn = document.getElementById('showScoresBtn');
+    showScoresBtn.onclick = function () {
+      document.getElementById('highscoresSection').style.display = 'block';
+      showScoresBtn.style.display = 'none';
+    };
+
+    function saveInitials() {
+      const initials =
+        (document.getElementById('init1').value || 'X').toUpperCase() +
+        (document.getElementById('init2').value || 'X').toUpperCase() +
+        (document.getElementById('init3').value || 'X').toUpperCase();
+      highscores.push({ initials, score });
+      highscores.sort((a, b) => b.score - a.score);
+      highscores = highscores.slice(0, 6);
+      renderHighscores();
+      document.getElementById('initialsPopup').style.display = 'none';
+      awaitingInitials = false;
+      showScoresBtn.style.display = 'block';
+      resetGame();
+    }
+    function resetGame() {
+      score = 0;
+      ball = { x: 200, y: 300, dx: 2.4, dy: -2.4, radius: 8 };
+      paddle = { x: 160, y: 380, width: 56, height: 12, speed: 6 };
+      initBricks();
+      gameOver = false;
+    }
+
+    function gameLoop() {
+      if (!gameOver && !awaitingInitials) {
+        draw();
+        collisionDetection();
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+        if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) ball.dx = -ball.dx;
+        if (ball.y - ball.radius < 0) ball.dy = -ball.dy;
+        if (ball.x > paddle.x && ball.x < paddle.x + paddle.width &&
+            ball.y + ball.radius > paddle.y && ball.y - ball.radius < paddle.y + paddle.height) {
+          ball.dy = -Math.abs(ball.dy);
+        }
+        if (ball.y + ball.radius > canvas.height) {
+          gameOver = true;
+          setTimeout(() => { checkHighscore(); if (!awaitingInitials) resetGame(); }, 1200);
+        }
+        if (rightPressed && paddle.x < canvas.width - paddle.width) paddle.x += paddle.speed;
+        if (leftPressed && paddle.x > 0) paddle.x -= paddle.speed;
+        if (bricks.every(b => b.status === 0)) {
+          gameOver = true;
+          setTimeout(() => { checkHighscore(); if (!awaitingInitials) resetGame(); }, 1200);
+        }
+      }
+      requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
+  </script>
+</body>
+</html>
