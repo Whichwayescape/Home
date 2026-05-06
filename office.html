@@ -4,310 +4,499 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Office — Whichway Escape</title>
- 
-  <!-- XP.css: open-source (MIT) recreation of the authentic Windows XP UI by Jordan Scales -->
-  <!-- https://botoxparty.github.io/XP.css/ — included from public CDN, no attribution stripped -->
   <link rel="stylesheet" href="https://unpkg.com/xp.css" />
-  <link rel="stylesheet" href="office-style.css" />
+  <style>
+    html, body { margin:0; padding:0; font-family:'Tahoma','Verdana',sans-serif; height:100vh; overflow:hidden; user-select:none; }
+    .xp-desktop {
+      background: radial-gradient(ellipse at 30% 70%, rgba(255,255,255,0.15), transparent 50%),
+        linear-gradient(180deg,#4a90d9 0%,#6caee0 25%,#88c270 55%,#5fa84a 80%,#4a8d3a 100%);
+      height:100vh; position:relative;
+    }
+    #top-bar {
+      position:fixed;top:0;left:0;width:100%;height:44px;
+      background:rgba(243,243,243,0.92);border-bottom:1px solid #245edb;
+      display:flex;align-items:center;gap:1rem;padding:0 1rem;
+      z-index:500;backdrop-filter:blur(4px);font-size:11px;box-sizing:border-box;
+    }
+    #top-bar button,#top-bar a {
+      background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);
+      border:1px solid #003c74;border-radius:3px;padding:4px 10px;
+      font-family:'Tahoma',sans-serif;font-size:11px;cursor:pointer;text-decoration:none;color:#000;
+    }
+    #top-bar button:hover,#top-bar a:hover { background:linear-gradient(180deg,#fff 0%,#d6eaff 100%); }
+    #passStatus { font-weight:bold;color:#245edb;font-size:11px; }
+    .desktop-icon { position:absolute;width:80px;text-align:center;cursor:pointer;color:white;text-shadow:1px 1px 2px rgba(0,0,0,0.8);font-size:11px; }
+    .icon-img { font-size:38px;height:50px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;margin:0 auto;width:56px; }
+    .desktop-icon:hover .icon-img { background:rgba(49,106,197,0.3);border:1px dotted #fff; }
+    .icon-label { margin-top:4px;padding:1px 4px;display:inline-block; }
+    #postit-note {
+      position:fixed;top:80px;right:24px;width:200px;background:#fff59d;
+      border:1px solid #fbc02d;padding:16px 14px;box-shadow:2px 6px 16px rgba(0,0,0,0.3);
+      z-index:50;font-family:'Comic Sans MS',cursive;color:#333;font-size:13px;transform:rotate(2deg);
+    }
+    .postit-task { margin-bottom:6px;position:relative;padding-left:14px; }
+    .postit-task:before { content:'☐';position:absolute;left:0; }
+    .strikethrough { text-decoration:line-through;color:#777; }
+    .strikethrough:before { content:'☑'; }
+    .xp-win { position:fixed;display:none;z-index:200;min-width:300px;box-shadow:4px 4px 16px rgba(0,0,0,0.4); }
+    .xp-win .title-bar { cursor:move; }
+    .email-toolbar { display:flex;gap:4px;padding:4px 0;border-bottom:1px solid #aca899;margin-bottom:8px; }
+    .email-toolbar button { font-size:11px;padding:4px 10px; }
+    .email-meta { font-size:12px;line-height:1.7;padding:8px 4px;background:#ece9d8;border:1px solid #aca899; }
+    .email-meta div { margin-bottom:2px; }
+    .email-body { padding:12px 8px;font-size:12px;line-height:1.6;color:#000;background:#fff;max-height:280px;overflow-y:auto; }
+    .email-body p { margin:0 0 10px; }
+    .notes-body { padding:12px 8px;font-size:12px;line-height:1.7;color:#000;background:#fff;max-height:280px;overflow-y:auto; }
+    .notes-body .ts { color:#245edb;font-weight:bold;font-size:11px;margin-right:.4em; }
+    .notes-body div { padding:3px 0;border-bottom:1px dotted #ccc; }
+    .notes-body div:last-child { border-bottom:none; }
+    #snakeCanvas,#bbCanvas { background:#f3f3f3;border:2px inset #aca899;display:block;margin:4px auto; }
+    .score-bar { text-align:center;font-size:12px;font-weight:bold;background:#ece9d8;border:1px inset #aca899;padding:4px;margin-bottom:4px; }
+    .hs-panel { background:#ffffe1;border:1px solid #aca899;padding:6px 8px;font-size:11px;display:none; }
+    .hs-panel h4 { margin:0 0 4px;font-size:11px;color:#245edb; }
+    .hs-list { list-style:none;margin:0;padding:0; }
+    .hs-list li { display:flex;justify-content:space-between;padding:1px 0; }
+    .dpad { display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:3px;justify-content:center;margin:8px auto 2px; }
+    .dpad button { font-size:18px;font-weight:bold;padding:0;cursor:pointer;touch-action:manipulation; }
+    .dpad-up{grid-column:2;grid-row:1;} .dpad-left{grid-column:1;grid-row:2;}
+    .dpad-down{grid-column:2;grid-row:3;} .dpad-right{grid-column:3;grid-row:2;}
+    .dpad-center{grid-column:2;grid-row:2;background:#ece9d8;border:1px inset #aca899;}
+    .pad-controls { display:flex;justify-content:center;gap:10px;margin:8px 0 2px; }
+    .pad-controls button { font-size:18px;font-weight:bold;padding:10px 28px;cursor:pointer;touch-action:manipulation; }
+    #initialsModal { display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;width:260px; }
+    #initialsModal input { width:32px;font-size:16px;text-transform:uppercase;margin:0 3px;text-align:center;border:1px inset #aca899;padding:3px; }
+    #passwordModal { display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;width:380px; }
+    .pw-row { display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px; }
+    .pw-row label { min-width:130px; }
+    .pw-row input { flex:1;padding:3px 6px;border:1px solid #7f9db9;font-size:12px; }
+    .pw-row--solved { color:#2e7d32;background:#e8f5e9;padding:6px;border:1px solid #a5d6a7; }
+    #taskbar {
+      position:fixed;bottom:0;left:0;width:100%;height:30px;
+      background:linear-gradient(180deg,#245edb 0%,#3f8cf3 8%,#245edb 100%);
+      border-top:1px solid #0a246a;display:flex;align-items:center;z-index:500;
+    }
+    #start-btn {
+      height:30px;padding:0 16px 0 10px;
+      background:linear-gradient(180deg,#5eac56 0%,#3c873a 50%,#2c6e2a 100%);
+      border:none;border-right:1px solid #1a4d18;color:#fff;
+      font-family:'Tahoma',sans-serif;font-weight:bold;font-style:italic;font-size:15px;
+      cursor:pointer;display:flex;align-items:center;gap:5px;
+      border-radius:0 14px 14px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.5);
+    }
+    #start-btn:hover { filter:brightness(1.1); }
+    #start-menu {
+      position:fixed;bottom:30px;left:0;width:260px;background:#fff;
+      border:1px solid #0a246a;display:none;z-index:600;box-shadow:4px -4px 16px rgba(0,0,0,0.3);
+    }
+    #start-menu.active { display:block; }
+    .sm-header { background:linear-gradient(180deg,#245edb,#3f8cf3);color:#fff;padding:10px 12px;font-weight:bold;font-size:13px;display:flex;align-items:center;gap:8px; }
+    .sm-body { padding:4px 0; }
+    .sm-opt { padding:8px 14px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px; }
+    .sm-opt:hover { background:#316ac5;color:#fff; }
+    #systray { margin-left:auto;padding:0 12px;color:#fff;font-size:11px;background:linear-gradient(180deg,#1941a5,#183a8a);height:30px;display:flex;align-items:center;border-left:1px solid #0a246a; }
+    .tb-btn { height:22px;margin:4px 2px;padding:0 10px;background:linear-gradient(180deg,#3f8cf3,#245edb);border:1px solid #0a246a;color:#fff;font-size:11px;cursor:pointer;border-radius:2px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis; }
+    .tb-btn:hover { filter:brightness(1.15); }
+    .tree-view a { color:#0000ff;text-decoration:none;display:block;padding:4px 8px; }
+    .tree-view a:hover { background:#316ac5;color:#fff; }
+  </style>
 </head>
 <body class="xp-desktop">
  
-  <!-- Top status bar / pass tracker -->
   <div id="top-bar">
-    <button id="multiPassBtn" class="xp-button">🔓 Unlock Office Pass</button>
-    <span id="passStatus">Solved: 0 / 3</span>
-    <a href="index.html" class="xp-button" style="margin-left:auto;">↩ Return to Parlour</a>
+    <button id="multiPassBtn">🔓 Unlock Office Pass</button>
+    <span id="passStatus">Solved: 0 / 4</span>
+    <a href="index.html" style="margin-left:auto;">↩ Return to Parlour</a>
   </div>
  
-  <!-- Desktop icons -->
-  <div class="desktop-icon" style="top: 80px; left: 30px;" id="iconGames">
-    <div class="icon-img">🎮</div>
-    <div class="icon-label">Games</div>
-  </div>
-  <div class="desktop-icon" style="top: 80px; left: 130px;" id="iconEmails">
-    <div class="icon-img">✉️</div>
-    <div class="icon-label">Emails</div>
-  </div>
-  <div class="desktop-icon" style="top: 80px; left: 230px;" id="iconMeetings">
-    <div class="icon-img">📋</div>
-    <div class="icon-label">Meetings</div>
-  </div>
-  <div class="desktop-icon" style="top: 80px; left: 330px;" id="iconConference">
-    <div class="icon-img">📞</div>
-    <div class="icon-label">Conference</div>
-  </div>
+  <div class="desktop-icon" style="top:80px;left:30px" id="iconGames"><div class="icon-img">🎮</div><div class="icon-label">Games</div></div>
+  <div class="desktop-icon" style="top:80px;left:130px" id="iconEmails"><div class="icon-img">✉️</div><div class="icon-label">Emails</div></div>
+  <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📋</div><div class="icon-label">Meetings</div></div>
+  <div class="desktop-icon" style="top:80px;left:330px" id="iconConference"><div class="icon-img">📞</div><div class="icon-label">Conference</div></div>
  
-  <!-- Sticky note (post-it) -->
   <div id="postit-note">
     <div class="postit-task strikethrough">Get Top Score in Snake</div>
     <div class="postit-task">Crack Top 3 in Brick Breaker</div>
   </div>
  
-  <!-- Games window (XP-styled) -->
-  <div class="window xp-popup" id="gamesPopup" style="width: 280px;">
-    <div class="title-bar">
-      <div class="title-bar-text">Games</div>
-      <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closePopups()"></button>
-      </div>
-    </div>
+  <!-- GAMES -->
+  <div class="window xp-win" id="winGames" style="width:240px;top:120px;left:60px;">
+    <div class="title-bar"><div class="title-bar-text">Games</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winGames')"></button></div></div>
     <div class="window-body">
-      <p>Select a game to play:</p>
       <ul class="tree-view">
-        <li><a href="snake.html" target="_blank">🐍 Snake</a></li>
-        <li><a href="ballbreaker/ballbreaker.html" target="_blank">🧱 Ball Breaker</a></li>
+        <li><a href="#" onclick="openWin('winSnake');return false;">🐍 Snake</a></li>
+        <li><a href="#" onclick="openWin('winBB');return false;">🧱 Ball Breaker</a></li>
       </ul>
     </div>
   </div>
  
-  <!-- Emails window -->
-  <div class="window xp-popup" id="emailsPopup" style="width: 280px;">
-    <div class="title-bar">
-      <div class="title-bar-text">Outlook Express</div>
-      <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closePopups()"></button>
-      </div>
-    </div>
+  <!-- EMAILS -->
+  <div class="window xp-win" id="winEmails" style="width:240px;top:130px;left:80px;">
+    <div class="title-bar"><div class="title-bar-text">Outlook Express</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winEmails')"></button></div></div>
     <div class="window-body">
-      <p>Mailboxes:</p>
       <ul class="tree-view">
-        <li><a href="inbox.html" target="_blank">📥 Inbox</a></li>
-        <li><a href="sent.html" target="_blank">📤 Sent Items</a></li>
+        <li><a href="#" onclick="openWin('winInbox');return false;">📥 Inbox</a></li>
+        <li><a href="#" onclick="openWin('winSent');return false;">📤 Sent Items</a></li>
       </ul>
     </div>
   </div>
  
-  <!-- Meetings window -->
-  <div class="window xp-popup" id="meetingsPopup" style="width: 280px;">
-    <div class="title-bar">
-      <div class="title-bar-text">Calendar</div>
-      <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closePopups()"></button>
-      </div>
-    </div>
+  <!-- MEETINGS -->
+  <div class="window xp-win" id="winMeetings" style="width:240px;top:140px;left:100px;">
+    <div class="title-bar"><div class="title-bar-text">Calendar</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winMeetings')"></button></div></div>
     <div class="window-body">
-      <p>Recent records:</p>
       <ul class="tree-view">
-        <li><a href="history.html" target="_blank">📝 Meeting Notes — Aug 2, 2005</a></li>
+        <li><a href="#" onclick="openWin('winNotes');return false;">📝 Meeting Notes — Aug 2, 2005</a></li>
       </ul>
     </div>
   </div>
  
-  <!-- Conference window -->
-  <div class="window xp-popup" id="conferencePopup" style="width: 280px;">
-    <div class="title-bar">
-      <div class="title-bar-text">NetMeeting — Conference Call</div>
-      <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closePopups()"></button>
-      </div>
-    </div>
+  <!-- CONFERENCE -->
+  <div class="window xp-win" id="winConference" style="width:280px;top:150px;left:120px;">
+    <div class="title-bar"><div class="title-bar-text">NetMeeting — Conference Call</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winConference')"></button></div></div>
     <div class="window-body">
-      <p>Scheduled call:</p>
       <ul class="tree-view">
-        <!-- TODO: Replace this URL with your Render deployment URL once you deploy the animal-ranking puzzle. -->
         <li><a href="https://YOUR-ANIMAL-PUZZLE-URL.onrender.com/gm" target="_blank">📞 Join Team Conference</a></li>
       </ul>
-      <p style="font-size: 11px; color: #555; margin-top: 8px;">
-        The team is waiting on the line. Pick up.
-      </p>
+      <p style="font-size:11px;color:#555;margin-top:6px;">The team is waiting on the line.</p>
     </div>
   </div>
  
-  <!-- Password modal -->
-  <div class="window" id="passwordModal" style="display:none; width: 380px;">
-    <div class="title-bar">
-      <div class="title-bar-text">🔐 Solve a Password</div>
-      <div class="title-bar-controls">
-        <button aria-label="Close" onclick="closePasswordModal()"></button>
+  <!-- INBOX -->
+  <div class="window xp-win" id="winInbox" style="width:500px;top:130px;left:70px;">
+    <div class="title-bar"><div class="title-bar-text">📥 Inbox — Outlook Express</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winInbox')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>📨 New</button><button>↩ Reply</button><button>↪ Forward</button><button>🗑 Delete</button></div>
+      <div class="email-meta">
+        <div><strong>From:</strong> Fez@Smartlad</div>
+        <div><strong>To:</strong> Frex@Hellothere</div>
+        <div><strong>Subject:</strong> You Won't Find What You Are Looking for Here</div>
+        <div><strong>Date:</strong> Tuesday, August 02, 2005 9:14 AM</div>
+      </div>
+      <hr/>
+      <div class="email-body">
+        <p>Hi Team,</p>
+        <p>Just a quick note to clarify that the information you may have been expecting in this thread is not available at this time. If you were hoping for documentation, deliverables, or project updates, you won't find what you are looking for here.</p>
+        <p>Please redirect all inquiries related to this initiative to the Boss. Future updates, if any, will be sent by the boss. It is your responsibility to keep track.</p>
+        <p>Let me know if there's anything else I can support with—but again, to reiterate: you won't find what you are looking for here.</p>
+        <p>Thanks,<br/>[Your Name]<br/>Project Manager of Special Projects and Products</p>
+        <p><em>Post script: Do not ask for help.</em></p>
       </div>
     </div>
+    <div class="status-bar"><p class="status-bar-field">© 2002 Microsoft Outlook Express</p><p class="status-bar-field">1 message</p><p class="status-bar-field">Online</p></div>
+  </div>
+ 
+  <!-- SENT -->
+  <div class="window xp-win" id="winSent" style="width:500px;top:150px;left:90px;">
+    <div class="title-bar"><div class="title-bar-text">📤 Sent Mail — Outlook Express</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winSent')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>📨 New</button><button>↩ Reply</button><button>↪ Forward</button><button>🗑 Delete</button></div>
+      <div class="email-meta">
+        <div><strong>From:</strong> Fez@Smartlad</div>
+        <div><strong>To:</strong> Frex@Hellothere</div>
+        <div><strong>Subject:</strong> Re: Ops Dashboard – Wraps Add</div>
+        <div><strong>Date:</strong> Tuesday, August 02, 2005 9:21 AM</div>
+      </div>
+      <hr/>
+      <div class="email-body">
+        <p>Hi Team,</p>
+        <p>Thank you all for attending yesterday's status update.</p>
+        <p>Hopefully, everyone has reviewed the shared slide deck.</p>
+        <p>Each team is responsible for updating their own section.</p>
+        <p>Please remember to cc stakeholders on relevant correspondence.</p>
+        <p>All action items from the meeting are due by Friday EOD.</p>
+        <p>Some concerns were raised about resource allocation.</p>
+        <p>Start thinking about Q4 objectives and key results now.</p>
+        <p>We'll be using the new template for weekly recaps.</p>
+        <p>Overdue items will be escalated automatically.</p>
+        <p>Reminders will be sent through Slack by default.</p>
+        <p>Don't forget to acknowledge the updated documentation.</p>
+        <p>Internal deadlines remain unchanged despite the holiday.</p>
+        <p>Scheduling conflicts should be logged in the calendar.</p>
+        <p>If you have questions, please reach out to your lead.</p>
+        <p>See you all at the next sync.</p>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2002 Microsoft Outlook Express</p><p class="status-bar-field">1 message</p><p class="status-bar-field">Online</p></div>
+  </div>
+ 
+  <!-- MEETING NOTES -->
+  <div class="window xp-win" id="winNotes" style="width:500px;top:140px;left:80px;">
+    <div class="title-bar"><div class="title-bar-text">📋 Meeting Notes — August 2, 2005 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNotes')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body">
+        <div><span class="ts">9:02am</span> – Reviewed Q3 feedback from Dev team re: UX inconsistencies in v2.4.</div>
+        <div><span class="ts">9:14am</span> – Follow-up on pending invoice #614B for vendor support ticketing platform.</div>
+        <div><span class="ts">9:27am</span> – I am so sick of this &amp;%$#ING!!! password — still can't access the admin dashboard. IT keeps saying I must be pressing something but they don't make my salary.</div>
+        <div><span class="ts">9:31am</span> – Drafted preliminary scope notes for AlphaBatch_07 revisions.</div>
+        <div><span class="ts">9:39am</span> – Sync w/Marketing postponed to Friday, see 8-2 doc for updated rollout timeline.</div>
+        <div><span class="ts">9:44am</span> – Re-tagged legacy tasks under Archive-Set_C47 per compliance guidelines.</div>
+        <div><span class="ts">9:51am</span> – Logged action item: Review API call limits for 3rd-partyPlugin_v1.9.8.</div>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Office Meeting Notes</p><p class="status-bar-field">Ln 7, Col 1</p></div>
+  </div>
+ 
+  <!-- SNAKE -->
+  <div class="window xp-win" id="winSnake" style="width:410px;top:120px;left:60px;">
+    <div class="title-bar"><div class="title-bar-text">🐍 Snake</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winSnake');stopSnake();"></button></div></div>
+    <div class="window-body" style="padding:6px;">
+      <canvas id="snakeCanvas" width="390" height="280"></canvas>
+      <div class="score-bar">Score: <span id="snakeScore">0</span></div>
+      <div id="snakeHS" class="hs-panel"><h4>🏆 High Scores</h4><ul class="hs-list" id="snakeHSList"></ul></div>
+      <div class="dpad">
+        <button class="dpad-up" data-sdir="UP">▲</button>
+        <button class="dpad-left" data-sdir="LEFT">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-right" data-sdir="RIGHT">▶</button>
+        <button class="dpad-down" data-sdir="DOWN">▼</button>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">Arrow keys or tap buttons</div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">v1.0</p></div>
+  </div>
+ 
+  <!-- BALL BREAKER -->
+  <div class="window xp-win" id="winBB" style="width:410px;top:130px;left:80px;">
+    <div class="title-bar"><div class="title-bar-text">🧱 Ball Breaker</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winBB');stopBB();"></button></div></div>
+    <div class="window-body" style="padding:6px;">
+      <canvas id="bbCanvas" width="390" height="280"></canvas>
+      <div class="score-bar">Score: <span id="bbScore">0</span></div>
+      <div id="bbHS" class="hs-panel"><h4>🏆 High Scores</h4><ul class="hs-list" id="bbHSList"></ul></div>
+      <div class="pad-controls">
+        <button id="padLeft">◀ Left</button>
+        <button id="padRight">Right ▶</button>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">Arrow keys or hold buttons</div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">v1.0</p></div>
+  </div>
+ 
+  <!-- PASSWORD MODAL -->
+  <div class="window" id="passwordModal">
+    <div class="title-bar"><div class="title-bar-text">🔐 Solve a Password</div><div class="title-bar-controls"><button aria-label="Close" onclick="closePasswordModal()"></button></div></div>
     <div class="window-body">
       <div id="passwordOptions"></div>
-      <section class="field-row" style="justify-content: flex-end; margin-top: 1rem;">
-        <button onclick="closePasswordModal()">Close</button>
-      </section>
+      <div class="field-row" style="justify-content:flex-end;margin-top:1rem;"><button onclick="closePasswordModal()">Close</button></div>
     </div>
   </div>
  
-  <!-- Taskbar -->
+  <!-- INITIALS MODAL -->
+  <div class="window" id="initialsModal">
+    <div class="title-bar"><div class="title-bar-text">New High Score!</div></div>
+    <div class="window-body" style="text-align:center;">
+      <p>Enter your initials:</p>
+      <input type="text" maxlength="1" id="ini1"/>
+      <input type="text" maxlength="1" id="ini2"/>
+      <input type="text" maxlength="1" id="ini3"/>
+      <br/><br/><button onclick="saveInitials()">Save</button>
+    </div>
+  </div>
+ 
+  <!-- TASKBAR -->
   <div id="taskbar">
-    <button id="start-btn">
-      <span class="start-flag">⊞</span>
-      <span class="start-text">start</span>
-    </button>
-    <div id="start-menu" class="window">
-      <div class="start-menu-header">
-        <span>👤</span>
-        <span>Office Worker</span>
-      </div>
-      <div class="start-menu-body">
-        <div class="start-menu-option" id="gamesOption">🎮 Games</div>
-        <div class="start-menu-option" id="emailsOption">✉️ Emails</div>
-        <div class="start-menu-option" id="meetingsOption">📋 Meetings</div>
-        <div class="start-menu-option" id="conferenceOption">📞 Conference</div>
+    <button id="start-btn"><span>⊞</span> start</button>
+    <div id="start-menu">
+      <div class="sm-header">👤 Office Worker</div>
+      <div class="sm-body">
+        <div class="sm-opt" onclick="openWin('winGames');closeStart();">🎮 Games</div>
+        <div class="sm-opt" onclick="openWin('winEmails');closeStart();">✉️ Emails</div>
+        <div class="sm-opt" onclick="openWin('winMeetings');closeStart();">📋 Meetings</div>
+        <div class="sm-opt" onclick="openWin('winConference');closeStart();">📞 Conference</div>
       </div>
     </div>
-    <div id="systray">
-      <span id="clock">9:42 AM</span>
-    </div>
+    <div id="tb-open-wins"></div>
+    <div id="systray"><span id="clock">9:42 AM</span></div>
   </div>
  
-  <!-- ===========================================================
-       PUZZLE LOGIC — solutions preserved exactly from original
-       =========================================================== -->
-  <script>
-    // ---- Puzzle solutions: DO NOT CHANGE without updating the puzzles to match ----
-    const requiredPasswords = [
-      { key: "gamesPass",      label: "Games Password",      value: "RATLOL" },
-      { key: "emailPass",      label: "Email Password",      value: "IS" },
-      { key: "meetingPass",    label: "Meeting Password",    value: "7543ing111" },
-      { key: "conferencePass", label: "Conference Password", value: "PLACEHOLDER" }
-    ];
+<script>
+// ---- Passwords ----
+const requiredPasswords = [
+  { key:"gamesPass",      label:"Games Password",      value:"RATLOL" },
+  { key:"emailPass",      label:"Email Password",      value:"IS" },
+  { key:"meetingPass",    label:"Meeting Password",    value:"7543ing111" },
+  { key:"conferencePass", label:"Conference Password", value:"PLACEHOLDER" }
+];
+function getSolved(){ return requiredPasswords.map(p=>localStorage.getItem(p.key)==="solved"); }
+function updateStatus(){ document.getElementById("passStatus").textContent=`Solved: ${getSolved().filter(Boolean).length} / 4`; }
+document.getElementById("multiPassBtn").onclick=function(){
+  if(getSolved().every(Boolean)){window.location.href="officepass.html";return;}
+  showPasswordModal();
+};
+function showPasswordModal(){
+  const solved=getSolved(), div=document.getElementById('passwordOptions');
+  div.innerHTML='';
+  requiredPasswords.forEach((p,i)=>{
+    if(solved[i]) div.innerHTML+=`<div class="pw-row pw-row--solved"><strong>${p.label}:</strong> <span>✓ Solved</span></div>`;
+    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="solvePassword('${p.key}')">Submit</button></div>`;
+  });
+  document.getElementById('passwordModal').style.display='block';
+}
+function solvePassword(key){
+  const pwObj=requiredPasswords.find(p=>p.key===key);
+  const val=document.getElementById(`pwinput_${key}`).value;
+  if(val===pwObj.value){
+    localStorage.setItem(key,"solved"); alert('✓ Correct!'); updateStatus(); showPasswordModal();
+    if(getSolved().every(Boolean)){closePasswordModal();window.location.href="officepass.html";}
+  } else { alert("Incorrect — try again."); }
+}
+function closePasswordModal(){ document.getElementById('passwordModal').style.display='none'; }
+updateStatus();
  
-    function getSolved() {
-      return requiredPasswords.map(p => localStorage.getItem(p.key) === "solved");
-    }
+// ---- Window management ----
+let topZ=300;
+const tbWins=document.getElementById('tb-open-wins');
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📋 Meetings',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Notes',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker'};
  
-    function updateStatus() {
-      const solved = getSolved();
-      document.getElementById("passStatus").textContent =
-        `Solved: ${solved.filter(Boolean).length} / 4`;
-    }
+function openWin(id){
+  const w=document.getElementById(id);
+  w.style.display='block'; bringToFront(w); addToTaskbar(id);
+  if(id==='winSnake') startSnake();
+  if(id==='winBB') startBB();
+}
+function closeWin(id){ document.getElementById(id).style.display='none'; removeFromTaskbar(id); }
+function bringToFront(w){ topZ++; w.style.zIndex=topZ; }
+function addToTaskbar(id){
+  if(document.getElementById('tb_'+id)) return;
+  const btn=document.createElement('button'); btn.className='tb-btn'; btn.id='tb_'+id;
+  btn.textContent=winLabels[id]||id;
+  btn.onclick=()=>{ const w=document.getElementById(id); if(w.style.display==='none') w.style.display='block'; bringToFront(w); };
+  tbWins.appendChild(btn);
+}
+function removeFromTaskbar(id){ const btn=document.getElementById('tb_'+id); if(btn) btn.remove(); }
  
-    document.getElementById("multiPassBtn").onclick = function () {
-      const solved = getSolved();
-      if (solved.every(Boolean)) {
-        window.location.href = "officepass.html";
-        return;
-      }
-      showPasswordModal();
-    };
+document.getElementById('iconGames').onclick    =()=>openWin('winGames');
+document.getElementById('iconEmails').onclick   =()=>openWin('winEmails');
+document.getElementById('iconMeetings').onclick =()=>openWin('winMeetings');
+document.getElementById('iconConference').onclick=()=>openWin('winConference');
+document.querySelectorAll('.xp-win').forEach(w=>w.addEventListener('mousedown',()=>bringToFront(w)));
  
-    function showPasswordModal() {
-      const solved = getSolved();
-      const optionsDiv = document.getElementById('passwordOptions');
-      optionsDiv.innerHTML = '';
-      requiredPasswords.forEach((p, i) => {
-        if (solved[i]) {
-          optionsDiv.innerHTML += `
-            <div class="pw-row pw-row--solved">
-              <strong>${p.label}:</strong> <span>✓ Solved</span>
-            </div>`;
-        } else {
-          optionsDiv.innerHTML += `
-            <div class="pw-row">
-              <label><strong>${p.label}:</strong></label>
-              <input type="password" id="input_${p.key}" />
-              <button onclick="solvePassword('${p.key}')">Submit</button>
-            </div>`;
-        }
-      });
-      document.getElementById('passwordModal').style.display = 'block';
-    }
+// ---- Drag ----
+let dragWin=null,dragOX=0,dragOY=0;
+document.querySelectorAll('.xp-win .title-bar').forEach(bar=>{
+  bar.addEventListener('mousedown',e=>{ if(e.target.closest('button')) return; dragWin=e.currentTarget.closest('.xp-win'); bringToFront(dragWin); dragOX=e.clientX-dragWin.offsetLeft; dragOY=e.clientY-dragWin.offsetTop; e.preventDefault(); });
+  bar.addEventListener('touchstart',e=>{ if(e.target.closest('button')) return; const t=e.touches[0]; dragWin=e.currentTarget.closest('.xp-win'); bringToFront(dragWin); dragOX=t.clientX-dragWin.offsetLeft; dragOY=t.clientY-dragWin.offsetTop; e.preventDefault(); },{passive:false});
+});
+document.addEventListener('mousemove',e=>{ if(!dragWin) return; dragWin.style.left=(e.clientX-dragOX)+'px'; dragWin.style.top=(e.clientY-dragOY)+'px'; });
+document.addEventListener('touchmove',e=>{ if(!dragWin) return; const t=e.touches[0]; dragWin.style.left=(t.clientX-dragOX)+'px'; dragWin.style.top=(t.clientY-dragOY)+'px'; },{passive:false});
+document.addEventListener('mouseup',()=>dragWin=null);
+document.addEventListener('touchend',()=>dragWin=null);
  
-    function solvePassword(key) {
-      const pwObj = requiredPasswords.find(p => p.key === key);
-      const input = document.getElementById(`input_${key}`).value;
-      if (input === pwObj.value) {
-        localStorage.setItem(key, "solved");
-        alert(`Correct for ${pwObj.label}!`);
-        updateStatus();
-        showPasswordModal();
-        if (getSolved().every(Boolean)) {
-          closePasswordModal();
-          window.location.href = "officepass.html";
-        }
-      } else {
-        alert("Incorrect.");
-      }
-    }
+// ---- Start menu ----
+const startBtn=document.getElementById('start-btn'), startMenu=document.getElementById('start-menu');
+startBtn.onclick=e=>{ e.stopPropagation(); startMenu.classList.toggle('active'); };
+function closeStart(){ startMenu.classList.remove('active'); }
+document.body.addEventListener('click',e=>{ if(!startBtn.contains(e.target)&&!startMenu.contains(e.target)) closeStart(); });
  
-    function closePasswordModal() {
-      document.getElementById('passwordModal').style.display = 'none';
-    }
+// ---- Clock ----
+function updateClock(){ const d=new Date(); let h=d.getHours(),m=d.getMinutes().toString().padStart(2,'0'); const ap=h>=12?'PM':'AM'; h=h%12||12; document.getElementById('clock').textContent=`${h}:${m} ${ap}`; }
+updateClock(); setInterval(updateClock,30000);
  
-    updateStatus();
-  </script>
+// ---- Snake ----
+let snakeHS=[{ini:"RAT",score:10},{ini:"CAT",score:8},{ini:"LAT",score:6},{ini:"MAT",score:0},{ini:"HAT",score:0},{ini:"FAT",score:0}];
+let snakeState=null,snakeTimer=null,awaitingSnakeInit=false,currentGame=null;
+function renderSnakeHS(){ document.getElementById('snakeHSList').innerHTML=snakeHS.slice(0,6).map(e=>`<li><span>${e.ini}</span><span>${e.score}</span></li>`).join(''); }
+renderSnakeHS();
+function startSnake(){ if(snakeTimer) return; resetSnakeState(); snakeTimer=setInterval(tickSnake,100); }
+function stopSnake(){ clearInterval(snakeTimer); snakeTimer=null; }
+function resetSnakeState(){ snakeState={snake:[{x:200,y:140}],dir:'RIGHT',nextDir:'RIGHT',food:{x:80,y:80},score:0,over:false}; placeSnakeFood(); }
+function placeSnakeFood(){ const c=document.getElementById('snakeCanvas'); snakeState.food.x=Math.floor(Math.random()*(c.width/20))*20; snakeState.food.y=Math.floor(Math.random()*(c.height/20))*20; }
+function tickSnake(){
+  if(!snakeState||snakeState.over||awaitingSnakeInit) return;
+  snakeState.dir=snakeState.nextDir;
+  const h={...snakeState.snake[0]};
+  if(snakeState.dir==='UP') h.y-=20; if(snakeState.dir==='DOWN') h.y+=20;
+  if(snakeState.dir==='LEFT') h.x-=20; if(snakeState.dir==='RIGHT') h.x+=20;
+  const c=document.getElementById('snakeCanvas');
+  if(h.x<0||h.x>=c.width||h.y<0||h.y>=c.height||snakeState.snake.some(s=>s.x===h.x&&s.y===h.y)){
+    snakeState.over=true; checkSnakeHS(); return;
+  }
+  if(h.x===snakeState.food.x&&h.y===snakeState.food.y){ snakeState.score++; snakeState.snake.unshift(h); placeSnakeFood(); }
+  else { snakeState.snake.unshift(h); snakeState.snake.pop(); }
+  const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle='#7ec850'; snakeState.snake.forEach(s=>{ctx.fillRect(s.x,s.y,20,20);ctx.strokeStyle='#245edb';ctx.strokeRect(s.x,s.y,20,20);});
+  ctx.fillStyle='#d9534f'; ctx.fillRect(snakeState.food.x,snakeState.food.y,20,20);
+  document.getElementById('snakeScore').textContent=snakeState.score;
+}
+function checkSnakeHS(){
+  if(snakeState.score>snakeHS[2].score){ awaitingSnakeInit=true; currentGame='snake'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
+  else { setTimeout(()=>{ resetSnakeState(); },800); }
+}
+document.addEventListener('keydown',e=>{
+  if(!snakeState) return;
+  if(e.key==='ArrowUp'&&snakeState.dir!=='DOWN') snakeState.nextDir='UP';
+  if(e.key==='ArrowDown'&&snakeState.dir!=='UP') snakeState.nextDir='DOWN';
+  if(e.key==='ArrowLeft'&&snakeState.dir!=='RIGHT') snakeState.nextDir='LEFT';
+  if(e.key==='ArrowRight'&&snakeState.dir!=='LEFT') snakeState.nextDir='RIGHT';
+});
+document.querySelectorAll('[data-sdir]').forEach(btn=>{
+  const h=e=>{ e.preventDefault(); if(!snakeState) return; const dir=btn.getAttribute('data-sdir'),d=snakeState;
+    if(dir==='UP'&&d.dir!=='DOWN') d.nextDir='UP'; if(dir==='DOWN'&&d.dir!=='UP') d.nextDir='DOWN';
+    if(dir==='LEFT'&&d.dir!=='RIGHT') d.nextDir='LEFT'; if(dir==='RIGHT'&&d.dir!=='LEFT') d.nextDir='RIGHT';
+  };
+  btn.addEventListener('click',h); btn.addEventListener('touchstart',h,{passive:false});
+});
  
-  <!-- UI behaviour -->
-  <script>
-    const startBtn   = document.getElementById('start-btn');
-    const startMenu  = document.getElementById('start-menu');
-    const gamesPopup      = document.getElementById('gamesPopup');
-    const emailsPopup     = document.getElementById('emailsPopup');
-    const meetingsPopup   = document.getElementById('meetingsPopup');
-    const conferencePopup = document.getElementById('conferencePopup');
+// ---- Ball Breaker ----
+let bbHS=[{ini:"RAT",score:10},{ini:"WOW",score:8},{ini:"LOL",score:6},{ini:"ZAP",score:4},{ini:"FUN",score:2},{ini:"DOG",score:0}];
+let bbState=null,bbRunning=false,awaitingBBInit=false,leftPress=false,rightPress=false;
+function renderBBHS(){ document.getElementById('bbHSList').innerHTML=bbHS.slice(0,6).map(e=>`<li><span>${e.ini}</span><span>${e.score}</span></li>`).join(''); }
+renderBBHS();
+function startBB(){ if(bbRunning) return; initBBState(); bbRunning=true; requestAnimationFrame(tickBB); }
+function stopBB(){ bbRunning=false; }
+function initBBState(){
+  const bricks=[];
+  for(let r=0;r<3;r++) for(let c=0;c<6;c++) bricks.push({x:10+c*63,y:40+r*26,status:1});
+  bbState={ball:{x:195,y:220,dx:2.5,dy:-2.5,r:8},paddle:{x:140,y:260,w:80,h:10,speed:5},bricks,score:0,over:false};
+}
+function tickBB(){
+  if(!bbRunning) return;
+  if(!bbState||awaitingBBInit){ requestAnimationFrame(tickBB); return; }
+  if(bbState.over){ requestAnimationFrame(tickBB); return; }
+  const c=document.getElementById('bbCanvas'),ctx=c.getContext('2d'),b=bbState.ball,p=bbState.paddle;
+  if(leftPress&&p.x>0) p.x-=p.speed;
+  if(rightPress&&p.x<c.width-p.w) p.x+=p.speed;
+  b.x+=b.dx; b.y+=b.dy;
+  if(b.x+b.r>c.width||b.x-b.r<0) b.dx=-b.dx;
+  if(b.y-b.r<0) b.dy=-b.dy;
+  if(b.x>p.x&&b.x<p.x+p.w&&b.y+b.r>p.y&&b.y-b.r<p.y+p.h) b.dy=-Math.abs(b.dy);
+  if(b.y+b.r>c.height){ bbState.over=true; checkBBHS(); requestAnimationFrame(tickBB); return; }
+  bbState.bricks.forEach(br=>{ if(br.status&&b.x>br.x&&b.x<br.x+55&&b.y-b.r<br.y+20&&b.y+b.r>br.y){b.dy=-b.dy;br.status=0;bbState.score++;} });
+  if(bbState.bricks.every(br=>!br.status)){ bbState.over=true; checkBBHS(); requestAnimationFrame(tickBB); return; }
+  ctx.clearRect(0,0,c.width,c.height);
+  bbState.bricks.forEach(br=>{ if(br.status){ctx.fillStyle='#d9534f';ctx.fillRect(br.x,br.y,55,20);ctx.strokeStyle='#245edb';ctx.strokeRect(br.x,br.y,55,20);} });
+  ctx.fillStyle='#245edb'; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#7ec850'; ctx.fillRect(p.x,p.y,p.w,p.h);
+  document.getElementById('bbScore').textContent=bbState.score;
+  requestAnimationFrame(tickBB);
+}
+function checkBBHS(){
+  if(bbState.score>bbHS[2].score){ awaitingBBInit=true; currentGame='bb'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
+  else { setTimeout(()=>{ initBBState(); },1000); }
+}
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') leftPress=true; if(e.key==='ArrowRight') rightPress=true; });
+document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft') leftPress=false; if(e.key==='ArrowRight') rightPress=false; });
+const padL=document.getElementById('padLeft'),padR=document.getElementById('padRight');
+padL.addEventListener('mousedown',()=>leftPress=true); padL.addEventListener('mouseup',()=>leftPress=false); padL.addEventListener('mouseleave',()=>leftPress=false);
+padR.addEventListener('mousedown',()=>rightPress=true); padR.addEventListener('mouseup',()=>rightPress=false); padR.addEventListener('mouseleave',()=>rightPress=false);
+padL.addEventListener('touchstart',e=>{e.preventDefault();leftPress=true;},{passive:false}); padL.addEventListener('touchend',()=>leftPress=false);
+padR.addEventListener('touchstart',e=>{e.preventDefault();rightPress=true;},{passive:false}); padR.addEventListener('touchend',()=>rightPress=false);
  
-    function closePopups() {
-      gamesPopup.style.display = 'none';
-      emailsPopup.style.display = 'none';
-      meetingsPopup.style.display = 'none';
-      conferencePopup.style.display = 'none';
-    }
- 
-    startBtn.onclick = (e) => {
-      e.stopPropagation();
-      startMenu.classList.toggle('active');
-      closePopups();
-    };
- 
-    function showPopup(popup, anchorEl) {
-      closePopups();
-      popup.style.display = 'block';
-    }
- 
-    function bindMenuItem(optionId, popup) {
-      const option = document.getElementById(optionId);
-      option.onclick = (e) => {
-        e.stopPropagation();
-        showPopup(popup);
-      };
-      option.onmouseenter = () => showPopup(popup);
-    }
- 
-    bindMenuItem('gamesOption',      gamesPopup);
-    bindMenuItem('emailsOption',     emailsPopup);
-    bindMenuItem('meetingsOption',   meetingsPopup);
-    bindMenuItem('conferenceOption', conferencePopup);
- 
-    // Desktop icons also open windows
-    document.getElementById('iconGames').onclick      = () => showPopup(gamesPopup);
-    document.getElementById('iconEmails').onclick     = () => showPopup(emailsPopup);
-    document.getElementById('iconMeetings').onclick   = () => showPopup(meetingsPopup);
-    document.getElementById('iconConference').onclick = () => showPopup(conferencePopup);
-    document.getElementById('iconGames').ondblclick      = () => showPopup(gamesPopup);
-    document.getElementById('iconEmails').ondblclick     = () => showPopup(emailsPopup);
-    document.getElementById('iconMeetings').ondblclick   = () => showPopup(meetingsPopup);
-    document.getElementById('iconConference').ondblclick = () => showPopup(conferencePopup);
- 
-    // Click outside to close
-    document.body.addEventListener('click', (e) => {
-      const inside =
-        startBtn.contains(e.target) ||
-        startMenu.contains(e.target) ||
-        gamesPopup.contains(e.target) ||
-        emailsPopup.contains(e.target) ||
-        meetingsPopup.contains(e.target) ||
-        conferencePopup.contains(e.target) ||
-        e.target.closest('.desktop-icon') ||
-        e.target.closest('#top-bar');
-      if (!inside) {
-        startMenu.classList.remove('active');
-        closePopups();
-      }
-    });
- 
-    // Live clock
-    function updateClock() {
-      const d = new Date();
-      let h = d.getHours();
-      const m = d.getMinutes().toString().padStart(2, '0');
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12;
-      document.getElementById('clock').textContent = `${h}:${m} ${ampm}`;
-    }
-    updateClock();
-    setInterval(updateClock, 30000);
-  </script>
+// ---- Shared initials save ----
+function saveInitials(){
+  const ini=(document.getElementById('ini1').value||'X').toUpperCase()+(document.getElementById('ini2').value||'X').toUpperCase()+(document.getElementById('ini3').value||'X').toUpperCase();
+  document.getElementById('initialsModal').style.display='none';
+  if(currentGame==='snake'){
+    snakeHS.push({ini,score:snakeState.score}); snakeHS.sort((a,b)=>b.score-a.score); snakeHS=snakeHS.slice(0,6);
+    renderSnakeHS(); document.getElementById('snakeHS').style.display='block';
+    awaitingSnakeInit=false; resetSnakeState();
+  } else if(currentGame==='bb'){
+    bbHS.push({ini,score:bbState.score}); bbHS.sort((a,b)=>b.score-a.score); bbHS=bbHS.slice(0,6);
+    renderBBHS(); document.getElementById('bbHS').style.display='block';
+    awaitingBBInit=false; initBBState();
+  }
+  currentGame=null;
+}
+</script>
 </body>
 </html>
