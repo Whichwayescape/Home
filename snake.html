@@ -113,7 +113,7 @@
   <button id="showScoresBtn" style="display:none; position:fixed; top:24px; right:24px; z-index:1000;">
     Show High Scores
   </button>
-
+ 
   <div class="window game-window">
     <div class="title-bar">
       <div class="title-bar-text">🐍 Snake</div>
@@ -133,7 +133,7 @@
       <div class="game-controls">
         <button onclick="window.close()">Close</button>
       </div>
-
+ 
       <!-- On-screen D-pad (works on iPad and desktop) -->
       <div class="dpad" aria-label="On-screen game controls">
         <button class="dpad-up"    data-dir="UP"    aria-label="Up">▲</button>
@@ -149,7 +149,7 @@
       <p class="status-bar-field">v1.0</p>
     </div>
   </div>
-
+ 
   <div class="window" id="initialsPopup">
     <div class="title-bar">
       <div class="title-bar-text">New High Score!</div>
@@ -165,7 +165,7 @@
       <button onclick="saveInitials()">Save</button>
     </div>
   </div>
-
+ 
   <script>
     // ====================================================
     // PUZZLE: top high scores spell clues for password RATLOL
@@ -179,7 +179,7 @@
       { initials: "HAT", score: 0 },
       { initials: "FAT", score: 0 }
     ];
-
+ 
     function renderHighscores() {
       const list = document.getElementById('highscoresList');
       list.innerHTML = '';
@@ -188,7 +188,7 @@
       });
     }
     renderHighscores();
-
+ 
     // ---- Snake game ----
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -199,14 +199,14 @@
     let food = { x: 120, y: 120 };
     const cellSize = 20;
     let gameOver = false, awaitingInitials = false;
-
+ 
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp"    && direction !== "DOWN")  nextDirection = "UP";
       if (e.key === "ArrowDown"  && direction !== "UP")    nextDirection = "DOWN";
       if (e.key === "ArrowLeft"  && direction !== "RIGHT") nextDirection = "LEFT";
       if (e.key === "ArrowRight" && direction !== "LEFT")  nextDirection = "RIGHT";
     });
-
+ 
     // ---- On-screen D-pad ----
     function setDir(dir) {
       if (dir === "UP"    && direction !== "DOWN")  nextDirection = "UP";
@@ -220,7 +220,7 @@
       btn.addEventListener('click', handler);
       btn.addEventListener('touchstart', handler, { passive: false });
     });
-
+ 
     function drawSnake() {
       ctx.fillStyle = "#7ec850";
       snake.forEach((segment) => {
@@ -246,7 +246,7 @@
       food.y = Math.floor(Math.random() * (canvas.height / cellSize)) * cellSize;
       if (snake.some(seg => seg.x === food.x && seg.y === food.y)) placeFood();
     }
-
+ 
     function checkHighscore() {
       let minScore = highscores[2].score;
       if (score > minScore) {
@@ -255,13 +255,13 @@
         document.getElementById('init1').focus();
       }
     }
-
+ 
     const showScoresBtn = document.getElementById('showScoresBtn');
     showScoresBtn.onclick = function () {
       document.getElementById('highscoresSection').style.display = 'block';
       showScoresBtn.style.display = 'none';
     };
-
+ 
     function saveInitials() {
       const initials =
         (document.getElementById('init1').value || 'X').toUpperCase() +
@@ -276,7 +276,7 @@
       showScoresBtn.style.display = 'block';
       resetGame();
     }
-
+ 
     function resetGame() {
       score = 0;
       snake = [{ x: 200, y: 200 }];
@@ -285,7 +285,7 @@
       placeFood();
       gameOver = false;
     }
-
+ 
     function gameLoop() {
       if (!gameOver && !awaitingInitials) {
         direction = nextDirection;
@@ -294,7 +294,7 @@
         if (direction === "DOWN")  head.y += cellSize;
         if (direction === "LEFT")  head.x -= cellSize;
         if (direction === "RIGHT") head.x += cellSize;
-
+ 
         if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
           gameOver = true;
           setTimeout(() => {
