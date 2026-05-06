@@ -4,21 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Office — Whichway Escape</title>
-
+ 
   <!-- XP.css: open-source (MIT) recreation of the authentic Windows XP UI by Jordan Scales -->
   <!-- https://botoxparty.github.io/XP.css/ — included from public CDN, no attribution stripped -->
   <link rel="stylesheet" href="https://unpkg.com/xp.css" />
   <link rel="stylesheet" href="office-style.css" />
 </head>
 <body class="xp-desktop">
-
+ 
   <!-- Top status bar / pass tracker -->
   <div id="top-bar">
     <button id="multiPassBtn" class="xp-button">🔓 Unlock Office Pass</button>
     <span id="passStatus">Solved: 0 / 3</span>
     <a href="index.html" class="xp-button" style="margin-left:auto;">↩ Return to Parlour</a>
   </div>
-
+ 
   <!-- Desktop icons -->
   <div class="desktop-icon" style="top: 80px; left: 30px;" id="iconGames">
     <div class="icon-img">🎮</div>
@@ -36,13 +36,13 @@
     <div class="icon-img">📞</div>
     <div class="icon-label">Conference</div>
   </div>
-
+ 
   <!-- Sticky note (post-it) -->
   <div id="postit-note">
     <div class="postit-task strikethrough">Get Top Score in Snake</div>
     <div class="postit-task">Crack Top 3 in Brick Breaker</div>
   </div>
-
+ 
   <!-- Games window (XP-styled) -->
   <div class="window xp-popup" id="gamesPopup" style="width: 280px;">
     <div class="title-bar">
@@ -59,7 +59,7 @@
       </ul>
     </div>
   </div>
-
+ 
   <!-- Emails window -->
   <div class="window xp-popup" id="emailsPopup" style="width: 280px;">
     <div class="title-bar">
@@ -76,7 +76,7 @@
       </ul>
     </div>
   </div>
-
+ 
   <!-- Meetings window -->
   <div class="window xp-popup" id="meetingsPopup" style="width: 280px;">
     <div class="title-bar">
@@ -92,7 +92,7 @@
       </ul>
     </div>
   </div>
-
+ 
   <!-- Conference window -->
   <div class="window xp-popup" id="conferencePopup" style="width: 280px;">
     <div class="title-bar">
@@ -112,7 +112,7 @@
       </p>
     </div>
   </div>
-
+ 
   <!-- Password modal -->
   <div class="window" id="passwordModal" style="display:none; width: 380px;">
     <div class="title-bar">
@@ -128,7 +128,7 @@
       </section>
     </div>
   </div>
-
+ 
   <!-- Taskbar -->
   <div id="taskbar">
     <button id="start-btn">
@@ -151,7 +151,7 @@
       <span id="clock">9:42 AM</span>
     </div>
   </div>
-
+ 
   <!-- ===========================================================
        PUZZLE LOGIC — solutions preserved exactly from original
        =========================================================== -->
@@ -163,17 +163,17 @@
       { key: "meetingPass",    label: "Meeting Password",    value: "7543ing111" },
       { key: "conferencePass", label: "Conference Password", value: "PLACEHOLDER" }
     ];
-
+ 
     function getSolved() {
       return requiredPasswords.map(p => localStorage.getItem(p.key) === "solved");
     }
-
+ 
     function updateStatus() {
       const solved = getSolved();
       document.getElementById("passStatus").textContent =
         `Solved: ${solved.filter(Boolean).length} / 4`;
     }
-
+ 
     document.getElementById("multiPassBtn").onclick = function () {
       const solved = getSolved();
       if (solved.every(Boolean)) {
@@ -182,7 +182,7 @@
       }
       showPasswordModal();
     };
-
+ 
     function showPasswordModal() {
       const solved = getSolved();
       const optionsDiv = document.getElementById('passwordOptions');
@@ -204,7 +204,7 @@
       });
       document.getElementById('passwordModal').style.display = 'block';
     }
-
+ 
     function solvePassword(key) {
       const pwObj = requiredPasswords.find(p => p.key === key);
       const input = document.getElementById(`input_${key}`).value;
@@ -221,14 +221,14 @@
         alert("Incorrect.");
       }
     }
-
+ 
     function closePasswordModal() {
       document.getElementById('passwordModal').style.display = 'none';
     }
-
+ 
     updateStatus();
   </script>
-
+ 
   <!-- UI behaviour -->
   <script>
     const startBtn   = document.getElementById('start-btn');
@@ -237,25 +237,25 @@
     const emailsPopup     = document.getElementById('emailsPopup');
     const meetingsPopup   = document.getElementById('meetingsPopup');
     const conferencePopup = document.getElementById('conferencePopup');
-
+ 
     function closePopups() {
       gamesPopup.style.display = 'none';
       emailsPopup.style.display = 'none';
       meetingsPopup.style.display = 'none';
       conferencePopup.style.display = 'none';
     }
-
+ 
     startBtn.onclick = (e) => {
       e.stopPropagation();
       startMenu.classList.toggle('active');
       closePopups();
     };
-
+ 
     function showPopup(popup, anchorEl) {
       closePopups();
       popup.style.display = 'block';
     }
-
+ 
     function bindMenuItem(optionId, popup) {
       const option = document.getElementById(optionId);
       option.onclick = (e) => {
@@ -264,12 +264,12 @@
       };
       option.onmouseenter = () => showPopup(popup);
     }
-
+ 
     bindMenuItem('gamesOption',      gamesPopup);
     bindMenuItem('emailsOption',     emailsPopup);
     bindMenuItem('meetingsOption',   meetingsPopup);
     bindMenuItem('conferenceOption', conferencePopup);
-
+ 
     // Desktop icons also open windows
     document.getElementById('iconGames').onclick      = () => showPopup(gamesPopup);
     document.getElementById('iconEmails').onclick     = () => showPopup(emailsPopup);
@@ -279,7 +279,7 @@
     document.getElementById('iconEmails').ondblclick     = () => showPopup(emailsPopup);
     document.getElementById('iconMeetings').ondblclick   = () => showPopup(meetingsPopup);
     document.getElementById('iconConference').ondblclick = () => showPopup(conferencePopup);
-
+ 
     // Click outside to close
     document.body.addEventListener('click', (e) => {
       const inside =
@@ -296,7 +296,7 @@
         closePopups();
       }
     });
-
+ 
     // Live clock
     function updateClock() {
       const d = new Date();
