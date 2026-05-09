@@ -98,13 +98,47 @@
     .tb-btn:hover { filter:brightness(1.15); }
     .tree-view a { color:#0000ff;text-decoration:none;display:block;padding:4px 8px; }
     .tree-view a:hover { background:#316ac5;color:#fff; }
+
+    /* Stapley */
+    #stapley-widget {
+      position:fixed; bottom:36px; right:16px; z-index:999;
+      display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+      font-family:'Tahoma','Verdana',sans-serif;
+    }
+    #stapley-bubble {
+      background:#ffffe1; border:1px solid #aca899;
+      padding:8px 10px; font-size:11px; line-height:1.6; color:#000;
+      max-width:240px; word-break:break-all;
+      box-shadow:2px 2px 6px rgba(0,0,0,0.2);
+      position:relative;
+    }
+    #stapley-bubble::after {
+      content:''; position:absolute; bottom:-8px; right:24px;
+      border:4px solid transparent; border-top-color:#aca899; border-bottom:none;
+    }
+    #stapley-input-row {
+      display:flex; gap:4px; width:240px;
+    }
+    #stapley-input {
+      flex:1; font-size:11px; padding:2px 6px;
+      border:1px inset #aca899; font-family:'Tahoma',sans-serif;
+    }
+    #stapley-submit {
+      font-size:11px; padding:2px 8px; cursor:pointer;
+      font-family:'Tahoma',sans-serif;
+    }
+    #stapley-svg-wrap {
+      width:100px; height:70px; display:flex; align-items:center; justify-content:center;
+      transition: transform 0.5s ease;
+    }
+    #stapley-svg-wrap.upside-down { transform: rotate(180deg); }
   </style>
 </head>
 <body class="xp-desktop">
  
   <div id="top-bar">
     <button id="multiPassBtn">🔓 Unlock Office Pass</button>
-    <span id="passStatus">Solved: 0 / 4</span>
+    <span id="passStatus">Solved: 0 / 5</span>
     <a href="index.html" style="margin-left:auto;">↩ Return to Parlour</a>
   </div>
  
@@ -293,6 +327,29 @@
     </div>
   </div>
  
+  <!-- STAPLEY -->
+  <div id="stapley-widget">
+    <div id="stapley-svg-wrap">
+      <svg viewBox="0 0 300 175" xmlns="http://www.w3.org/2000/svg" width="100" height="70">
+        <path d="M85 60 L215 45 L250 85 L120 102 Z" fill="#2d6a4f" stroke="#1b4332" stroke-width="2"/>
+        <path d="M250 85 L262 110" fill="none" stroke="#1b4332" stroke-width="2"/>
+        <path d="M262 110 L247 120" fill="none" stroke="#1b4332" stroke-width="2"/>
+        <path d="M87 110 L215 95 L250 117 L105 135 Z" fill="#40916c" stroke="#1b4332" stroke-width="2"/>
+        <rect x="95" y="120" width="14" height="6" rx="1" fill="none" stroke="#1b4332" stroke-width="2"/>
+        <ellipse cx="75" cy="85" rx="12" ry="18" fill="#d8f3dc" stroke="#1b4332" stroke-width="1.5"/>
+        <ellipse cx="100" cy="87" rx="12" ry="18" fill="#d8f3dc" stroke="#1b4332" stroke-width="1.5"/>
+        <circle cx="72" cy="95" r="5.5" fill="#1b1b1b"/>
+        <circle cx="97" cy="97" r="5.5" fill="#1b1b1b"/>
+        <path d="M75 107 Q87 112 97 107" fill="none" stroke="#1b4332" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div id="stapley-bubble">Hello Fez! Do you like my design? I am not going to say this but you are special and matt thinks he is funny. How can I help?</div>
+    <div id="stapley-input-row">
+      <input type="text" id="stapley-input" placeholder="Type here..." autocomplete="off"/>
+      <button id="stapley-submit">OK</button>
+    </div>
+  </div>
+
   <!-- TASKBAR -->
   <div id="taskbar">
     <button id="start-btn"><span>⊞</span> start</button>
@@ -315,10 +372,11 @@ const requiredPasswords = [
   { key:"gamesPass",      label:"Games Password",      value:"RATLOL" },
   { key:"emailPass",      label:"Email Password",      value:"IS" },
   { key:"meetingPass",    label:"Meeting Password",    value:"7543ing111" },
-  { key:"conferencePass", label:"Conference Password", value:"PLACEHOLDER" }
+  { key:"conferencePass", label:"Conference Password", value:"PLACEHOLDER" },
+  { key:"stapleRemover",  label:"Staple Remover",      value:"badgerjkl" }
 ];
 function getSolved(){ return requiredPasswords.map(p=>localStorage.getItem(p.key)==="solved"); }
-function updateStatus(){ document.getElementById("passStatus").textContent=`Solved: ${getSolved().filter(Boolean).length} / 4`; }
+function updateStatus(){ document.getElementById("passStatus").textContent=`Solved: ${getSolved().filter(Boolean).length} / 5`; }
 document.getElementById("multiPassBtn").onclick=function(){
   if(getSolved().every(Boolean)){window.location.href="officepass.html";return;}
   showPasswordModal();
@@ -497,6 +555,100 @@ function saveInitials(){
   }
   currentGame=null;
 }
+
+// ---- Stapley ----
+(function() {
+  const PASS = "badgerjkl";
+  const SCREENS = [
+    "Hello Fez! Do you like my design? I am not going to say this but you are special and matt thinks he is funny. How can I help?",
+    "qwertyuiop pass asdfghjklzxcvbnmaajgdh;kjadsn word cdcnlksdnclka;",
+    "etatcinnummocotelbamilli@tsiaylesnotupidesyehguohtayakostisdesuf#nocelttilanettogevaheemesi!ecnatsmucricsuoitro$ftsomasihtradnelacehtotnigolotetgniyrteuaoyeesi%pioiumnbsatsixeediuls^eduoyslaitaltnede&rceht",
+    "lurthe defkos amwit sendor blatur confwes isghat yourl thepms norder skuven amlit vorped"
+  ];
+  let step = 0;
+  let s4count = 0;
+  let inputLock = false;
+
+  function setScreen(s) {
+    document.getElementById('stapley-bubble').textContent = SCREENS[s];
+    const wrap = document.getElementById('stapley-svg-wrap');
+    if (s === 0) wrap.classList.remove('upside-down');
+    else wrap.classList.add('upside-down');
+  }
+
+  let locked = false;
+  
+  function advance() {
+    if (locked) {
+      console.log('LOCKED - staying on S4');
+      return;
+    }
+    
+    step++;
+    if (step > 3) step = 0;
+    console.log('advance: step=' + step);
+    
+    // After first complete cycle, lock on S4
+    if (step === 0 && s4count > 0) {
+      console.log('LOCKING on S4 after first cycle');
+      step = 2;
+      locked = true;
+    }
+    
+    // Track when we visit S4 for the first time
+    if (step === 2 && s4count === 0) {
+      s4count = 1;
+      console.log('First S4 visit');
+    }
+    
+    setScreen(step);
+  }
+
+  function dismiss() {
+    localStorage.setItem("stapleRemover", "solved");
+    updateStatus();
+    document.getElementById('stapley-widget').style.display = 'none';
+  }
+
+  function handleInput() {
+    if (inputLock) {
+      console.log('input locked, ignoring');
+      return;
+    }
+    inputLock = true;
+    console.log('handleInput called');
+    const inp = document.getElementById('stapley-input');
+    const val = inp.value.trim();
+    inp.value = '';
+    if (!val) {
+      console.log('empty input, returning');
+      inputLock = false;
+      return;
+    }
+    if (val === PASS) { 
+      console.log('password match, dismissing');
+      dismiss(); 
+      inputLock = false;
+      return; 
+    }
+    console.log('calling advance()');
+    advance();
+    setTimeout(() => { inputLock = false; }, 100);
+  }
+
+  document.getElementById('stapley-submit').addEventListener('click', handleInput);
+  document.getElementById('stapley-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleInput();
+  });
+
+  // Init
+  if (localStorage.getItem("stapleRemover") === "solved") {
+    document.getElementById('stapley-widget').style.display = 'none';
+  } else {
+    document.getElementById('stapley-widget').style.display = 'flex';
+    setScreen(0);
+  }
+})();
 </script>
 </body>
 </html>
