@@ -668,7 +668,6 @@ function toggleHS(panelId){
   // Already in countdown order (#10 first, #1 last) in the array
   list.innerHTML = memes.map(m => `
     <div style="margin-bottom:14px;padding:8px;background:#f8f8f8;border:1px solid #d0d0d0;">
-      <div style="font-weight:bold;font-size:13px;color:#245edb;margin-bottom:4px;">#${m.rank} &mdash; ${m.caption}</div>
       <img src="${m.src}" alt="Meme #${m.rank}" style="max-width:100%;display:block;border:1px solid #aca899;"/>
     </div>
   `).join('');
