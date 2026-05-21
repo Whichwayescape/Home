@@ -165,9 +165,122 @@
       letter-spacing:0.14em;
       text-transform:uppercase;
     }
+
+    /* XP Login Screen */
+    #xpLoginScreen {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:linear-gradient(180deg,#1a3a6b 0%,#2a5298 40%,#1a3a6b 100%);
+      z-index:99999;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      font-family:'Tahoma','Verdana',sans-serif;
+    }
+    #xpLoginScreen .login-header {
+      width:100%; background:rgba(0,0,0,0.25);
+      border-top:2px solid rgba(255,255,255,0.2);
+      border-bottom:2px solid rgba(255,255,255,0.2);
+      padding:10px 40px; display:flex; align-items:center;
+      justify-content:space-between; margin-bottom:40px;
+    }
+    #xpLoginScreen .login-header span {
+      color:#fff; font-size:22px; font-weight:bold; font-style:italic;
+      text-shadow:1px 1px 4px rgba(0,0,0,0.6); letter-spacing:0.04em;
+    }
+    #xpLoginScreen .login-header .xp-logo {
+      font-size:13px; color:rgba(255,255,255,0.7); text-align:right; line-height:1.4;
+    }
+    #xpLoginScreen .login-box {
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:4px; padding:30px 40px;
+      display:flex; flex-direction:column; align-items:center; gap:14px;
+      min-width:320px;
+    }
+    #xpLoginScreen .user-icon {
+      width:64px; height:64px; background:rgba(255,255,255,0.15);
+      border:2px solid rgba(255,255,255,0.4); border-radius:2px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:38px;
+    }
+    #xpLoginScreen .username {
+      color:#fff; font-size:15px; font-weight:bold;
+      text-shadow:1px 1px 3px rgba(0,0,0,0.5);
+    }
+    #xpLoginScreen .pw-label {
+      color:rgba(255,255,255,0.8); font-size:11px; align-self:flex-start;
+    }
+    #xpLoginScreen .pw-row {
+      display:flex; gap:6px; width:100%;
+    }
+    #xpLoginScreen #loginPwInput {
+      flex:1; padding:4px 8px; font-size:13px;
+      border:1px solid #7f9db9; font-family:'Tahoma',sans-serif;
+      background:#fff;
+    }
+    #xpLoginScreen .login-arrow-btn {
+      width:30px; height:30px; background:linear-gradient(180deg,#5eac56,#3c873a);
+      border:1px solid #1a4d18; border-radius:2px; cursor:pointer;
+      color:#fff; font-size:16px; display:flex; align-items:center; justify-content:center;
+      font-weight:bold;
+    }
+    #xpLoginScreen .login-arrow-btn:hover { filter:brightness(1.15); }
+    #xpLoginScreen .login-hint-btn {
+      font-size:11px; padding:3px 12px; cursor:pointer;
+      font-family:'Tahoma',sans-serif; align-self:flex-start;
+      background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);
+      border:1px solid #003c74; border-radius:3px;
+    }
+    #xpLoginScreen .login-hint-btn:hover { background:linear-gradient(180deg,#fff 0%,#d6eaff 100%); }
+    #xpLoginScreen .login-error {
+      color:#ffcccc; font-size:11px; min-height:14px;
+    }
+    #xpLoginScreen .login-footer {
+      width:100%; background:rgba(0,0,0,0.25);
+      border-top:2px solid rgba(255,255,255,0.2);
+      padding:8px 40px; margin-top:40px;
+      color:rgba(255,255,255,0.5); font-size:10px; text-align:center;
+    }
+
+    /* Hint dialogue */
+    #loginHintModal {
+      display:none; position:fixed;
+      top:50%; left:50%; transform:translate(-50%,-50%);
+      z-index:100000; width:280px;
+    }
   </style>
 </head>
 <body class="xp-desktop">
+
+  <!-- XP LOGIN SCREEN -->
+  <div id="xpLoginScreen">
+    <div class="login-header">
+      <span>Windows <em>XP</em></span>
+      <div class="xp-logo">Professional<br/>Edition</div>
+    </div>
+    <div class="login-box">
+      <div class="user-icon">👤</div>
+      <div class="username">P.Firward</div>
+      <div class="pw-label">To begin, type your password</div>
+      <div class="pw-row">
+        <input type="password" id="loginPwInput" autocomplete="off" placeholder="Password" />
+        <button class="login-arrow-btn" id="loginSubmitBtn">▶</button>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button class="login-hint-btn" id="loginHintBtn">Hint</button>
+    </div>
+    <div class="login-footer">© Microsoft Corporation. All rights reserved.</div>
+  </div>
+
+  <!-- HINT DIALOGUE -->
+  <div class="window" id="loginHintModal">
+    <div class="title-bar">
+      <div class="title-bar-text">Password Hint</div>
+      <div class="title-bar-controls"><button aria-label="Close" id="loginHintClose"></button></div>
+    </div>
+    <div class="window-body" style="padding:16px;font-size:12px;line-height:1.6;">
+      Password? Come it is Soooeasy.
+    </div>
+  </div>
 
   <div id="top-bar">
     <button id="multiPassBtn">🔓 Unlock Office Pass</button>
@@ -434,6 +547,38 @@
   </div>
 
 <script>
+// ---- XP Login ----
+(function(){
+  const LOGIN_PASS = "Soooeasy";
+  const screen = document.getElementById('xpLoginScreen');
+  const input  = document.getElementById('loginPwInput');
+  const error  = document.getElementById('loginError');
+  const hint   = document.getElementById('loginHintModal');
+
+  function tryLogin(){
+    if(input.value === LOGIN_PASS){
+      screen.style.display = 'none';
+    } else {
+      error.textContent = 'The password is incorrect. Please try again.';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  document.getElementById('loginSubmitBtn').addEventListener('click', tryLogin);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') tryLogin(); });
+
+  document.getElementById('loginHintBtn').addEventListener('click', function(){
+    hint.style.display = 'block';
+    hint.style.zIndex  = 100000;
+  });
+  document.getElementById('loginHintClose').addEventListener('click', function(){
+    hint.style.display = 'none';
+  });
+
+  input.focus();
+})();
+
 // ---- Passwords ----
 const requiredPasswords = [
   { key:"gamesPass",      label:"Games Password",      value:"RATLOL" },
