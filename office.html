@@ -487,6 +487,55 @@
 
   </div>
 
+
+  <!-- SECRET LEVEL PROMPT -->
+  <div class="window" id="secretModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;width:340px;">
+    <div class="title-bar"><div class="title-bar-text">🔓 SECRET LEVEL UNLOCKED!</div><div class="title-bar-controls"><button aria-label="Close" onclick="document.getElementById('secretModal').style.display='none'"></button></div></div>
+    <div class="window-body" style="padding:16px;text-align:center;">
+      <p style="font-size:13px;font-weight:bold;margin-bottom:8px;">You've unlocked the SECRET LEVEL!</p>
+      <p style="font-size:11px;color:#555;margin-bottom:14px;" id="secretModalDesc"></p>
+      <div class="field-row" style="justify-content:center;gap:8px;">
+        <button id="secretYesBtn">Enter Secret Level</button>
+        <button id="secretNoBtn">Maybe Later</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SNAKE SECRET LEVEL -->
+  <div class="window xp-win" id="winSnakeSec" style="width:410px;top:120px;left:80px;">
+    <div class="title-bar"><div class="title-bar-text">🐍💀 Snake — SECRET LEVEL</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winSnakeSec');stopSnakeSec();"></button></div></div>
+    <div class="window-body" style="padding:6px;">
+      <div style="font-size:10px;color:#d9534f;text-align:center;margin-bottom:3px;font-weight:bold;">⚠ RED BLOCKS = INSTANT DEATH &nbsp;·&nbsp; New block every 30s &nbsp;·&nbsp; Use W/A/S/D to move</div>
+      <canvas id="snakeSecCanvas" width="390" height="280"></canvas>
+      <div class="score-bar">Score: <span id="snakeSecScore">0</span> &nbsp;|&nbsp; Death Blocks: <span id="snakeSecBlocks">0</span></div>
+      <div class="dpad">
+        <button class="dpad-up" data-ssdir="UP">▲</button>
+        <button class="dpad-left" data-ssdir="LEFT">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-right" data-ssdir="RIGHT">▶</button>
+        <button class="dpad-down" data-ssdir="DOWN">▼</button>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">W/A/S/D keys or tap buttons</div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">SECRET LEVEL v1.0</p></div>
+  </div>
+
+  <!-- BB SECRET LEVEL -->
+  <div class="window xp-win" id="winBBSec" style="width:410px;top:130px;left:100px;">
+    <div class="title-bar"><div class="title-bar-text">🧱💀 Ball Breaker — SECRET LEVEL</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winBBSec');stopBBSec();"></button></div></div>
+    <div class="window-body" style="padding:6px;">
+      <div style="font-size:10px;color:#d9534f;text-align:center;margin-bottom:3px;font-weight:bold;">⚠ New brick row every 10s &nbsp;·&nbsp; Extra ball every 15s &nbsp;·&nbsp; Don't let bricks hit the bottom!</div>
+      <canvas id="bbSecCanvas" width="390" height="280"></canvas>
+      <div class="score-bar">Score: <span id="bbSecScore">0</span> &nbsp;|&nbsp; Balls: <span id="bbSecBalls">1</span></div>
+      <div class="pad-controls">
+        <button id="padSecLeft">◀ Left</button>
+        <button id="padSecRight">Right ▶</button>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">Arrow keys or hold buttons</div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">SECRET LEVEL v1.0</p></div>
+  </div>
+
   <!-- TASKBAR -->
   <div id="taskbar">
     <button id="start-btn"><span>⊞</span> start</button>
@@ -576,7 +625,7 @@ updateStatus();
 // ---- Window management ----
 let topZ=300;
 const tbWins=document.getElementById('tb-open-wins');
-const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📋 Meetings',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Notes',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes'};
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📋 Meetings',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Notes',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret'};
 
 // Reset all puzzles to unsolved
 localStorage.clear();
@@ -586,6 +635,8 @@ function openWin(id){
   w.style.display='block'; bringToFront(w); addToTaskbar(id);
   if(id==='winSnake') startSnake();
   if(id==='winBB') startBB();
+  if(id==='winSnakeSec') startSnakeSec();
+  if(id==='winBBSec') startBBSec();
 }
 function closeWin(id){ document.getElementById(id).style.display='none'; removeFromTaskbar(id); }
 function bringToFront(w){ topZ++; w.style.zIndex=topZ; }
@@ -733,6 +784,7 @@ padR.addEventListener('touchstart',e=>{e.preventDefault();rightPress=true;},{pas
 function saveInitials(){
   const ini=(document.getElementById('ini1').value||'X').toUpperCase()+(document.getElementById('ini2').value||'X').toUpperCase()+(document.getElementById('ini3').value||'X').toUpperCase();
   document.getElementById('initialsModal').style.display='none';
+  const savedGame=currentGame;
   if(currentGame==='snake'){
     snakeHS.push({ini,score:snakeState.score}); snakeHS.sort((a,b)=>b.score-a.score); snakeHS=snakeHS.slice(0,6);
     renderSnakeHS(); document.getElementById('snakeHSBtn').style.display='block';
@@ -743,6 +795,21 @@ function saveInitials(){
     awaitingBBInit=false; initBBState();
   }
   currentGame=null;
+  showSecretPrompt(savedGame);
+}
+
+function showSecretPrompt(game){
+  const modal=document.getElementById('secretModal');
+  const desc=document.getElementById('secretModalDesc');
+  if(game==='snake'){
+    desc.textContent="Red death blocks appear every 30 seconds. Touch one and it's instant death. Survive as long as you can.";
+    document.getElementById('secretYesBtn').onclick=()=>{ modal.style.display='none'; openWin('winSnakeSec'); };
+  } else if(game==='bb'){
+    desc.textContent="Bricks respawn every 10 seconds. A new ball joins every 15 seconds. Don't let the bricks reach the bottom!";
+    document.getElementById('secretYesBtn').onclick=()=>{ modal.style.display='none'; openWin('winBBSec'); };
+  } else { return; }
+  document.getElementById('secretNoBtn').onclick=()=>{ modal.style.display='none'; };
+  modal.style.display='block';
 }
 
 // ---- High Scores Toggle ----
@@ -831,6 +898,189 @@ function toggleHS(panelId){
     setScreen(0);
   }
 })();
+
+// ---- Snake Secret Level ----
+let snakeSecState=null,snakeSecTimer=null,snakeSecDeathBlocks=[],snakeSecBlockInterval=null,snakeSecRestartTO=null;
+
+function startSnakeSec(){
+  stopSnakeSec();
+  snakeSecDeathBlocks=[];
+  resetSnakeSecState();
+  snakeSecTimer=setInterval(tickSnakeSec,100);
+  snakeSecBlockInterval=setInterval(addSnakeSecBlock,30000);
+}
+function stopSnakeSec(){
+  clearInterval(snakeSecTimer); snakeSecTimer=null;
+  clearInterval(snakeSecBlockInterval); snakeSecBlockInterval=null;
+  clearTimeout(snakeSecRestartTO); snakeSecRestartTO=null;
+}
+function resetSnakeSecState(){
+  snakeSecState={snake:[{x:200,y:140}],dir:'RIGHT',nextDir:'RIGHT',food:{x:80,y:80},score:0,over:false};
+  placeSnakeSecFood();
+  const el=document.getElementById('snakeSecBlocks'); if(el) el.textContent='0';
+}
+function placeSnakeSecFood(){
+  const c=document.getElementById('snakeSecCanvas'); if(!c) return;
+  let pos,t=0;
+  do{ pos={x:Math.floor(Math.random()*(c.width/20))*20,y:Math.floor(Math.random()*(c.height/20))*20}; t++; }
+  while(t<200&&(snakeSecState.snake.some(s=>s.x===pos.x&&s.y===pos.y)||snakeSecDeathBlocks.some(d=>d.x===pos.x&&d.y===pos.y)));
+  snakeSecState.food=pos;
+}
+function addSnakeSecBlock(){
+  if(!snakeSecState||snakeSecState.over) return;
+  const c=document.getElementById('snakeSecCanvas'); if(!c) return;
+  let pos,t=0;
+  do{ pos={x:Math.floor(Math.random()*(c.width/20))*20,y:Math.floor(Math.random()*(c.height/20))*20}; t++; }
+  while(t<200&&(snakeSecState.snake.some(s=>s.x===pos.x&&s.y===pos.y)||(pos.x===snakeSecState.food.x&&pos.y===snakeSecState.food.y)||snakeSecDeathBlocks.some(d=>d.x===pos.x&&d.y===pos.y)));
+  snakeSecDeathBlocks.push(pos);
+  const el=document.getElementById('snakeSecBlocks'); if(el) el.textContent=snakeSecDeathBlocks.length;
+}
+function tickSnakeSec(){
+  if(!snakeSecState||snakeSecState.over) return;
+  snakeSecState.dir=snakeSecState.nextDir;
+  const h={...snakeSecState.snake[0]};
+  if(snakeSecState.dir==='UP') h.y-=20; if(snakeSecState.dir==='DOWN') h.y+=20;
+  if(snakeSecState.dir==='LEFT') h.x-=20; if(snakeSecState.dir==='RIGHT') h.x+=20;
+  const c=document.getElementById('snakeSecCanvas'); if(!c) return;
+  if(h.x<0||h.x>=c.width||h.y<0||h.y>=c.height||snakeSecState.snake.some(s=>s.x===h.x&&s.y===h.y)||snakeSecDeathBlocks.some(d=>d.x===h.x&&d.y===h.y)){
+    snakeSecState.over=true;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#fff'; ctx.font='bold 22px Tahoma'; ctx.textAlign='center';
+    ctx.fillText('💀 GAME OVER',c.width/2,c.height/2-10);
+    ctx.font='12px Tahoma';
+    ctx.fillText('Score: '+snakeSecState.score+' | Blocks: '+snakeSecDeathBlocks.length,c.width/2,c.height/2+14);
+    snakeSecRestartTO=setTimeout(()=>{ snakeSecDeathBlocks=[]; resetSnakeSecState(); },1500);
+    return;
+  }
+  if(h.x===snakeSecState.food.x&&h.y===snakeSecState.food.y){ snakeSecState.score++; snakeSecState.snake.unshift(h); placeSnakeSecFood(); }
+  else{ snakeSecState.snake.unshift(h); snakeSecState.snake.pop(); }
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  snakeSecDeathBlocks.forEach(d=>{
+    ctx.fillStyle='#8b0000'; ctx.fillRect(d.x,d.y,20,20);
+    ctx.strokeStyle='#ff4444'; ctx.strokeRect(d.x,d.y,20,20);
+    ctx.strokeStyle='#ff8888'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(d.x+4,d.y+4); ctx.lineTo(d.x+16,d.y+16);
+    ctx.moveTo(d.x+16,d.y+4); ctx.lineTo(d.x+4,d.y+16); ctx.stroke(); ctx.lineWidth=1;
+  });
+  ctx.fillStyle='#7ec850';
+  snakeSecState.snake.forEach(s=>{ ctx.fillRect(s.x,s.y,20,20); ctx.strokeStyle='#245edb'; ctx.strokeRect(s.x,s.y,20,20); });
+  ctx.fillStyle='#ffaa00'; ctx.fillRect(snakeSecState.food.x,snakeSecState.food.y,20,20);
+  const sc=document.getElementById('snakeSecScore'); if(sc) sc.textContent=snakeSecState.score;
+}
+document.addEventListener('keydown',e=>{
+  if(!snakeSecState) return;
+  if((e.key==='w'||e.key==='W')&&snakeSecState.dir!=='DOWN') snakeSecState.nextDir='UP';
+  if((e.key==='s'||e.key==='S')&&snakeSecState.dir!=='UP')   snakeSecState.nextDir='DOWN';
+  if((e.key==='a'||e.key==='A')&&snakeSecState.dir!=='RIGHT') snakeSecState.nextDir='LEFT';
+  if((e.key==='d'||e.key==='D')&&snakeSecState.dir!=='LEFT')  snakeSecState.nextDir='RIGHT';
+});
+document.querySelectorAll('[data-ssdir]').forEach(btn=>{
+  const h=e=>{ e.preventDefault(); if(!snakeSecState) return; const dir=btn.getAttribute('data-ssdir'),d=snakeSecState;
+    if(dir==='UP'&&d.dir!=='DOWN') d.nextDir='UP'; if(dir==='DOWN'&&d.dir!=='UP') d.nextDir='DOWN';
+    if(dir==='LEFT'&&d.dir!=='RIGHT') d.nextDir='LEFT'; if(dir==='RIGHT'&&d.dir!=='LEFT') d.nextDir='RIGHT';
+  };
+  btn.addEventListener('click',h); btn.addEventListener('touchstart',h,{passive:false});
+});
+
+// ---- BB Secret Level ----
+let bbSecState=null,bbSecRunning=false,bbSecLeftPress=false,bbSecRightPress=false;
+let bbSecRowInterval=null,bbSecBallInterval=null,bbSecRestartTO=null;
+
+function startBBSec(){
+  stopBBSec();
+  initBBSecState();
+  bbSecRunning=true;
+  requestAnimationFrame(tickBBSec);
+  bbSecRowInterval=setInterval(addBBSecRow,10000);
+  bbSecBallInterval=setInterval(addBBSecBall,15000);
+}
+function stopBBSec(){
+  bbSecRunning=false;
+  clearInterval(bbSecRowInterval); bbSecRowInterval=null;
+  clearInterval(bbSecBallInterval); bbSecBallInterval=null;
+  clearTimeout(bbSecRestartTO); bbSecRestartTO=null;
+}
+function initBBSecState(){
+  const bricks=[];
+  for(let r=0;r<3;r++) for(let cl=0;cl<6;cl++) bricks.push({x:10+cl*63,y:40+r*26,status:1,age:0});
+  bbSecState={balls:[{x:195,y:220,dx:4,dy:-4,r:8}],paddle:{x:140,y:260,w:80,h:10,speed:6},bricks,score:0,over:false,overMsg:''};
+  const el=document.getElementById('bbSecBalls'); if(el) el.textContent='1';
+}
+function addBBSecRow(){
+  if(!bbSecState||bbSecState.over) return;
+  bbSecState.bricks.forEach(b=>{ b.y+=26; b.age++; });
+  if(bbSecState.bricks.some(b=>b.status&&b.y+20>=bbSecState.paddle.y-5)){
+    bbSecState.over=true; bbSecState.overMsg='The bricks reached the bottom!'; return;
+  }
+  for(let cl=0;cl<6;cl++) bbSecState.bricks.push({x:10+cl*63,y:40,status:1,age:0});
+}
+function addBBSecBall(){
+  if(!bbSecState||bbSecState.over) return;
+  const spd=4+bbSecState.balls.length*0.5;
+  bbSecState.balls.push({x:bbSecState.paddle.x+40,y:bbSecState.paddle.y-20,dx:(Math.random()>0.5?1:-1)*spd,dy:-spd,r:8});
+  const el=document.getElementById('bbSecBalls'); if(el) el.textContent=bbSecState.balls.length;
+}
+function tickBBSec(){
+  if(!bbSecRunning) return;
+  if(!bbSecState){ requestAnimationFrame(tickBBSec); return; }
+  const c=document.getElementById('bbSecCanvas'); if(!c){ requestAnimationFrame(tickBBSec); return; }
+  const ctx=c.getContext('2d'),p=bbSecState.paddle;
+  if(bbSecLeftPress&&p.x>0) p.x-=p.speed;
+  if(bbSecRightPress&&p.x<c.width-p.w) p.x+=p.speed;
+  const survivors=[];
+  bbSecState.balls.forEach(b=>{
+    b.x+=b.dx; b.y+=b.dy;
+    if(b.x+b.r>c.width||b.x-b.r<0) b.dx=-b.dx;
+    if(b.y-b.r<0) b.dy=-b.dy;
+    if(b.x>p.x&&b.x<p.x+p.w&&b.y+b.r>p.y&&b.y-b.r<p.y+p.h) b.dy=-Math.abs(b.dy);
+    bbSecState.bricks.forEach(br=>{ if(br.status&&b.x>br.x&&b.x<br.x+55&&b.y-b.r<br.y+20&&b.y+b.r>br.y){ b.dy=-b.dy; br.status=0; bbSecState.score++; } });
+    if(b.y-b.r<c.height+20) survivors.push(b);
+  });
+  bbSecState.balls=survivors;
+  const ballEl=document.getElementById('bbSecBalls'); if(ballEl) ballEl.textContent=bbSecState.balls.length;
+  if(bbSecState.balls.length===0){ bbSecState.over=true; bbSecState.overMsg='All balls lost!'; }
+  if(!bbSecState.over&&bbSecState.bricks.some(b=>b.status&&b.y+20>=p.y-5)){ bbSecState.over=true; bbSecState.overMsg='Bricks reached the bottom!'; }
+  ctx.clearRect(0,0,c.width,c.height);
+  if(bbSecState.over){
+    ctx.fillStyle='#111'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#d9534f'; ctx.font='bold 20px Tahoma'; ctx.textAlign='center';
+    ctx.fillText('💀 GAME OVER',c.width/2,c.height/2-18);
+    ctx.fillStyle='#fff'; ctx.font='12px Tahoma';
+    ctx.fillText(bbSecState.overMsg,c.width/2,c.height/2+6);
+    ctx.fillText('Score: '+bbSecState.score,c.width/2,c.height/2+26);
+    const sc=document.getElementById('bbSecScore'); if(sc) sc.textContent=bbSecState.score;
+    stopBBSec(); bbSecRestartTO=setTimeout(()=>startBBSec(),3000); return;
+  }
+  const brickColors=['#e05c5c','#c94040','#b03030','#963030','#7d1010'];
+  bbSecState.bricks.forEach(br=>{
+    if(br.status){
+      ctx.fillStyle=brickColors[Math.min(br.age,brickColors.length-1)];
+      ctx.fillRect(br.x,br.y,55,20); ctx.strokeStyle='#245edb'; ctx.strokeRect(br.x,br.y,55,20);
+    }
+  });
+  const ballColors=['#245edb','#ff9900','#7ec850','#d9534f','#9b59b6'];
+  bbSecState.balls.forEach((b,i)=>{
+    ctx.fillStyle=ballColors[i%ballColors.length];
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+  });
+  ctx.fillStyle='#7ec850'; ctx.fillRect(p.x,p.y,p.w,p.h);
+  const sc=document.getElementById('bbSecScore'); if(sc) sc.textContent=bbSecState.score;
+  requestAnimationFrame(tickBBSec);
+}
+const padSecL=document.getElementById('padSecLeft'),padSecR=document.getElementById('padSecRight');
+if(padSecL){
+  padSecL.addEventListener('mousedown',()=>bbSecLeftPress=true); padSecL.addEventListener('mouseup',()=>bbSecLeftPress=false); padSecL.addEventListener('mouseleave',()=>bbSecLeftPress=false);
+  padSecL.addEventListener('touchstart',e=>{e.preventDefault();bbSecLeftPress=true;},{passive:false}); padSecL.addEventListener('touchend',()=>bbSecLeftPress=false);
+}
+if(padSecR){
+  padSecR.addEventListener('mousedown',()=>bbSecRightPress=true); padSecR.addEventListener('mouseup',()=>bbSecRightPress=false); padSecR.addEventListener('mouseleave',()=>bbSecRightPress=false);
+  padSecR.addEventListener('touchstart',e=>{e.preventDefault();bbSecRightPress=true;},{passive:false}); padSecR.addEventListener('touchend',()=>bbSecRightPress=false);
+}
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') bbSecLeftPress=true; if(e.key==='ArrowRight') bbSecRightPress=true; });
+document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft') bbSecLeftPress=false; if(e.key==='ArrowRight') bbSecRightPress=false; });
+
 </script>
 </body>
 </html>
