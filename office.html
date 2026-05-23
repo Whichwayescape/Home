@@ -1244,9 +1244,13 @@ const timerStart = Date.now();
 // ---- Calendar App ----
 (function(){
   var _view='month', _anchor=new Date();
-  var BTN='font-family:Tahoma,sans-serif;font-size:11px;padding:3px 9px;cursor:pointer;border:1px solid #003c74;border-radius:3px;';
-  var BTN_XP=BTN+'background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);';
+  var _mtgDow=5, _mtgH=16; // current position of the reschedulable meeting
+
+  var BTN ='font-family:Tahoma,sans-serif;font-size:11px;padding:4px 12px;cursor:pointer;border:1px solid #003c74;border-radius:3px;';
+  var BTN_XP  =BTN+'background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);';
   var BTN_BLUE=BTN+'background:linear-gradient(180deg,#fff 0%,#d6eaff 100%);';
+
+  var MTG={l:'Market Saturation Meeting',bg:'#b8d4ff',fg:'#003c74'};
   var EVTS=[
     {dow:1,h:8, l:'Team Standup',             bg:'#ddeeff',fg:'#1a3a6b'},
     {dow:1,h:10,l:'Project Review',           bg:'#ddeeff',fg:'#1a3a6b'},
@@ -1263,19 +1267,144 @@ const timerStart = Date.now();
     {dow:4,h:16,l:'Retrospective',            bg:'#ddeeff',fg:'#1a3a6b'},
     {dow:5,h:9, l:'Weekly Wrap-Up',           bg:'#ddeeff',fg:'#1a3a6b'},
     {dow:5,h:12,l:'Lunch',                    bg:'#fff3cd',fg:'#856404'},
-    {dow:5,h:14,l:'Market Saturation Meeting',bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:5,h:16,l:'Market Saturation Meeting',bg:'#b8d4ff',fg:'#003c74'}
+    {dow:5,h:14,l:'Market Saturation Meeting',bg:'#ddeeff',fg:'#1a3a6b'}
   ];
-  var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var WDAYS=['Mon','Tue','Wed','Thu','Fri'];
+  var DAYS  =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var WDAYS =['Mon','Tue','Wed','Thu','Fri'];
+  var DNAMES=['Monday','Tuesday','Wednesday','Thursday','Friday'];
   var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  function getMon(d){
-    var dt=new Date(d),day=dt.getDay();
-    dt.setDate(dt.getDate()+(day===0?-6:1-day));dt.setHours(0,0,0,0);return dt;
-  }
+  function getMon(d){var dt=new Date(d),day=dt.getDay();dt.setDate(dt.getDate()+(day===0?-6:1-day));dt.setHours(0,0,0,0);return dt;}
   function hLabel(h){return h<12?(h+':00 AM'):(h===12?'12:00 PM':((h-12)+':00 PM'));}
 
+  // ---------- Meeting Modal ----------
+  function ensureModal(){
+    if(document.getElementById('_calModal')) return;
+    var bd=document.createElement('div');
+    bd.id='_calModalBd';
+    bd.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:none;';
+    bd.onclick=function(e){if(e.target===bd) window._calCloseModal();};
+    document.body.appendChild(bd);
+    var m=document.createElement('div');
+    m.id='_calModal';
+    m.className='window';
+    m.style.cssText='position:fixed;z-index:9999;display:none;width:390px;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:6px 6px 20px rgba(0,0,0,0.5);min-width:340px;';
+    document.body.appendChild(m);
+  }
+
+  function openModal(html){
+    ensureModal();
+    document.getElementById('_calModalBd').style.display='block';
+    var m=document.getElementById('_calModal');
+    m.innerHTML=html;
+    m.style.display='block';
+  }
+
+  window._calCloseModal=function(){
+    var bd=document.getElementById('_calModalBd');
+    var m=document.getElementById('_calModal');
+    if(bd)bd.style.display='none';
+    if(m)m.style.display='none';
+  };
+
+  window._calShowDetails=function(){
+    var dayName=DNAMES[_mtgDow-1];
+    var timeStr=hLabel(_mtgH)+' – '+hLabel(_mtgH+1);
+    openModal(
+      '<div class="title-bar"><div class="title-bar-text">&#128197; Meeting Details</div>'+
+      '<div class="title-bar-controls"><button aria-label="Close" onclick="window._calCloseModal()"></button></div></div>'+
+      '<div class="window-body" style="padding:16px;font-family:Tahoma,sans-serif;font-size:12px;">'+
+        '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;">'+
+          '<span style="font-size:32px;line-height:1;">&#128197;</span>'+
+          '<div><div style="font-size:14px;font-weight:bold;color:#000;margin-bottom:4px;">Market Saturation Meeting</div>'+
+          '<div style="color:#555;font-size:11px;">'+dayName+'&nbsp;&nbsp;&#183;&nbsp;&nbsp;'+timeStr+'</div></div>'+
+        '</div>'+
+        '<div style="border-top:1px solid #aca899;padding-top:10px;margin-bottom:10px;line-height:1.6;">'+
+          '<div style="margin-bottom:8px;"><strong>Description:</strong><br>Quarterly review of market penetration strategies, competitive positioning analysis, and department KPI alignment. Attendance mandatory for all department heads.</div>'+
+          '<div><strong>Attendees:</strong><br>P. Firward&nbsp;&nbsp;&#183;&nbsp;&nbsp;J. Smith&nbsp;&nbsp;&#183;&nbsp;&nbsp;R. Chen&nbsp;&nbsp;&#183;&nbsp;&nbsp;K. Williams</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #aca899;padding-top:12px;">'+
+          '<button style="'+BTN_BLUE+'" onclick="window._calShowReschedule()">&#8635; Reschedule</button>'+
+          '<button style="'+BTN_XP+'" onclick="window._calCloseModal()">Close</button>'+
+        '</div>'+
+      '</div>'
+    );
+  };
+
+  window._calShowReschedule=function(){
+    var dayOpts='';
+    for(var i=0;i<5;i++) dayOpts+='<option value="'+(i+1)+'"'+((_mtgDow===i+1)?' selected':'')+'>'+DNAMES[i]+'</option>';
+    var timeOpts='';
+    for(var h=8;h<=16;h++) timeOpts+='<option value="'+h+'"'+(_mtgH===h?' selected':'')+'>'+hLabel(h)+' – '+hLabel(h+1)+'</option>';
+    openModal(
+      '<div class="title-bar"><div class="title-bar-text">&#8635; Reschedule Meeting</div>'+
+      '<div class="title-bar-controls"><button aria-label="Close" onclick="window._calCloseModal()"></button></div></div>'+
+      '<div class="window-body" style="padding:16px;font-family:Tahoma,sans-serif;font-size:12px;">'+
+        '<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">Market Saturation Meeting</div>'+
+        '<div style="font-size:11px;color:#555;margin-bottom:14px;">Currently: '+DNAMES[_mtgDow-1]+' &bull; '+hLabel(_mtgH)+' – '+hLabel(_mtgH+1)+'</div>'+
+        '<div style="background:#ece9d8;border:1px solid #aca899;padding:8px 10px;border-radius:2px;font-size:11px;color:#333;margin-bottom:14px;">'+
+          'Select a new day and time slot to reschedule this meeting.'+
+        '</div>'+
+        '<div id="_calRescheduleErr" style="display:none;color:#c00;font-size:11px;padding:5px 8px;background:#fff0f0;border:1px solid #f5c0c0;border-radius:2px;margin-bottom:10px;"></div>'+
+        '<table style="width:100%;border-spacing:0 8px;">'+
+          '<tr><td style="font-weight:bold;padding-right:12px;width:45px;">Day</td>'+
+          '<td><select id="_calDay" style="font-family:Tahoma,sans-serif;font-size:12px;padding:4px 6px;border:1px solid #7f9db9;width:100%;border-radius:2px;">'+dayOpts+'</select></td></tr>'+
+          '<tr><td style="font-weight:bold;padding-right:12px;">Time</td>'+
+          '<td><select id="_calTime" style="font-family:Tahoma,sans-serif;font-size:12px;padding:4px 6px;border:1px solid #7f9db9;width:100%;border-radius:2px;">'+timeOpts+'</select></td></tr>'+
+        '</table>'+
+        '<div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #aca899;margin-top:16px;padding-top:12px;">'+
+          '<button style="'+BTN_BLUE+'" onclick="window._calConfirm()">&#10003; Confirm</button>'+
+          '<button style="'+BTN_XP+'" onclick="window._calShowDetails()">&#9664; Back</button>'+
+          '<button style="'+BTN_XP+'" onclick="window._calCloseModal()">Cancel</button>'+
+        '</div>'+
+      '</div>'
+    );
+  };
+
+  window._calConfirm=function(){
+    var dayEl=document.getElementById('_calDay');
+    var timeEl=document.getElementById('_calTime');
+    if(!dayEl||!timeEl)return;
+    var newDow=parseInt(dayEl.value,10);
+    var newH=parseInt(timeEl.value,10);
+    var errDiv=document.getElementById('_calRescheduleErr');
+
+    // Check same slot
+    if(newDow===_mtgDow && newH===_mtgH){
+      errDiv.textContent='That is already the current time slot.';
+      errDiv.style.display='block'; return;
+    }
+    // Check conflict with existing events
+    var conflict=EVTS.some(function(e){return e.dow===newDow&&e.h===newH;});
+    if(conflict){
+      errDiv.textContent='That time slot already has a meeting. Please choose another.';
+      errDiv.style.display='block'; return;
+    }
+
+    _mtgDow=newDow; _mtgH=newH;
+    window._calCloseModal();
+    if(_view==='week') renderWeek(); else renderMonth();
+
+    // Victory: Wednesday 2:00 PM
+    if(newDow===3&&newH===14){
+      var flash=document.createElement('div');
+      flash.style.cssText='position:fixed;inset:0;z-index:99999;background:#c8f0c8;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;';
+      flash.innerHTML='<div style="font-family:Tahoma,sans-serif;font-size:22px;font-weight:bold;color:#1a6b1a;">Meeting Scheduled!</div>'+
+        '<div style="font-family:Tahoma,sans-serif;font-size:14px;color:#245edb;">Market Saturation Meeting – Wednesday 2:00 PM</div>';
+      document.body.appendChild(flash);
+      setTimeout(function(){window.location.href='officepass.html';},1200);
+      return;
+    }
+
+    // Toast notification
+    var toast=document.createElement('div');
+    toast.style.cssText='position:fixed;bottom:24px;right:24px;background:#245edb;color:#fff;font-family:Tahoma,sans-serif;font-size:12px;padding:10px 18px;border-radius:4px;z-index:9999;box-shadow:3px 5px 14px rgba(0,0,0,0.35);';
+    toast.innerHTML='&#10003; Rescheduled to <strong>'+DNAMES[newDow-1]+'</strong>, '+hLabel(newH);
+    document.body.appendChild(toast);
+    setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity 0.4s';setTimeout(function(){toast.remove();},400);},2800);
+  };
+
+  // ---------- Month View ----------
   function renderMonth(){
     var app=document.getElementById('calApp');if(!app)return;
     var y=_anchor.getFullYear(),m=_anchor.getMonth();
@@ -1305,6 +1434,8 @@ const timerStart = Date.now();
         var day=cells[r*7+c],wk=(c===0||c===6);
         var isToday=day&&(new Date(y,m,day).getTime()===today.getTime());
         var dayEvts=(!wk&&day)?EVTS.filter(function(e){return e.dow===c;}):[];
+        // Include reschedulable MTG badge on its current day
+        if(!wk&&day&&_mtgDow===c) dayEvts=dayEvts.concat([MTG]);
         var bg=isToday?'#245edb':(wk?'#f5f5f5':'#fff');
         var fg=isToday?'#fff':(wk?'#bbb':'#000');
         var tip=day&&dayEvts.length?dayEvts.map(function(e){return hLabel(e.h)+' '+e.l;}).join('; '):'';
@@ -1329,10 +1460,11 @@ const timerStart = Date.now();
     app.innerHTML=h;
   }
 
+  // ---------- Week View ----------
   function renderWeek(){
     var app=document.getElementById('calApp');if(!app)return;
     var mon=getMon(_anchor),fri=new Date(mon);fri.setDate(fri.getDate()+4);
-    var weekStr=mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' \u2013 '+fri.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var weekStr=mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+fri.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     var HOURS=[];for(var hh=8;hh<=17;hh++)HOURS.push(hh);
     var h='<div style="padding:8px 10px;">';
     h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">';
@@ -1355,10 +1487,15 @@ const timerStart = Date.now();
       h+='<tr>';
       h+='<td style="padding:3px 4px;border-right:1px solid #aca899;border-bottom:1px dotted #d0d0d0;font-weight:bold;font-size:10px;font-family:Tahoma,sans-serif;color:#555;white-space:nowrap;background:#ece9d8;">'+hLabel(hh)+'</td>';
       for(var di=0;di<5;di++){
-        var dow=di+1,evt=null;
-        for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}
-        var isVic=(dow===3&&hh===14);
-        if(evt){
+        var dow=di+1;
+        var isMtg=(_mtgDow===dow&&_mtgH===hh);
+        var isVic=(dow===3&&hh===14&&!isMtg);
+        var evt=null;
+        if(!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
+        if(isMtg){
+          h+='<td onclick="window._calShowDetails()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
+            '<span style="text-decoration:underline;">'+MTG.l+'</span> &#128197;</td>';
+        }else if(evt){
           h+='<td style="background:'+evt.bg+';color:'+evt.fg+';border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;">'+evt.l+'</td>';
         }else if(isVic){
           h+='<td contenteditable="true" spellcheck="false" data-victory="true" style="background:#f9f9f9;border:2px dashed #245edb;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:text;" title="Schedule something here..." onfocus="this.style.outline=\'2px solid #245edb\'" onblur="this.style.outline=\'none\'" oninput="window._calVic(this)"></td>';
@@ -1372,6 +1509,7 @@ const timerStart = Date.now();
     app.innerHTML=h;
   }
 
+  // ---------- Navigation ----------
   window._calPrev=function(){
     if(_view==='month'){_anchor.setMonth(_anchor.getMonth()-1);renderMonth();}
     else{_anchor.setDate(_anchor.getDate()-7);renderWeek();}
