@@ -1361,6 +1361,14 @@ const timerStart = Date.now();
     );
   };
 
+  function ensureShakeCSS(){
+    if(document.getElementById('_calShakeCSS'))return;
+    var s=document.createElement('style');
+    s.id='_calShakeCSS';
+    s.textContent='@keyframes _calShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-4px)}90%{transform:translateX(4px)}}._calShake{animation:_calShake 0.5s ease;}';
+    document.head.appendChild(s);
+  }
+
   window._calConfirm=function(){
     var dayEl=document.getElementById('_calDay');
     var timeEl=document.getElementById('_calTime');
@@ -1369,39 +1377,30 @@ const timerStart = Date.now();
     var newH=parseInt(timeEl.value,10);
     var errDiv=document.getElementById('_calRescheduleErr');
 
-    // Check same slot
-    if(newDow===_mtgDow && newH===_mtgH){
-      errDiv.textContent='That is already the current time slot.';
-      errDiv.style.display='block'; return;
-    }
-    // Check conflict with existing events
-    var conflict=EVTS.some(function(e){return e.dow===newDow&&e.h===newH;});
-    if(conflict){
-      errDiv.textContent='That time slot already has a meeting. Please choose another.';
-      errDiv.style.display='block'; return;
-    }
-
-    _mtgDow=newDow; _mtgH=newH;
-    window._calCloseModal();
-    if(_view==='week') renderWeek(); else renderMonth();
-
-    // Victory: Wednesday 2:00 PM
-    if(newDow===3&&newH===14){
-      var flash=document.createElement('div');
-      flash.style.cssText='position:fixed;inset:0;z-index:99999;background:#c8f0c8;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;';
-      flash.innerHTML='<div style="font-family:Tahoma,sans-serif;font-size:22px;font-weight:bold;color:#1a6b1a;">Meeting Scheduled!</div>'+
-        '<div style="font-family:Tahoma,sans-serif;font-size:14px;color:#245edb;">Market Saturation Meeting – Wednesday 2:00 PM</div>';
-      document.body.appendChild(flash);
-      setTimeout(function(){window.location.href='officepass.html';},1200);
+    // Solution: Wednesday 3:00 PM
+    if(newDow===3&&newH===15){
+      _mtgDow=newDow; _mtgH=newH;
+      window._calCloseModal();
+      if(_view==='week') renderWeek(); else renderMonth();
+      // Success toast
+      var toast=document.createElement('div');
+      toast.style.cssText='position:fixed;bottom:24px;right:24px;background:#2a7a2a;color:#fff;font-family:Tahoma,sans-serif;font-size:12px;padding:12px 20px;border-radius:4px;z-index:9999;box-shadow:3px 5px 14px rgba(0,0,0,0.4);line-height:1.5;';
+      toast.innerHTML='&#10003; <strong>Meeting rescheduled!</strong><br>Market Saturation Meeting – Wednesday 3:00 PM';
+      document.body.appendChild(toast);
+      setTimeout(function(){
+        toast.style.opacity='0'; toast.style.transition='opacity 0.5s';
+        setTimeout(function(){window.location.href='officepass.html';},500);
+      },1800);
       return;
     }
 
-    // Toast notification
-    var toast=document.createElement('div');
-    toast.style.cssText='position:fixed;bottom:24px;right:24px;background:#245edb;color:#fff;font-family:Tahoma,sans-serif;font-size:12px;padding:10px 18px;border-radius:4px;z-index:9999;box-shadow:3px 5px 14px rgba(0,0,0,0.35);';
-    toast.innerHTML='&#10003; Rescheduled to <strong>'+DNAMES[newDow-1]+'</strong>, '+hLabel(newH);
-    document.body.appendChild(toast);
-    setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity 0.4s';setTimeout(function(){toast.remove();},400);},2800);
+    // Wrong answer: shake and show unavailability message
+    ensureShakeCSS();
+    errDiv.textContent='Time Slot is not available.';
+    errDiv.style.display='block';
+    errDiv.classList.remove('_calShake');
+    void errDiv.offsetWidth; // force reflow to restart animation
+    errDiv.classList.add('_calShake');
   };
 
   // ---------- Month View ----------
@@ -1489,7 +1488,7 @@ const timerStart = Date.now();
       for(var di=0;di<5;di++){
         var dow=di+1;
         var isMtg=(_mtgDow===dow&&_mtgH===hh);
-        var isVic=(dow===3&&hh===14&&!isMtg);
+        var isVic=(dow===3&&hh===15&&!isMtg);
         var evt=null;
         if(!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
         if(isMtg){
