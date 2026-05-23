@@ -252,14 +252,10 @@
 
   <div class="desktop-icon" style="top:80px;left:30px" id="iconGames"><div class="icon-img">🎮</div><div class="icon-label">Games</div></div>
   <div class="desktop-icon" style="top:80px;left:130px" id="iconEmails"><div class="icon-img">✉️</div><div class="icon-label">Emails</div></div>
-  <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📋</div><div class="icon-label">Meetings</div></div>
+  <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
   <div class="desktop-icon" style="top:80px;left:330px" id="iconConference"><div class="icon-img">📞</div><div class="icon-label">Conference</div></div>
   <div class="desktop-icon" style="top:80px;left:430px" id="iconFunny"><div class="icon-img">📁</div><div class="icon-label">The Funny Pages</div></div>
 
-  <div id="postit-note">
-    <div class="postit-task strikethrough">Get Top Score in Snake</div>
-    <div class="postit-task">Crack Top 2 in Brick Breaker</div>
-  </div>
 
   <!-- GAMES -->
   <div class="window xp-win" id="winGames" style="width:240px;top:120px;left:60px;">
@@ -285,10 +281,16 @@
 
   <!-- MEETINGS -->
   <div class="window xp-win" id="winMeetings" style="width:240px;top:140px;left:100px;">
-    <div class="title-bar"><div class="title-bar-text">Calendar</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winMeetings')"></button></div></div>
+    <div class="title-bar"><div class="title-bar-text">📝 Notes</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winMeetings')"></button></div></div>
     <div class="window-body">
       <ul class="tree-view">
-        <li><a href="#" onclick="openWin('winNotes');return false;">📝 Meeting Notes — Aug 2, 2005</a></li>
+        <li><a href="#" onclick="openWin('winNotes');return false;">📋 Today's Notes</a></li>
+        <li><a href="#" onclick="openWin('winGoals');return false;">⭐ Super Important Goals</a></li>
+        <li><a href="#" onclick="openWin('winNote1');return false;">📄 Note 1</a></li>
+        <li><a href="#" onclick="openWin('winNote2');return false;">📄 Note 2</a></li>
+        <li><a href="#" onclick="openWin('winNote3');return false;">📄 Note 3</a></li>
+        <li><a href="#" onclick="openWin('winNote4');return false;">📄 Note 4</a></li>
+        <li><a href="#" onclick="openWin('winNote5');return false;">📄 Note 5</a></li>
       </ul>
     </div>
   </div>
@@ -383,7 +385,7 @@
 
   <!-- MEETING NOTES -->
   <div class="window xp-win" id="winNotes" style="width:500px;top:140px;left:80px;">
-    <div class="title-bar"><div class="title-bar-text">📋 Meeting Notes — August 2, 2005 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNotes')"></button></div></div>
+    <div class="title-bar"><div class="title-bar-text">📋 Today's Notes — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNotes')"></button></div></div>
     <div class="window-body">
       <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
       <div class="notes-body">
@@ -396,7 +398,86 @@
         <div><span class="ts">9:51am</span> – Logged action item: Review API call limits for 3rd-partyPlugin_v1.9.8.</div>
       </div>
     </div>
-    <div class="status-bar"><p class="status-bar-field">© 2005 Office Meeting Notes</p><p class="status-bar-field">Ln 7, Col 1</p></div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 7, Col 1</p></div>
+  </div>
+
+
+  <!-- SUPER IMPORTANT GOALS -->
+  <div class="window xp-win" id="winGoals" style="width:420px;top:150px;left:90px;">
+    <div class="title-bar"><div class="title-bar-text">⭐ Super Important Goals — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winGoals')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body">
+        <div style="text-decoration:line-through;color:#777;">☑ Get Top Score in Snake</div>
+        <div>☐ Crack Top 2 in Brick Breaker</div>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 2, Col 1</p></div>
+  </div>
+
+  <!-- NOTE 1 -->
+  <div class="window xp-win" id="winNote1" style="width:500px;top:145px;left:85px;">
+    <div class="title-bar"><div class="title-bar-text">📄 Note 1 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNote1')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body" style="padding:10px 8px;">
+        <p style="margin:0 0 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p style="margin:0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 1, Col 1</p></div>
+  </div>
+
+  <!-- NOTE 2 -->
+  <div class="window xp-win" id="winNote2" style="width:500px;top:150px;left:90px;">
+    <div class="title-bar"><div class="title-bar-text">📄 Note 2 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNote2')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body" style="padding:10px 8px;">
+        <p style="margin:0 0 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p style="margin:0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 1, Col 1</p></div>
+  </div>
+
+  <!-- NOTE 3 -->
+  <div class="window xp-win" id="winNote3" style="width:500px;top:155px;left:95px;">
+    <div class="title-bar"><div class="title-bar-text">📄 Note 3 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNote3')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body" style="padding:10px 8px;">
+        <p style="margin:0 0 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p style="margin:0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 1, Col 1</p></div>
+  </div>
+
+  <!-- NOTE 4 -->
+  <div class="window xp-win" id="winNote4" style="width:500px;top:160px;left:100px;">
+    <div class="title-bar"><div class="title-bar-text">📄 Note 4 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNote4')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body" style="padding:10px 8px;">
+        <p style="margin:0 0 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p style="margin:0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 1, Col 1</p></div>
+  </div>
+
+  <!-- NOTE 5 -->
+  <div class="window xp-win" id="winNote5" style="width:500px;top:165px;left:105px;">
+    <div class="title-bar"><div class="title-bar-text">📄 Note 5 — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNote5')"></button></div></div>
+    <div class="window-body">
+      <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
+      <div class="notes-body" style="padding:10px 8px;">
+        <p style="margin:0 0 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p style="margin:0;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 1, Col 1</p></div>
   </div>
 
   <!-- SNAKE -->
@@ -558,7 +639,7 @@
       <div class="sm-body">
         <div class="sm-opt" onclick="openWin('winGames');closeStart();">🎮 Games</div>
         <div class="sm-opt" onclick="openWin('winEmails');closeStart();">✉️ Emails</div>
-        <div class="sm-opt" onclick="openWin('winMeetings');closeStart();">📋 Meetings</div>
+        <div class="sm-opt" onclick="openWin('winMeetings');closeStart();">📝 Notes</div>
         <div class="sm-opt" onclick="openWin('winConference');closeStart();">📞 Conference</div>
         <div class="sm-opt" onclick="openWin('winFunny');closeStart();">📁 The Funny Pages</div>
         <div class="sm-opt" onclick="openLockedRoom();closeStart();">🔒 Locked Room</div>
@@ -640,7 +721,7 @@ updateStatus();
 // ---- Window management ----
 let topZ=300;
 const tbWins=document.getElementById('tb-open-wins');
-const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📋 Meetings',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Notes',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break'};
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Today\'s Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break'};
 
 // Reset all puzzles to unsolved
 localStorage.clear();
