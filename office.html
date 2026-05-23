@@ -809,7 +809,7 @@ document.getElementById("multiPassBtn").onclick=function(){
 };
 function showPasswordModal(){
   const solved=getSolved(), div=document.getElementById('passwordOptions');
-  div.innerHTML='';
+  div.innerHTML='<div class="pw-row" style="border-bottom:1px solid #aca899;margin-bottom:8px;padding-bottom:8px;"><label><strong>Master Password:</strong></label><input type="password" id="pwinput_master" placeholder="Override all"/><button onclick="solveMaster()">Submit</button></div>';
   requiredPasswords.forEach((p,i)=>{
     if(solved[i]) div.innerHTML+=`<div class="pw-row pw-row--solved"><strong>${p.label}:</strong> <span>✓ Solved</span></div>`;
     else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="solvePassword('${p.key}')">Submit</button></div>`;
@@ -825,6 +825,14 @@ function solvePassword(key){
   } else { alert("Incorrect — try again."); }
 }
 function closePasswordModal(){ document.getElementById('passwordModal').style.display='none'; }
+function solveMaster(){
+  const val=document.getElementById('pwinput_master').value;
+  if(val==='Boss'){
+    requiredPasswords.forEach(p=>localStorage.setItem(p.key,'solved'));
+    updateStatus(); closePasswordModal();
+    window.location.href='officepass.html';
+  } else { alert('Incorrect master password.'); }
+}
 updateStatus();
 
 // ---- Window management ----
