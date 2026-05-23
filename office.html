@@ -1468,7 +1468,7 @@ const timerStart = Date.now();
             h+='<div style="margin-top:2px;display:flex;gap:2px;flex-direction:column;">';
             var show=Math.min(dayEvts.length,2);
             for(var ei=0;ei<show;ei++){
-              h+='<span style="font-size:9px;font-family:Tahoma,sans-serif;padding:1px 3px;border-radius:2px;background:'+dayEvts[ei].bg+';color:'+dayEvts[ei].fg+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+dayEvts[ei].l+'</span>';
+              h+='<span style="font-size:9px;font-family:Tahoma,sans-serif;padding:1px 3px;border-radius:2px;background:'+dayEvts[ei].bg+';color:'+dayEvts[ei].fg+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(dayEvts[ei].l||(dayEvts[ei].labels&&dayEvts[ei].labels[0])||'')+'</span>';
             }
             if(dayEvts.length>2)h+='<span style="font-size:9px;font-family:Tahoma,sans-serif;color:#666;">+'+(dayEvts.length-2)+' more</span>';
             h+='</div>';
