@@ -804,7 +804,7 @@ const requiredPasswords = [
 function getSolved(){ return requiredPasswords.map(p=>localStorage.getItem(p.key)==="solved"); }
 function updateStatus(){ document.getElementById("passStatus").textContent=`Solved: ${getSolved().filter(Boolean).length} / 6`; }
 document.getElementById("multiPassBtn").onclick=function(){
-  if(getSolved().every(Boolean)){window.location.href="officepass.html";return;}
+  if(getSolved().every(Boolean)){openWin('winCalendar');return;}
   showPasswordModal();
 };
 function showPasswordModal(){
@@ -821,7 +821,7 @@ function solvePassword(key){
   const val=document.getElementById(`pwinput_${key}`).value;
   if(val===pwObj.value){
     localStorage.setItem(key,"solved"); alert('✓ Correct!'); updateStatus(); showPasswordModal();
-    if(getSolved().every(Boolean)){closePasswordModal();window.location.href="officepass.html";}
+    if(getSolved().every(Boolean)){closePasswordModal();openWin('winCalendar');}
   } else { alert("Incorrect — try again."); }
 }
 function closePasswordModal(){ document.getElementById('passwordModal').style.display='none'; }
@@ -830,7 +830,7 @@ function solveMaster(){
   if(val==='Boss'){
     requiredPasswords.forEach(p=>localStorage.setItem(p.key,'solved'));
     updateStatus(); closePasswordModal();
-    window.location.href='officepass.html';
+    openWin('winCalendar');
   } else { alert('Incorrect master password.'); }
 }
 updateStatus();
@@ -862,7 +862,7 @@ function addToTaskbar(id){
 }
 function removeFromTaskbar(id){ const btn=document.getElementById('tb_'+id); if(btn) btn.remove(); }
 
-document.getElementById('iconCalendar').onclick  =()=>openWin('winCalendar');
+document.getElementById('iconCalendar').onclick  =()=>{ if(getSolved().every(Boolean)) openWin('winCalendar'); else showPasswordModal(); };
 document.getElementById('iconGames').onclick    =()=>openWin('winGames');
 document.getElementById('iconEmails').onclick   =()=>openWin('winEmails');
 document.getElementById('iconMeetings').onclick =()=>openWin('winMeetings');
@@ -1332,6 +1332,28 @@ const timerStart = Date.now();
       addToTaskbar('winTimer');
     }
   });
+})();
+
+
+// ---- Calendar Victory: schedule Wednesday 2-3 PM ----
+(function(){
+  function setupVictory(){
+    const rows = document.querySelectorAll('#winCalendar table tbody tr');
+    if(rows.length < 7) return;
+    const cells = rows[6].querySelectorAll('td'); // row 6 = 2:00 PM
+    const wedCell = cells[3]; // col 3 = Wednesday
+    if(!wedCell) return;
+    wedCell.setAttribute('data-victory', 'true');
+    wedCell.style.outline = '2px dashed #245edb';
+    wedCell.title = 'Schedule something here...';
+    wedCell.addEventListener('input', function(){
+      if(this.textContent.trim() !== ''){
+        this.style.background = '#c8f0c8';
+        setTimeout(()=>{ window.location.href='officepass.html'; }, 800);
+      }
+    });
+  }
+  setupVictory();
 })();
 
 </script>
