@@ -255,6 +255,7 @@
   <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
   <div class="desktop-icon" style="top:80px;left:330px" id="iconConference"><div class="icon-img">📞</div><div class="icon-label">Conference</div></div>
   <div class="desktop-icon" style="top:80px;left:430px" id="iconFunny"><div class="icon-img">📁</div><div class="icon-label">The Funny Pages</div></div>
+  <div class="desktop-icon" style="top:80px;left:530px" id="iconSupplyCloset"><div class="icon-img">📦</div><div class="icon-label">Office Supply Closet</div></div>
 
 
   <!-- GAMES -->
@@ -314,6 +315,40 @@
         <li><a href="#" onclick="openWin('winCountdown');return false;">📁 Counting Down the Top 10</a></li>
       </ul>
     </div>
+  </div>
+
+  <!-- OFFICE SUPPLY CLOSET -->
+  <div class="window xp-win" id="winSupplyCloset" style="width:520px;top:100px;left:150px;">
+    <div class="title-bar"><div class="title-bar-text">📦 Office Supply Closet</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winSupplyCloset')"></button></div></div>
+    <div class="window-body" style="padding:6px;">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;padding:8px;background:#fff;border:1px inset #aca899;max-height:420px;overflow-y:auto;">
+        <div style="text-align:center;width:120px;cursor:default;">
+          <img src="office-supply-closet/Calculator.jpg" alt="Calculator" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Calculator.jpg</div>
+        </div>
+        <div style="text-align:center;width:120px;cursor:default;">
+          <img src="office-supply-closet/Paper.jpg" alt="Paper" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Paper.jpg</div>
+        </div>
+        <div style="text-align:center;width:120px;cursor:default;">
+          <img src="office-supply-closet/Pencil.jpg" alt="Pencil" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Pencil.jpg</div>
+        </div>
+        <div style="text-align:center;width:120px;cursor:default;">
+          <img src="office-supply-closet/Ruler.jpg" alt="Ruler" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Ruler.jpg</div>
+        </div>
+        <div style="text-align:center;width:120px;cursor:default;">
+          <img src="office-supply-closet/Scissors.jpg" alt="Scissors" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Scissors.jpg</div>
+        </div>
+        <div style="text-align:center;width:120px;cursor:default;">
+          <img src="office-supply-closet/Stapler.jpg" alt="Stapler" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Stapler.jpg</div>
+        </div>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">6 items</p></div>
   </div>
 
   <!-- COUNTING DOWN THE TOP 10 -->
@@ -743,7 +778,7 @@ updateStatus();
 // ---- Window management ----
 let topZ=300;
 const tbWins=document.getElementById('tb-open-wins');
-const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Monday Meeting Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break',winCalendar:'📅 Calendar'};
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Monday Meeting Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSupplyCloset:'📦 Supply Closet',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break',winCalendar:'📅 Calendar'};
 
 // Reset all puzzles to unsolved
 localStorage.clear();
@@ -774,6 +809,7 @@ document.getElementById('iconEmails').onclick   =()=>openWin('winEmails');
 document.getElementById('iconMeetings').onclick =()=>openWin('winMeetings');
 document.getElementById('iconConference').onclick=()=>openWin('winConference');
 document.getElementById('iconFunny').onclick    =()=>openWin('winFunny');
+document.getElementById('iconSupplyCloset').onclick=()=>openWin('winSupplyCloset');
 document.querySelectorAll('.xp-win').forEach(w=>w.addEventListener('mousedown',()=>bringToFront(w)));
 
 // ---- Drag ----
