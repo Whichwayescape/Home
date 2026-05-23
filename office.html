@@ -536,6 +536,20 @@
     <div class="status-bar"><p class="status-bar-field">SECRET LEVEL v1.0</p></div>
   </div>
 
+
+  <!-- LUNCH BREAK TIMER -->
+  <div class="window xp-win" id="winTimer" style="display:none;position:fixed;top:52px;right:8px;width:158px;z-index:450;">
+    <div class="title-bar">
+      <div class="title-bar-text">🕐 Lunch Break</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" id="timerMinBtn"></button>
+      </div>
+    </div>
+    <div class="window-body" style="padding:4px 8px;text-align:center;">
+      <span id="timerDisplay" style="font-size:16px;font-weight:bold;font-family:'Tahoma',monospace;color:#245edb;letter-spacing:2px;">60:00</span>
+    </div>
+  </div>
+
   <!-- TASKBAR -->
   <div id="taskbar">
     <button id="start-btn"><span>⊞</span> start</button>
@@ -566,6 +580,7 @@
   function tryLogin(){
     if(input.value === LOGIN_PASS){
       screen.style.display = 'none';
+      openWin('winTimer');
     } else {
       error.textContent = 'The password is incorrect. Please try again.';
       input.value = '';
@@ -625,7 +640,7 @@ updateStatus();
 // ---- Window management ----
 let topZ=300;
 const tbWins=document.getElementById('tb-open-wins');
-const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📋 Meetings',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Notes',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret'};
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📋 Meetings',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Notes',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break'};
 
 // Reset all puzzles to unsolved
 localStorage.clear();
@@ -1080,6 +1095,45 @@ if(padSecR){
 }
 document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') bbSecLeftPress=true; if(e.key==='ArrowRight') bbSecRightPress=true; });
 document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft') bbSecLeftPress=false; if(e.key==='ArrowRight') bbSecRightPress=false; });
+
+
+// ---- Lunch Break Timer ----
+const timerStart = Date.now();
+
+(function(){
+  const DURATION = 60 * 60; // 60 minutes in seconds
+
+  function tick(){
+    const elapsed   = Math.floor((Date.now() - timerStart) / 1000);
+    const remaining = Math.max(0, DURATION - elapsed);
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    const display = document.getElementById('timerDisplay');
+    if(!display) return;
+    display.textContent = mins + ':' + String(secs).padStart(2,'0');
+    if(remaining <= 0){
+      display.style.color = '#d9534f';
+      display.textContent = '0:00';
+    } else if(remaining <= 300){
+      display.style.color = '#d9534f';
+    } else if(remaining <= 600){
+      display.style.color = '#cc7700';
+    } else {
+      display.style.color = '#245edb';
+    }
+  }
+
+  setInterval(tick, 1000);
+  tick();
+
+  // Minimize — hide window, keep taskbar button
+  document.addEventListener('click', function(e){
+    if(e.target.id === 'timerMinBtn'){
+      document.getElementById('winTimer').style.display = 'none';
+      addToTaskbar('winTimer');
+    }
+  });
+})();
 
 </script>
 </body>
