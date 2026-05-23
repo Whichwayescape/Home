@@ -491,7 +491,7 @@
         <span id="passStatus" style="font-weight:bold;color:#245edb;font-size:11px;">Solved: 0 / 6</span>
       </div>
     </div>
-    <div class="status-bar"><p class="status-bar-field">Month / Week Views</p><p class="status-bar-field">Schedule Wednesday 2&#8211;3 PM to proceed</p></div>
+    <div class="status-bar"><p class="status-bar-field">Month / Week Views</p><p class="status-bar-field">Month / Week Views</p></div>
   </div>
 
   <!-- SNAKE -->
@@ -1245,7 +1245,9 @@ const timerStart = Date.now();
 (function(){
   // Fixed: March 2026, week 3 (Mon 16) as starting week
   var MARCH_YEAR=2026, MARCH_MONTH=2;
-  var WEEK3_MON=new Date(2026,2,16).getTime(); // March 16 = Monday of week 3
+  var WEEK3_MON =new Date(2026,2,16).getTime(); // March 16 = Monday of week 3
+  var FIRST_MON =new Date(2026,2,2).getTime();  // March 2  = first Monday
+  var LAST_MON  =new Date(2026,2,30).getTime(); // March 30 = last Monday (week 5)
   var EVENTS_CUTOFF=22; // days >= 22 are week 4+ (no events shown)
 
   var _view='month';
@@ -1446,13 +1448,18 @@ const timerStart = Date.now();
   function renderWeek(){
     var app=document.getElementById('calApp');if(!app)return;
     var mon=getMon(_anchor),fri=new Date(mon);fri.setDate(fri.getDate()+4);
-    var inWeek3=mon.getTime()===WEEK3_MON;
+    var curMon=mon.getTime();
+    var inWeek3=curMon===WEEK3_MON;
+    var canPrev=curMon>FIRST_MON;
+    var canNext=curMon<LAST_MON;
     var weekStr=mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+fri.toLocaleDateString('en-US',{month:'short',day:'numeric'});
     var HOURS=[];for(var hh=8;hh<=17;hh++)HOURS.push(hh);
+    var DISABLED='opacity:0.35;cursor:not-allowed;';
     var h='<div style="padding:8px 10px;">';
-    // Header: week range + Month View toggle (no prev/next)
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
-    h+='<span style="font-weight:bold;font-size:13px;font-family:Tahoma,sans-serif;">'+weekStr+'</span>';
+    h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">';
+    h+='<button style="'+BTN_XP+(canPrev?'':DISABLED)+'" onclick="window._calPrev()" '+(canPrev?'':'disabled')+'>&#9664; Prev</button>';
+    h+='<span style="font-weight:bold;flex:1;text-align:center;font-size:13px;font-family:Tahoma,sans-serif;">'+weekStr+'</span>';
+    h+='<button style="'+BTN_XP+(canNext?'':DISABLED)+'" onclick="window._calNext()" '+(canNext?'':'disabled')+'>Next &#9654;</button>';
     h+='<button style="'+BTN_BLUE+'" onclick="window._calToggle()">&#128197; Month View</button>';
     h+='</div>';
     h+='<div style="overflow-y:auto;max-height:340px;">';
@@ -1470,20 +1477,14 @@ const timerStart = Date.now();
       h+='<td style="padding:3px 4px;border-right:1px solid #aca899;border-bottom:1px dotted #d0d0d0;font-weight:bold;font-size:10px;font-family:Tahoma,sans-serif;color:#555;white-space:nowrap;background:#ece9d8;">'+hLabel(hh)+'</td>';
       for(var di=0;di<5;di++){
         var dow=di+1;
-        // MTG only visible in week 3
         var isMtg=inWeek3&&(_mtgDow===dow&&_mtgH===hh);
-        // Regular events only in week 3
         var evt=null;
         if(inWeek3&&!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
-        // Dashed hint only in week 4 (not week 3) at Wed 3 PM
-        var isVic=(!inWeek3&&dow===3&&hh===15);
         if(isMtg){
           h+='<td onclick="window._calShowDetails()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
             '<span style="text-decoration:underline;">'+MTG.l+'</span> &#128197;</td>';
         }else if(evt){
           h+='<td style="background:'+evt.bg+';color:'+evt.fg+';border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;">'+evt.l+'</td>';
-        }else if(isVic){
-          h+='<td contenteditable="true" spellcheck="false" style="background:#f0f8ff;border:2px dashed #245edb;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:text;" title="Available – Schedule something here?" onfocus="this.style.outline=\'2px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
         }else{
           h+='<td contenteditable="true" spellcheck="false" style="background:#f9f9f9;border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;" onfocus="this.style.outline=\'1px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
         }
@@ -1494,6 +1495,18 @@ const timerStart = Date.now();
     app.innerHTML=h;
   }
 
+  window._calPrev=function(){
+    var mon=getMon(_anchor);
+    if(mon.getTime()<=FIRST_MON)return;
+    _anchor=new Date(mon);_anchor.setDate(_anchor.getDate()-7);
+    renderWeek();
+  };
+  window._calNext=function(){
+    var mon=getMon(_anchor);
+    if(mon.getTime()>=LAST_MON)return;
+    _anchor=new Date(mon);_anchor.setDate(_anchor.getDate()+7);
+    renderWeek();
+  };
   window._calToggle=function(){
     _view=(_view==='month'?'week':'month');
     if(_view==='month')renderMonth();else renderWeek();
