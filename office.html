@@ -1498,7 +1498,7 @@ const timerStart = Date.now();
         }else if(evt){
           h+='<td style="background:'+evt.bg+';color:'+evt.fg+';border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;">'+evt.l+'</td>';
         }else if(isVic){
-          h+='<td contenteditable="true" spellcheck="false" data-victory="true" style="background:#f9f9f9;border:2px dashed #245edb;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:text;" title="Schedule something here..." onfocus="this.style.outline=\'2px solid #245edb\'" onblur="this.style.outline=\'none\'" oninput="window._calVic(this)"></td>';
+          h+='<td contenteditable="true" spellcheck="false" data-victory="true" style="background:#f9f9f9;border:2px dashed #245edb;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:text;" title="Schedule something here..." onfocus="this.style.outline=\'2px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
         }else{
           h+='<td contenteditable="true" spellcheck="false" style="background:#f9f9f9;border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;" onfocus="this.style.outline=\'1px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
         }
@@ -1523,12 +1523,7 @@ const timerStart = Date.now();
     if(_view==='month')renderMonth();else renderWeek();
   };
   window._calWeek=function(y,m,d){_anchor=new Date(y,m,d);_view='week';renderWeek();};
-  window._calVic=function(cell){
-    if(cell.textContent.trim()!==''){
-      cell.style.background='#c8f0c8';
-      setTimeout(function(){window.location.href='officepass.html';},800);
-    }
-  };
+
   window.initCalendar=function(){_anchor=new Date();_view='month';renderMonth();};
 })();
 
