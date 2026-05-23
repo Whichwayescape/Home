@@ -1243,8 +1243,14 @@ const timerStart = Date.now();
 
 // ---- Calendar App ----
 (function(){
-  var _view='month', _anchor=new Date();
-  var _mtgDow=5, _mtgH=16; // current position of the reschedulable meeting
+  // Fixed: March 2026, week 3 (Mon 16) as starting week
+  var MARCH_YEAR=2026, MARCH_MONTH=2;
+  var WEEK3_MON=new Date(2026,2,16).getTime(); // March 16 = Monday of week 3
+  var EVENTS_CUTOFF=22; // days >= 22 are week 4+ (no events shown)
+
+  var _view='month';
+  var _anchor=new Date(2026,2,16); // start on week 3
+  var _mtgDow=5, _mtgH=16;
 
   var BTN ='font-family:Tahoma,sans-serif;font-size:11px;padding:4px 12px;cursor:pointer;border:1px solid #003c74;border-radius:3px;';
   var BTN_XP  =BTN+'background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);';
@@ -1272,44 +1278,35 @@ const timerStart = Date.now();
   var DAYS  =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var WDAYS =['Mon','Tue','Wed','Thu','Fri'];
   var DNAMES=['Monday','Tuesday','Wednesday','Thursday','Friday'];
-  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   function getMon(d){var dt=new Date(d),day=dt.getDay();dt.setDate(dt.getDate()+(day===0?-6:1-day));dt.setHours(0,0,0,0);return dt;}
   function hLabel(h){return h<12?(h+':00 AM'):(h===12?'12:00 PM':((h-12)+':00 PM'));}
 
   // ---------- Meeting Modal ----------
   function ensureModal(){
-    if(document.getElementById('_calModal')) return;
+    if(document.getElementById('_calModal'))return;
     var bd=document.createElement('div');
     bd.id='_calModalBd';
     bd.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:none;';
-    bd.onclick=function(e){if(e.target===bd) window._calCloseModal();};
+    bd.onclick=function(e){if(e.target===bd)window._calCloseModal();};
     document.body.appendChild(bd);
     var m=document.createElement('div');
-    m.id='_calModal';
-    m.className='window';
+    m.id='_calModal';m.className='window';
     m.style.cssText='position:fixed;z-index:9999;display:none;width:390px;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:6px 6px 20px rgba(0,0,0,0.5);min-width:340px;';
     document.body.appendChild(m);
   }
-
   function openModal(html){
     ensureModal();
     document.getElementById('_calModalBd').style.display='block';
     var m=document.getElementById('_calModal');
-    m.innerHTML=html;
-    m.style.display='block';
+    m.innerHTML=html; m.style.display='block';
   }
-
   window._calCloseModal=function(){
-    var bd=document.getElementById('_calModalBd');
-    var m=document.getElementById('_calModal');
-    if(bd)bd.style.display='none';
-    if(m)m.style.display='none';
+    var bd=document.getElementById('_calModalBd'),m=document.getElementById('_calModal');
+    if(bd)bd.style.display='none'; if(m)m.style.display='none';
   };
-
   window._calShowDetails=function(){
-    var dayName=DNAMES[_mtgDow-1];
-    var timeStr=hLabel(_mtgH)+' – '+hLabel(_mtgH+1);
+    var dayName=DNAMES[_mtgDow-1],timeStr=hLabel(_mtgH)+' – '+hLabel(_mtgH+1);
     openModal(
       '<div class="title-bar"><div class="title-bar-text">&#128197; Meeting Details</div>'+
       '<div class="title-bar-controls"><button aria-label="Close" onclick="window._calCloseModal()"></button></div></div>'+
@@ -1330,7 +1327,6 @@ const timerStart = Date.now();
       '</div>'
     );
   };
-
   window._calShowReschedule=function(){
     var dayOpts='';
     for(var i=0;i<5;i++) dayOpts+='<option value="'+(i+1)+'"'+((_mtgDow===i+1)?' selected':'')+'>'+DNAMES[i]+'</option>';
@@ -1363,57 +1359,45 @@ const timerStart = Date.now();
 
   function ensureShakeCSS(){
     if(document.getElementById('_calShakeCSS'))return;
-    var s=document.createElement('style');
-    s.id='_calShakeCSS';
+    var s=document.createElement('style');s.id='_calShakeCSS';
     s.textContent='@keyframes _calShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-4px)}90%{transform:translateX(4px)}}._calShake{animation:_calShake 0.5s ease;}';
     document.head.appendChild(s);
   }
-
   window._calConfirm=function(){
-    var dayEl=document.getElementById('_calDay');
-    var timeEl=document.getElementById('_calTime');
+    var dayEl=document.getElementById('_calDay'),timeEl=document.getElementById('_calTime');
     if(!dayEl||!timeEl)return;
-    var newDow=parseInt(dayEl.value,10);
-    var newH=parseInt(timeEl.value,10);
+    var newDow=parseInt(dayEl.value,10),newH=parseInt(timeEl.value,10);
     var errDiv=document.getElementById('_calRescheduleErr');
-
     // Solution: Wednesday 3:00 PM
     if(newDow===3&&newH===15){
-      _mtgDow=newDow; _mtgH=newH;
+      _mtgDow=newDow;_mtgH=newH;
       window._calCloseModal();
-      if(_view==='week') renderWeek(); else renderMonth();
-      // Success toast
+      if(_view==='week')renderWeek();else renderMonth();
       var toast=document.createElement('div');
       toast.style.cssText='position:fixed;bottom:24px;right:24px;background:#2a7a2a;color:#fff;font-family:Tahoma,sans-serif;font-size:12px;padding:12px 20px;border-radius:4px;z-index:9999;box-shadow:3px 5px 14px rgba(0,0,0,0.4);line-height:1.5;';
       toast.innerHTML='&#10003; <strong>Meeting rescheduled!</strong><br>Market Saturation Meeting – Wednesday 3:00 PM';
       document.body.appendChild(toast);
-      setTimeout(function(){
-        toast.style.opacity='0'; toast.style.transition='opacity 0.5s';
-        setTimeout(function(){window.location.href='officepass.html';},500);
-      },1800);
+      setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity 0.5s';setTimeout(function(){window.location.href='officepass.html';},500);},1800);
       return;
     }
-
-    // Wrong answer: shake and show unavailability message
+    // Wrong: shake + unavailability message
     ensureShakeCSS();
     errDiv.textContent='Time Slot is not available.';
     errDiv.style.display='block';
     errDiv.classList.remove('_calShake');
-    void errDiv.offsetWidth; // force reflow to restart animation
+    void errDiv.offsetWidth;
     errDiv.classList.add('_calShake');
   };
 
-  // ---------- Month View ----------
+  // ---------- Month View (fixed March) ----------
   function renderMonth(){
     var app=document.getElementById('calApp');if(!app)return;
-    var y=_anchor.getFullYear(),m=_anchor.getMonth();
+    var y=MARCH_YEAR,m=MARCH_MONTH;
     var first=new Date(y,m,1),last=new Date(y,m+1,0),startDow=first.getDay();
-    var today=new Date();today.setHours(0,0,0,0);
     var h='<div style="padding:8px 10px;">';
-    h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">';
-    h+='<button style="'+BTN_XP+'" onclick="window._calPrev()">&#9664; Prev</button>';
-    h+='<span style="font-weight:bold;flex:1;text-align:center;font-size:13px;font-family:Tahoma,sans-serif;">'+MONTHS[m]+' '+y+'</span>';
-    h+='<button style="'+BTN_XP+'" onclick="window._calNext()">Next &#9654;</button>';
+    // Header: just "March" with Week View toggle
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
+    h+='<span style="font-weight:bold;font-size:14px;font-family:Tahoma,sans-serif;letter-spacing:0.5px;">March</span>';
     h+='<button style="'+BTN_BLUE+'" onclick="window._calToggle()">&#128203; Week View</button>';
     h+='</div>';
     h+='<table style="width:100%;border-collapse:collapse;">';
@@ -1431,16 +1415,15 @@ const timerStart = Date.now();
       h+='<tr>';
       for(var c=0;c<7;c++){
         var day=cells[r*7+c],wk=(c===0||c===6);
-        var isToday=day&&(new Date(y,m,day).getTime()===today.getTime());
-        var dayEvts=(!wk&&day)?EVTS.filter(function(e){return e.dow===c;}):[];
-        // Include reschedulable MTG badge on its current day
-        if(!wk&&day&&_mtgDow===c) dayEvts=dayEvts.concat([MTG]);
-        var bg=isToday?'#245edb':(wk?'#f5f5f5':'#fff');
-        var fg=isToday?'#fff':(wk?'#bbb':'#000');
+        // Events only in weeks 1-3 (days 1-21)
+        var active=!wk&&day&&day<EVENTS_CUTOFF;
+        var dayEvts=active?EVTS.filter(function(e){return e.dow===c;}):[];
+        if(active&&_mtgDow===c) dayEvts=dayEvts.concat([MTG]);
+        var clickable=!wk&&!!day;
         var tip=day&&dayEvts.length?dayEvts.map(function(e){return hLabel(e.h)+' '+e.l;}).join('; '):'';
-        h+='<td style="padding:4px 5px;border:1px solid #d0d0d0;vertical-align:top;height:54px;background:'+bg+';color:'+fg+';cursor:'+(day?'pointer':'default')+';" title="'+tip+'"'+(day?' onclick="window._calWeek('+y+','+m+','+day+')"':'')+'>'; 
+        h+='<td style="padding:4px 5px;border:1px solid #d0d0d0;vertical-align:top;height:54px;background:#fff;color:'+(wk?'#bbb':'#000')+';cursor:'+(clickable?'pointer':'default')+';" title="'+tip+'"'+(clickable?' onclick="window._calWeek('+y+','+m+','+day+')"':'')+'>'; 
         if(day){
-          h+='<div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:'+(isToday?'bold':'normal')+';text-align:right;">'+day+'</div>';
+          h+='<div style="font-size:11px;font-family:Tahoma,sans-serif;text-align:right;color:'+(wk?'#bbb':'#333')+';">'+day+'</div>';
           if(dayEvts.length){
             h+='<div style="margin-top:2px;display:flex;gap:2px;flex-direction:column;">';
             var show=Math.min(dayEvts.length,2);
@@ -1463,13 +1446,13 @@ const timerStart = Date.now();
   function renderWeek(){
     var app=document.getElementById('calApp');if(!app)return;
     var mon=getMon(_anchor),fri=new Date(mon);fri.setDate(fri.getDate()+4);
-    var weekStr=mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+fri.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var inWeek3=mon.getTime()===WEEK3_MON;
+    var weekStr=mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+fri.toLocaleDateString('en-US',{month:'short',day:'numeric'});
     var HOURS=[];for(var hh=8;hh<=17;hh++)HOURS.push(hh);
     var h='<div style="padding:8px 10px;">';
-    h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">';
-    h+='<button style="'+BTN_XP+'" onclick="window._calPrev()">&#9664; Prev</button>';
-    h+='<span style="font-weight:bold;flex:1;text-align:center;font-size:13px;font-family:Tahoma,sans-serif;">'+weekStr+'</span>';
-    h+='<button style="'+BTN_XP+'" onclick="window._calNext()">Next &#9654;</button>';
+    // Header: week range + Month View toggle (no prev/next)
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
+    h+='<span style="font-weight:bold;font-size:13px;font-family:Tahoma,sans-serif;">'+weekStr+'</span>';
     h+='<button style="'+BTN_BLUE+'" onclick="window._calToggle()">&#128197; Month View</button>';
     h+='</div>';
     h+='<div style="overflow-y:auto;max-height:340px;">';
@@ -1487,17 +1470,20 @@ const timerStart = Date.now();
       h+='<td style="padding:3px 4px;border-right:1px solid #aca899;border-bottom:1px dotted #d0d0d0;font-weight:bold;font-size:10px;font-family:Tahoma,sans-serif;color:#555;white-space:nowrap;background:#ece9d8;">'+hLabel(hh)+'</td>';
       for(var di=0;di<5;di++){
         var dow=di+1;
-        var isMtg=(_mtgDow===dow&&_mtgH===hh);
-        var isVic=(dow===3&&hh===15&&!isMtg);
+        // MTG only visible in week 3
+        var isMtg=inWeek3&&(_mtgDow===dow&&_mtgH===hh);
+        // Regular events only in week 3
         var evt=null;
-        if(!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
+        if(inWeek3&&!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
+        // Dashed hint only in week 4 (not week 3) at Wed 3 PM
+        var isVic=(!inWeek3&&dow===3&&hh===15);
         if(isMtg){
           h+='<td onclick="window._calShowDetails()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
             '<span style="text-decoration:underline;">'+MTG.l+'</span> &#128197;</td>';
         }else if(evt){
           h+='<td style="background:'+evt.bg+';color:'+evt.fg+';border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;">'+evt.l+'</td>';
         }else if(isVic){
-          h+='<td contenteditable="true" spellcheck="false" data-victory="true" style="background:#f9f9f9;border:2px dashed #245edb;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:text;" title="Schedule something here..." onfocus="this.style.outline=\'2px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
+          h+='<td contenteditable="true" spellcheck="false" style="background:#f0f8ff;border:2px dashed #245edb;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:text;" title="Available – Schedule something here?" onfocus="this.style.outline=\'2px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
         }else{
           h+='<td contenteditable="true" spellcheck="false" style="background:#f9f9f9;border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;" onfocus="this.style.outline=\'1px solid #245edb\'" onblur="this.style.outline=\'none\'"></td>';
         }
@@ -1508,22 +1494,13 @@ const timerStart = Date.now();
     app.innerHTML=h;
   }
 
-  // ---------- Navigation ----------
-  window._calPrev=function(){
-    if(_view==='month'){_anchor.setMonth(_anchor.getMonth()-1);renderMonth();}
-    else{_anchor.setDate(_anchor.getDate()-7);renderWeek();}
-  };
-  window._calNext=function(){
-    if(_view==='month'){_anchor.setMonth(_anchor.getMonth()+1);renderMonth();}
-    else{_anchor.setDate(_anchor.getDate()+7);renderWeek();}
-  };
   window._calToggle=function(){
     _view=(_view==='month'?'week':'month');
     if(_view==='month')renderMonth();else renderWeek();
   };
   window._calWeek=function(y,m,d){_anchor=new Date(y,m,d);_view='week';renderWeek();};
 
-  window.initCalendar=function(){_anchor=new Date();_view='month';renderMonth();};
+  window.initCalendar=function(){_anchor=new Date(2026,2,16);_view='month';renderMonth();};
 })();
 
 </script>
