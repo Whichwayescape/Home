@@ -1266,6 +1266,7 @@ const timerStart = Date.now();
   var REC_GREEN ={bg:'#c8f0c8',fg:'#1a5c1a'}; // green — biweekly (weeks 1 & 3)
 
   var MTG={l:'Market Saturation Meeting',bg:'#b8d4ff',fg:'#003c74'};
+  var MWTAULA_EVT={l:'MWTAULA',dow:3,h:14,bg:'#b8d4ff',fg:'#003c74'};
   // Blue meeting labels rotate each week [w1, w2, w3, w5]
   var EVTS=[
     // Monday
@@ -1298,7 +1299,6 @@ const timerStart = Date.now();
     {dow:3,h:11,labels:['Game Time','Check My LinkedIn','Analyze the Analytics Analytically','Fight off Existential Crisis'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     {dow:3,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
-    {dow:3,h:14,l:'MWTAULA',                                     biweekly:true,         bg:REC_GREEN.bg, fg:REC_GREEN.fg},
     {dow:3,h:15,labels:['Check My LinkedIn','Analyze the Analytics Analytically','Fight off Existential Crisis','Review UATS 🦄'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     // Thursday
@@ -1306,7 +1306,6 @@ const timerStart = Date.now();
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     {dow:4,h:9, labels:['Fight off Existential Crisis','Review UATS 🦄','Meet with Medium Management','Contemplate Life Choices'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:4,h:10,l:'BFFR Meeting',                                biweekly:true,         bg:REC_GREEN.bg, fg:REC_GREEN.fg},
     {dow:4,h:11,labels:['Review UATS 🦄','Meet with Medium Management','Contemplate Life Choices','Game Time'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     {dow:4,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
@@ -1322,7 +1321,6 @@ const timerStart = Date.now();
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     {dow:5,h:10,labels:['Analyze the Analytics Analytically','Fight off Existential Crisis','Review UATS 🦄','Meet with Medium Management'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:5,h:11,l:'Discuss Rebrand',                             biweekly:true,         bg:REC_GREEN.bg, fg:REC_GREEN.fg},
     {dow:5,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
     {dow:5,h:14,labels:['Fight off Existential Crisis','Review UATS 🦄','Meet with Medium Management','Contemplate Life Choices'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
@@ -1444,6 +1442,25 @@ const timerStart = Date.now();
     void errDiv.offsetWidth;
     errDiv.classList.add('_calShake');
   };
+  window._calShowMwtaula=function(){
+    openModal(
+      '<div class="title-bar"><div class="title-bar-text">&#128203; Meeting Details</div>'+
+      '<div class="title-bar-controls"><button aria-label="Close" onclick="window._calCloseModal()"></button></div></div>'+
+      '<div class="window-body" style="padding:16px;font-family:Tahoma,sans-serif;font-size:12px;">'+
+        '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;">'+
+          '<span style="font-size:32px;line-height:1;">&#128203;</span>'+
+          '<div><div style="font-size:14px;font-weight:bold;color:#000;margin-bottom:4px;">MWTAULA</div>'+
+          '<div style="color:#555;font-size:11px;">Wednesday&nbsp;&nbsp;&#183;&nbsp;&nbsp;2:00 PM &ndash; 3:00 PM</div></div>'+
+        '</div>'+
+        '<div style="border-top:1px solid #aca899;padding-top:10px;margin-bottom:10px;line-height:1.6;">'+
+          '<div><strong>Description:</strong><br>(Meet with team about using less Acronyms)</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid #aca899;padding-top:12px;">'+
+          '<button style="'+BTN_XP+'" onclick="window._calCloseModal()">Close</button>'+
+        '</div>'+
+      '</div>'
+    );
+  };
 
   // ---------- Month View (fixed March) ----------
   function renderMonth(){
@@ -1476,6 +1493,7 @@ const timerStart = Date.now();
         var biweeklyActive=!wk&&day&&(day<=7||(day>=15&&day<=21));
         var dayEvts=active?EVTS.filter(function(e){return e.dow===c&&!e.biweekly;}):[];
         if(active&&_mtgDow===c) dayEvts=dayEvts.concat([MTG]);
+        if(active&&MWTAULA_EVT.dow===c) dayEvts=dayEvts.concat([MWTAULA_EVT]);
         if(!wk&&day) EVTS.forEach(function(e){if(e.recurring&&e.dow===c&&!dayEvts.some(function(x){return x.h===e.h;}))dayEvts.push(e);});
         if(biweeklyActive) EVTS.forEach(function(e){if(e.biweekly&&e.dow===c&&!dayEvts.some(function(x){return x.h===e.h;}))dayEvts.push(e);});
         var clickable=!wk&&!!day;
@@ -1538,11 +1556,15 @@ const timerStart = Date.now();
       for(var di=0;di<5;di++){
         var dow=di+1;
         var isMtg=inActiveWeek&&(_mtgDow===dow&&_mtgH===hh);
+        var isMwtaula=inActiveWeek&&(MWTAULA_EVT.dow===dow&&MWTAULA_EVT.h===hh)&&!isMtg;
         var evt=null;
-        for(var ei=0;ei<EVTS.length;ei++){var e=EVTS[ei];if(e.dow===dow&&e.h===hh&&(e.recurring||(inActiveWeek&&(!e.biweekly||isBiweeklyWeek)))&&!isMtg){evt=e;break;}}
+        for(var ei=0;ei<EVTS.length;ei++){var e=EVTS[ei];if(e.dow===dow&&e.h===hh&&(e.recurring||(inActiveWeek&&(!e.biweekly||isBiweeklyWeek)))&&!isMtg&&!isMwtaula){evt=e;break;}}
         if(isMtg){
           h+='<td onclick="window._calShowDetails()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
             '<span style="text-decoration:underline;">'+MTG.l+'</span> &#128197;</td>';
+        }else if(isMwtaula){
+          h+='<td onclick="window._calShowMwtaula()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
+            '<span style="text-decoration:underline;">MWTAULA</span> &#128203;</td>';
         }else if(evt){
           h+='<td style="background:'+evt.bg+';color:'+evt.fg+';border-right:1px dotted #d0d0d0;border-bottom:1px dotted #d0d0d0;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;">'+evtLabel(evt,wkIdx)+'</td>';
         }else{
