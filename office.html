@@ -1268,39 +1268,52 @@ const timerStart = Date.now();
   // Blue meeting labels rotate each week [w1, w2, w3, w5]
   var EVTS=[
     // Monday
-    {dow:1,h:9, l:'Weekly Goals',   bg:REC_RED.bg,   fg:REC_RED.fg},
+    {dow:1,h:8, l:'Morning Stand-up',                                                  bg:REC_RED.bg,   fg:REC_RED.fg},
+    {dow:1,h:9, l:'Weekly Goals',                                                       bg:REC_RED.bg,   fg:REC_RED.fg},
     {dow:1,h:10,labels:['Deliverables Check','Roadmap Review','Project Review','Milestone Update'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:1,h:12,l:'Lunch',          bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:1,h:11,labels:['Task Prioritization','Work Planning','Priority Review','Backlog Grooming'],
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:1,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
     {dow:1,h:14,labels:['Manager Check-in','One-on-One','1:1 w/ Manager','Performance Chat'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     {dow:1,h:16,labels:['Daily Wrap-Up','Close-Out Brief','EOD Check-in','End of Day Sync'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    // Tuesday
-    {dow:2,h:10,l:'Department Sync', bg:REC_RED.bg,  fg:REC_RED.fg},
-    {dow:2,h:12,l:'Lunch',           bg:REC_LUNCH.bg,fg:REC_LUNCH.fg},
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    // Tuesday — blue only
+    {dow:2,h:9, labels:['Team Briefing','Morning Sync','Daily Kick-off','AM Stand-up'],  bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:2,h:11,labels:['Status Review','Progress Check','Mid-Day Sync','Update Meeting'],bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:2,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    {dow:2,h:14,labels:['Ops Check-in','Department Update','Process Review','Team Debrief'],bg:ONE_BLUE.bg,fg:ONE_BLUE.fg},
+    {dow:2,h:16,labels:['Progress Report','Accountability Sync','EOD Update','Daily Report'],bg:ONE_BLUE.bg,fg:ONE_BLUE.fg},
     // Wednesday
+    {dow:3,h:8, labels:['AM Check-in','Early Stand-up','Pre-Planning Brief','Morning Sync'],bg:ONE_BLUE.bg,fg:ONE_BLUE.fg},
     {dow:3,h:9, labels:['Sprint Kickoff','Iteration Planning','Sprint Planning','Work Queue Review'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:3,h:11,labels:['UX Review','Mockup Critique','Design Review','Design Feedback'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:3,h:12,l:'Lunch',          bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:3,h:10,labels:['Strategy Review','Initiative Update','Planning Check','Goals Alignment'],
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:3,h:11,labels:['UX Review','Mockup Critique','Design Review','Design Feedback'], bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:3,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
     {dow:3,h:15,labels:['Account Sync','Stakeholder Update','Client Call','Client Check-in'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     // Thursday
-    {dow:4,h:8, labels:['Town Hall','Company Update','All Hands','All-Staff Brief'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:4,h:12,l:'Lunch',          bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
-    {dow:4,h:14,labels:['Finance Check','Q1 Budget Sync','Budget Review','Cost Review'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:4,h:16,labels:['Team Retro','Process Review','Retrospective','Sprint Debrief'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:8, labels:['Town Hall','Company Update','All Hands','All-Staff Brief'],     bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:9, labels:['Planning Sync','Sprint Review','Scope Check','Agenda Setting'], bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:11,labels:['Systems Review','Tech Sync','Infrastructure Check','Platform Review'],
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    {dow:4,h:14,labels:['Finance Check','Q1 Budget Sync','Budget Review','Cost Review'], bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:15,labels:['Risk Assessment','Compliance Review','Issue Tracker','Risk Sync'],bg:ONE_BLUE.bg, fg:ONE_BLUE.fg},
+    {dow:4,h:16,labels:['Team Retro','Process Review','Retrospective','Sprint Debrief'], bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
     // Friday
     {dow:5,h:9, labels:['End-of-Week Review','Friday Stand-up','Weekly Wrap-Up','Weekly Summary'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
-    {dow:5,h:12,l:'Lunch',          bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:5,h:10,labels:['Pre-Release Check','Feature Walkthrough','Demo Prep','Launch Review'],
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:5,h:12,l:'Lunch',                                                              bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
     {dow:5,h:14,labels:['Market Analysis','Competitive Review','Market Saturation Meeting','Market Positioning'],
-                                    bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg}
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:5,h:15,labels:['Stakeholder Recap','Partner Update','Client Debrief','Exec Summary'],
+                                                                                        bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg}
   ];
   var DAYS  =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var WDAYS =['Mon','Tue','Wed','Thu','Fri'];
@@ -1449,7 +1462,7 @@ const timerStart = Date.now();
         var dayEvts=active?EVTS.filter(function(e){return e.dow===c;}):[];
         if(active&&_mtgDow===c) dayEvts=dayEvts.concat([MTG]);
         var clickable=!wk&&!!day;
-        var tip=day&&dayEvts.length?dayEvts.map(function(e){return hLabel(e.h)+' '+e.l;}).join('; '):'';
+        var tip=day&&dayEvts.length?dayEvts.map(function(e){return hLabel(e.h)+' '+(e.l||(e.labels&&e.labels[0])||'');}).join('; '):'';
         h+='<td style="padding:4px 5px;border:1px solid #d0d0d0;vertical-align:top;height:54px;background:#fff;color:'+(wk?'#bbb':'#000')+';cursor:'+(clickable?'pointer':'default')+';" title="'+tip+'"'+(clickable?' onclick="window._calWeek('+y+','+m+','+day+')"':'')+'>'; 
         if(day){
           h+='<div style="font-size:11px;font-family:Tahoma,sans-serif;text-align:right;color:'+(wk?'#bbb':'#333')+';">'+day+'</div>';
@@ -1477,7 +1490,7 @@ const timerStart = Date.now();
     var mon=getMon(_anchor),fri=new Date(mon);fri.setDate(fri.getDate()+4);
     var curMon=mon.getTime();
     var inWeek3=curMon===WEEK3_MON;
-    var inActiveWeek=curMon!==WEEK4_MON;
+    var inActiveWeek=curMon!==WEEK4_MON&&curMon!==LAST_MON;
     var wkIdx=Math.round((mon.getDate()-2)/7); // 0=w1,1=w2,2=w3,4=w5
     var canPrev=curMon>FIRST_MON;
     var canNext=curMon<LAST_MON;
