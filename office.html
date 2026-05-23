@@ -1246,9 +1246,10 @@ const timerStart = Date.now();
   // Fixed: March 2026, week 3 (Mon 16) as starting week
   var MARCH_YEAR=2026, MARCH_MONTH=2;
   var WEEK3_MON =new Date(2026,2,16).getTime(); // March 16 = Monday of week 3
+  var WEEK4_MON =new Date(2026,2,23).getTime(); // March 23 = Monday of week 4 (blank)
   var FIRST_MON =new Date(2026,2,2).getTime();  // March 2  = first Monday
   var LAST_MON  =new Date(2026,2,30).getTime(); // March 30 = last Monday (week 5)
-  var EVENTS_CUTOFF=22; // days >= 22 are week 4+ (no events shown)
+  var EVENTS_CUTOFF=22; // days >= 22 are week 4+ (no badges in month view)
 
   var _view='month';
   var _anchor=new Date(2026,2,16); // start on week 3
@@ -1258,24 +1259,35 @@ const timerStart = Date.now();
   var BTN_XP  =BTN+'background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);';
   var BTN_BLUE=BTN+'background:linear-gradient(180deg,#fff 0%,#d6eaff 100%);';
 
+  // REC = recurring (red tones), ONE = one-time (blue tones)
+  var REC_LUNCH ={bg:'#ffe4e4',fg:'#8b1a1a'}; // light red — daily recurring
+  var REC_RED   ={bg:'#ffb3b3',fg:'#7b0000'}; // red — weekly recurring
+  var ONE_BLUE  ={bg:'#ddeeff',fg:'#1a3a6b'}; // blue — one-time / regular
+
   var MTG={l:'Market Saturation Meeting',bg:'#b8d4ff',fg:'#003c74'};
   var EVTS=[
-    {dow:1,h:8, l:'Team Standup',             bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:1,h:10,l:'Project Review',           bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:1,h:12,l:'Lunch',                    bg:'#fff3cd',fg:'#856404'},
-    {dow:1,h:14,l:'1:1 w/ Manager',           bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:1,h:16,l:'EOD Check-in',             bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:3,h:9, l:'Sprint Planning',          bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:3,h:11,l:'Design Review',            bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:3,h:12,l:'Lunch',                    bg:'#fff3cd',fg:'#856404'},
-    {dow:3,h:15,l:'Client Call',              bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:4,h:8, l:'All Hands',               bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:4,h:12,l:'Lunch',                    bg:'#fff3cd',fg:'#856404'},
-    {dow:4,h:14,l:'Budget Review',            bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:4,h:16,l:'Retrospective',            bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:5,h:9, l:'Weekly Wrap-Up',           bg:'#ddeeff',fg:'#1a3a6b'},
-    {dow:5,h:12,l:'Lunch',                    bg:'#fff3cd',fg:'#856404'},
-    {dow:5,h:14,l:'Market Saturation Meeting',bg:'#ddeeff',fg:'#1a3a6b'}
+    // Monday
+    {dow:1,h:9, l:'Weekly Goals',             bg:REC_RED.bg,   fg:REC_RED.fg},
+    {dow:1,h:10,l:'Project Review',           bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:1,h:12,l:'Lunch',                    bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    {dow:1,h:14,l:'1:1 w/ Manager',           bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:1,h:16,l:'EOD Check-in',             bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    // Tuesday
+    {dow:2,h:12,l:'Lunch',                    bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    // Wednesday
+    {dow:3,h:9, l:'Sprint Planning',          bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:3,h:11,l:'Design Review',            bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:3,h:12,l:'Lunch',                    bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    {dow:3,h:15,l:'Client Call',              bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    // Thursday
+    {dow:4,h:8, l:'All Hands',               bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:12,l:'Lunch',                    bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    {dow:4,h:14,l:'Budget Review',            bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:4,h:16,l:'Retrospective',            bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    // Friday
+    {dow:5,h:9, l:'Weekly Wrap-Up',           bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
+    {dow:5,h:12,l:'Lunch',                    bg:REC_LUNCH.bg, fg:REC_LUNCH.fg},
+    {dow:5,h:14,l:'Market Saturation Meeting',bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg}
   ];
   var DAYS  =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var WDAYS =['Mon','Tue','Wed','Thu','Fri'];
@@ -1450,6 +1462,7 @@ const timerStart = Date.now();
     var mon=getMon(_anchor),fri=new Date(mon);fri.setDate(fri.getDate()+4);
     var curMon=mon.getTime();
     var inWeek3=curMon===WEEK3_MON;
+    var inActiveWeek=curMon!==WEEK4_MON; // all weeks except blank week 4 show events
     var canPrev=curMon>FIRST_MON;
     var canNext=curMon<LAST_MON;
     var weekStr=mon.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+fri.toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -1477,9 +1490,9 @@ const timerStart = Date.now();
       h+='<td style="padding:3px 4px;border-right:1px solid #aca899;border-bottom:1px dotted #d0d0d0;font-weight:bold;font-size:10px;font-family:Tahoma,sans-serif;color:#555;white-space:nowrap;background:#ece9d8;">'+hLabel(hh)+'</td>';
       for(var di=0;di<5;di++){
         var dow=di+1;
-        var isMtg=inWeek3&&(_mtgDow===dow&&_mtgH===hh);
+        var isMtg=inActiveWeek&&(_mtgDow===dow&&_mtgH===hh);
         var evt=null;
-        if(inWeek3&&!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
+        if(inActiveWeek&&!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
         if(isMtg){
           h+='<td onclick="window._calShowDetails()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
             '<span style="text-decoration:underline;">'+MTG.l+'</span> &#128197;</td>';
