@@ -250,6 +250,8 @@
     <a href="index.html" style="margin-left:auto;">↩ Return to Parlour</a>
   </div>
 
+  <div class="desktop-icon" style="top:190px;left:30px" id="iconCalendar"><div class="icon-img">📅</div><div class="icon-label">Calendar</div></div>
+
   <div class="desktop-icon" style="top:80px;left:30px" id="iconGames"><div class="icon-img">🎮</div><div class="icon-label">Games</div></div>
   <div class="desktop-icon" style="top:80px;left:130px" id="iconEmails"><div class="icon-img">✉️</div><div class="icon-label">Emails</div></div>
   <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
@@ -284,7 +286,7 @@
     <div class="title-bar"><div class="title-bar-text">📝 Notes</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winMeetings')"></button></div></div>
     <div class="window-body">
       <ul class="tree-view">
-        <li><a href="#" onclick="openWin('winNotes');return false;">📋 Today's Notes</a></li>
+        <li><a href="#" onclick="openWin('winNotes');return false;">📋 Monday Meeting Notes</a></li>
         <li><a href="#" onclick="openWin('winGoals');return false;">⭐ Super Important Goals</a></li>
         <li><a href="#" onclick="openWin('winNote1');return false;">📄 Note 1</a></li>
         <li><a href="#" onclick="openWin('winNote2');return false;">📄 Note 2</a></li>
@@ -385,7 +387,7 @@
 
   <!-- MEETING NOTES -->
   <div class="window xp-win" id="winNotes" style="width:500px;top:140px;left:80px;">
-    <div class="title-bar"><div class="title-bar-text">📋 Today's Notes — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNotes')"></button></div></div>
+    <div class="title-bar"><div class="title-bar-text">📋 Monday Meeting Notes — Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winNotes')"></button></div></div>
     <div class="window-body">
       <div class="email-toolbar"><button>File</button><button>Edit</button><button>Format</button><button>View</button><button>Help</button></div>
       <div class="notes-body">
@@ -478,6 +480,41 @@
       </div>
     </div>
     <div class="status-bar"><p class="status-bar-field">© 2005 Notes</p><p class="status-bar-field">Ln 1, Col 1</p></div>
+  </div>
+
+
+  <!-- CALENDAR -->
+  <div class="window xp-win" id="winCalendar" style="width:560px;top:145px;left:65px;">
+    <div class="title-bar"><div class="title-bar-text">📅 Calendar — Weekly View</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winCalendar')"></button></div></div>
+    <div class="window-body" style="padding:6px;">
+      <div style="max-height:320px;overflow-y:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:Tahoma,sans-serif;">
+          <thead>
+            <tr style="background:linear-gradient(180deg,#fff 0%,#ece9d8 100%);">
+              <th style="width:62px;padding:5px 6px;border:1px solid #aca899;text-align:left;"></th>
+              <th style="padding:5px 6px;border:1px solid #aca899;text-align:center;color:#245edb;">Monday</th>
+              <th style="padding:5px 6px;border:1px solid #aca899;text-align:center;color:#245edb;">Tuesday</th>
+              <th style="padding:5px 6px;border:1px solid #aca899;text-align:center;color:#245edb;">Wednesday</th>
+              <th style="padding:5px 6px;border:1px solid #aca899;text-align:center;color:#245edb;">Thursday</th>
+              <th style="padding:5px 6px;border:1px solid #aca899;text-align:center;color:#245edb;">Friday</th>
+            </tr>
+          </thead>
+          <tbody style="border:1px solid #aca899;">
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">8:00 AM</td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">9:00 AM</td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">10:00 AM</td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">11:00 AM</td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">12:00 PM</td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">1:00 PM</td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">2:00 PM</td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">3:00 PM</td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">4:00 PM</td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#f8f8f8;height:28px;"></td></tr>
+        <tr><td style="padding:5px 6px;color:#555;white-space:nowrap;border-right:1px solid #d0d0d0;font-weight:bold;">5:00 PM</td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;border-right:1px dotted #d0d0d0;height:28px;"></td><td style="background:#fff;height:28px;"></td></tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-bar-field">Weekly Schedule</p><p class="status-bar-field">Mon – Fri &nbsp; 8:00 AM – 5:00 PM</p></div>
   </div>
 
   <!-- SNAKE -->
@@ -721,7 +758,7 @@ updateStatus();
 // ---- Window management ----
 let topZ=300;
 const tbWins=document.getElementById('tb-open-wins');
-const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Today\'s Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break'};
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Monday Meeting Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break',winCalendar:'📅 Calendar'};
 
 // Reset all puzzles to unsolved
 localStorage.clear();
@@ -745,6 +782,7 @@ function addToTaskbar(id){
 }
 function removeFromTaskbar(id){ const btn=document.getElementById('tb_'+id); if(btn) btn.remove(); }
 
+document.getElementById('iconCalendar').onclick  =()=>openWin('winCalendar');
 document.getElementById('iconGames').onclick    =()=>openWin('winGames');
 document.getElementById('iconEmails').onclick   =()=>openWin('winEmails');
 document.getElementById('iconMeetings').onclick =()=>openWin('winMeetings');
