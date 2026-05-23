@@ -734,15 +734,16 @@
 
 // ---- Passwords ----
 const requiredPasswords = [
-  { key:"gamesPass",      label:"Games Password",      value:"RATLOL" },
-  { key:"emailPass",      label:"Email Password",      value:"IS" },
-  { key:"meetingPass",    label:"Meeting Password",    value:"7543ing111" },
-  { key:"conferencePass", label:"Conference Password", value:"PLACEHOLDER" },
-  { key:"stapleRemover",  label:"Staple Remover",      value:"badgerjkl" },
-  { key:"haPass",         label:"Ha",                  value:"1583025" }
+  { key:"gamesPass",        label:"Games Password",      value:"RATLOL" },
+  { key:"emailPass",        label:"Email Password",      value:"IS" },
+  { key:"meetingPass",      label:"Meeting Password",    value:"7543ing111" },
+  { key:"conferencePass",   label:"Conference Password", value:"PLACEHOLDER" },
+  { key:"stapleRemover",    label:"Staple Remover",      value:"badgerjkl" },
+  { key:"haPass",           label:"Ha",                  value:"1583025" },
+  { key:"officeSupplyPass", label:"Office Supplies",     value:"Rulcalpencilstapsci" }
 ];
 function getSolved(){ return requiredPasswords.map(p=>localStorage.getItem(p.key)==="solved"); }
-function updateStatus(){ document.getElementById("passStatus").textContent=`Solved: ${getSolved().filter(Boolean).length} / 6`; }
+function updateStatus(){ document.getElementById("passStatus").textContent=`Solved: ${getSolved().filter(Boolean).length} / 7`; }
 document.getElementById("multiPassBtn").onclick=function(){
   if(getSolved().every(Boolean)){openWin('winCalendar');return;}
   showPasswordModal();
@@ -752,7 +753,7 @@ function showPasswordModal(){
   div.innerHTML='<div class="pw-row" style="border-bottom:1px solid #aca899;margin-bottom:8px;padding-bottom:8px;"><label><strong>Master Password:</strong></label><input type="password" id="pwinput_master" placeholder="Override all"/><button onclick="solveMaster()">Submit</button></div>';
   requiredPasswords.forEach((p,i)=>{
     if(solved[i]) div.innerHTML+=`<div class="pw-row pw-row--solved"><strong>${p.label}:</strong> <span>✓ Solved</span></div>`;
-    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="solvePassword('${p.key}')">Submit</button></div>`;
+    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="document.getElementById('pwinput_${p.key}').value=''">Clear</button><button onclick="solvePassword('${p.key}')">Submit</button></div>`;
   });
   document.getElementById('passwordModal').style.display='block';
 }
