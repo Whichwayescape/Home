@@ -1268,7 +1268,7 @@ const timerStart = Date.now();
   // Blue meeting labels rotate each week [w1, w2, w3, w5]
   var EVTS=[
     // Monday
-    {dow:1,h:8, l:'Morning Stand-up',                                                  bg:REC_RED.bg,   fg:REC_RED.fg},
+    {dow:1,h:8, l:'Fill in Calendar', recurring:true,                                  bg:REC_RED.bg,   fg:REC_RED.fg},
     {dow:1,h:9, l:'Weekly Goals',                                                       bg:REC_RED.bg,   fg:REC_RED.fg},
     {dow:1,h:10,labels:['Deliverables Check','Roadmap Review','Project Review','Milestone Update'],
                                                                                         bg:ONE_BLUE.bg,  fg:ONE_BLUE.fg},
@@ -1459,6 +1459,7 @@ const timerStart = Date.now();
         var active=!wk&&day&&day<EVENTS_CUTOFF;
         var dayEvts=active?EVTS.filter(function(e){return e.dow===c;}):[];
         if(active&&_mtgDow===c) dayEvts=dayEvts.concat([MTG]);
+        if(!wk&&day) EVTS.forEach(function(e){if(e.recurring&&e.dow===c&&!dayEvts.some(function(x){return x.h===e.h;}))dayEvts.push(e);});
         var clickable=!wk&&!!day;
         var tip=day&&dayEvts.length?dayEvts.map(function(e){return hLabel(e.h)+' '+(e.l||(e.labels&&e.labels[0])||'');}).join('; '):'';
         h+='<td style="padding:4px 5px;border:1px solid #d0d0d0;vertical-align:top;height:54px;background:#fff;color:'+(wk?'#bbb':'#000')+';cursor:'+(clickable?'pointer':'default')+';" title="'+tip+'"'+(clickable?' onclick="window._calWeek('+y+','+m+','+day+')"':'')+'>'; 
@@ -1519,7 +1520,7 @@ const timerStart = Date.now();
         var dow=di+1;
         var isMtg=inActiveWeek&&(_mtgDow===dow&&_mtgH===hh);
         var evt=null;
-        if(inActiveWeek&&!isMtg){for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh){evt=EVTS[ei];break;}}}
+        for(var ei=0;ei<EVTS.length;ei++){if(EVTS[ei].dow===dow&&EVTS[ei].h===hh&&(inActiveWeek||EVTS[ei].recurring)&&!isMtg){evt=EVTS[ei];break;}}
         if(isMtg){
           h+='<td onclick="window._calShowDetails()" style="background:#b8d4ff;color:#003c74;border:1px solid #7aaad8;padding:3px 5px;min-height:26px;vertical-align:top;font-size:10px;font-family:Tahoma,sans-serif;cursor:pointer;" title="Click for meeting details">'+
             '<span style="text-decoration:underline;">'+MTG.l+'</span> &#128197;</td>';
