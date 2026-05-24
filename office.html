@@ -392,7 +392,7 @@
   </div>
 
   <!-- OFFICE SUPPLY CLOSET -->
-  <div class="window xp-win" id="winSupplyCloset" style="width:640px;top:90px;left:100px;">
+  <div class="window xp-win" id="winSupplyCloset" style="width:780px;top:90px;left:60px;">
     <div class="title-bar"><div class="title-bar-text">📦 Office Supply Closet</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winSupplyCloset')"></button></div></div>
     <div class="window-body" style="padding:10px 12px;">
 
@@ -435,6 +435,13 @@
           <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">I am not last but I am not first.</div>
         </div>
 
+        <div class="sup-item" draggable="true" data-supply="Pen" style="width:88px;text-align:center;cursor:grab;">
+          <img src="office-supply-closet/Pen.jpg" style="width:80px;height:64px;object-fit:contain;border:2px solid #4a2080;border-radius:3px;display:block;margin:0 auto;background:#f3f3f3;pointer-events:none;"/>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Pen</div>
+          <div data-pen-clue="A" style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">I can know first better than last.</div>
+          <div data-pen-clue="B" style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:1px;line-height:1.3;pointer-events:none;">I can know last better than first.</div>
+        </div>
+
       </div>
 
       <!-- Order slots -->
@@ -447,6 +454,7 @@
           <div class="sup-slot" data-slot="3" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">4</span></div>
           <div class="sup-slot" data-slot="4" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">5</span></div>
           <div class="sup-slot" data-slot="5" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">6</span></div>
+          <div class="sup-slot" data-slot="6" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">7</span></div>
         </div>
         <div id="supplyErr" style="display:none;color:#c00;font-size:11px;padding:5px 8px;background:#fff0f0;border:1px solid #f5c0c0;border-radius:2px;text-align:center;margin:4px 8px;"></div>
         <div style="text-align:center;">
@@ -455,7 +463,7 @@
       </div>
 
     </div>
-    <div class="status-bar"><p class="status-bar-field">6 items</p></div>
+    <div class="status-bar"><p class="status-bar-field">7 items</p></div>
   </div>
 
   <!-- SUPPLY SOLVED DIALOG -->
@@ -1427,8 +1435,12 @@ const timerStart = Date.now();
 
 // ---- Office Supply Puzzle ----
 (function(){
-  const CORRECT = ['Ruler','Calculator','Pencil','Stapler','Scissors'];
-  const IMAGES  = {Calculator:'office-supply-closet/Calculator.jpg',Paper:'office-supply-closet/Paper.jpg',Pencil:'office-supply-closet/Pencil.jpg',Ruler:'office-supply-closet/Ruler.jpg',Scissors:'office-supply-closet/Scissors.jpg',Stapler:'office-supply-closet/Stapler.jpg'};
+  // Two valid solutions — Pen in slot 3 or slot 5, other slot empty
+  const SOLUTIONS = [
+    ['Ruler','Calculator','Pen','Pencil',null,'Stapler','Scissors'],
+    ['Ruler','Calculator',null,'Pencil','Pen','Stapler','Scissors']
+  ];
+  const IMAGES  = {Calculator:'office-supply-closet/Calculator.jpg',Paper:'office-supply-closet/Paper.jpg',Pen:'office-supply-closet/Pen.jpg',Pencil:'office-supply-closet/Pencil.jpg',Ruler:'office-supply-closet/Ruler.jpg',Scissors:'office-supply-closet/Scissors.jpg',Stapler:'office-supply-closet/Stapler.jpg'};
   let dragging  = null;
 
   function slotNum(slot){ return parseInt(slot.getAttribute('data-slot'))+1; }
@@ -1472,9 +1484,9 @@ const timerStart = Date.now();
   function checkOrder(){
     const slots = document.querySelectorAll('#supplySlots .sup-slot');
     const order = Array.from(slots).map(s=>s.getAttribute('data-content')||null);
-    const first5 = order.slice(0,5);
-    const sixth = order[5];
-    if(first5.join(',')===CORRECT.join(',') && !sixth){
+    const filled = order.filter(Boolean).length;
+    const isSolved = SOLUTIONS.some(sol=>sol.every((item,i)=>item===order[i]));
+    if(isSolved){
       const errEl=document.getElementById('supplyErr'); if(errEl) errEl.style.display='none';
       setTimeout(()=>{
         localStorage.setItem('officeSupplyPass','solved');
@@ -1484,9 +1496,8 @@ const timerStart = Date.now();
       },200);
       return;
     }
-    if(first5.every(Boolean)){
-      showSupplyError('Incorrect');
-    }
+    // Show error only once 6 items are placed (one slot intentionally empty)
+    if(filled >= 6){ showSupplyError('Incorrect'); }
   }
 
   window.clearSupplySlots = function(){
@@ -1512,6 +1523,7 @@ const timerStart = Date.now();
     slot.addEventListener('drop',e=>{
       e.preventDefault();
       if(!dragging) return;
+      if(dragging==='Paper') return; // Paper is a red herring — cannot be placed
       // Restore old occupant's grid item if this slot already had one
       const oldSupply=slot.getAttribute('data-content');
       if(oldSupply && oldSupply!==dragging) setGridItemUsed(oldSupply,false);
@@ -1883,16 +1895,17 @@ window.showSupplySuccessModal = window.showSupplySuccessModal || function(){
     return _sb;
   }
 
-  // Clue distribution table: playerCount → array of supply-index arrays per player
+  // Clue distribution table: playerCount → array of clue-index arrays per player
+  // 8 clues: Calculator(0), Paper(1), Pencil(2), Ruler(3), Scissors(4), Stapler(5), PenA(6), PenB(7)
   var DIST = {
-    1: [[0,1,2,3,4,5]],
-    2: [[0,1,2],[3,4,5]],
-    3: [[0,1],[2,3],[4,5]],
-    4: [[0,1],[2,3],[4],[5]],
-    5: [[0,1],[2],[3],[4],[5]],
-    6: [[0],[1],[2],[3],[4],[5]]
+    1: [[0,1,2,3,4,5,6,7]],
+    2: [[0,1,2,3],[4,5,6,7]],
+    3: [[0,1,2],[3,4,5],[6,7]],
+    4: [[0,1],[2,3],[4,5],[6,7]],
+    5: [[0,1],[2,3],[4,5],[6],[7]],
+    6: [[0,1],[2,3],[4],[5],[6],[7]]
   };
-  var SUPPLIES = ['Calculator','Paper','Pencil','Ruler','Scissors','Stapler'];
+  var SUPPLIES = ['Calculator','Paper','Pencil','Ruler','Scissors','Stapler','PenA','PenB'];
 
   function getMySupplies(pc, pi){
     var dist = DIST[pc] || DIST[1];
@@ -1908,10 +1921,18 @@ window.showSupplySuccessModal = window.showSupplySuccessModal || function(){
     document.querySelectorAll('.sup-item').forEach(function(item){
       var sup = item.getAttribute('data-supply');
       var divs = item.querySelectorAll('div');
-      var clueDiv = divs[1]; // second div is the clue
-      if(!clueDiv) return;
-      if(mine.indexOf(sup) === -1){
-        clueDiv.innerHTML = '<em style="color:#aaa;font-style:italic;">Ask your team!</em>';
+      if(sup === 'Pen'){
+        // Pen has two half-clues — hide each half independently
+        var clueA = item.querySelector('[data-pen-clue="A"]');
+        var clueB = item.querySelector('[data-pen-clue="B"]');
+        if(clueA) clueA.style.display = (mine.indexOf('PenA') !== -1 ? '' : 'none');
+        if(clueB) clueB.style.display = (mine.indexOf('PenB') !== -1 ? '' : 'none');
+      } else {
+        var clueDiv = divs[1]; // second div is the clue text
+        if(!clueDiv) return;
+        if(mine.indexOf(sup) === -1){
+          clueDiv.style.visibility = 'hidden'; // hide text, preserve layout
+        }
       }
     });
   }
