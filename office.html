@@ -318,37 +318,82 @@
   </div>
 
   <!-- OFFICE SUPPLY CLOSET -->
-  <div class="window xp-win" id="winSupplyCloset" style="width:520px;top:100px;left:150px;">
+  <div class="window xp-win" id="winSupplyCloset" style="width:610px;top:90px;left:100px;">
     <div class="title-bar"><div class="title-bar-text">📦 Office Supply Closet</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winSupplyCloset')"></button></div></div>
-    <div class="window-body" style="padding:6px;">
-      <div style="display:flex;flex-wrap:wrap;gap:16px;padding:8px;background:#fff;border:1px inset #aca899;max-height:420px;overflow-y:auto;">
-        <div style="text-align:center;width:120px;cursor:default;">
-          <img src="office-supply-closet/Calculator.jpg" alt="Calculator" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
-          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Calculator.jpg</div>
+    <div class="window-body" style="padding:10px 12px;">
+
+      <!-- Supply items -->
+      <div style="display:flex;gap:8px;justify-content:center;padding:6px 0 12px;flex-wrap:wrap;">
+
+        <div class="sup-item" draggable="true" data-supply="Calculator" style="width:88px;text-align:center;cursor:grab;">
+          <div style="width:80px;height:64px;background:#4a7fc1;border:2px solid #2c5282;border-radius:3px;margin:0 auto;pointer-events:none;"></div>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Calculator</div>
+          <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">I am not first but I am not last.</div>
         </div>
-        <div style="text-align:center;width:120px;cursor:default;">
-          <img src="office-supply-closet/Paper.jpg" alt="Paper" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
-          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Paper.jpg</div>
+
+        <div class="sup-item" data-supply="Paper" style="width:88px;text-align:center;cursor:default;">
+          <div style="width:80px;height:64px;background:#f5f5dc;border:2px solid #c8c870;border-radius:3px;margin:0 auto;pointer-events:none;"></div>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Paper</div>
+          <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">First, last. Clear. I am a blank slate.</div>
         </div>
-        <div style="text-align:center;width:120px;cursor:default;">
-          <img src="office-supply-closet/Pencil.jpg" alt="Pencil" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
-          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Pencil.jpg</div>
+
+        <div class="sup-item" draggable="true" data-supply="Pencil" style="width:88px;text-align:center;cursor:grab;">
+          <div style="width:80px;height:64px;background:#f0c040;border:2px solid #b89020;border-radius:3px;margin:0 auto;pointer-events:none;"></div>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Pencil</div>
+          <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">I don't know what first or last is.</div>
         </div>
-        <div style="text-align:center;width:120px;cursor:default;">
-          <img src="office-supply-closet/Ruler.jpg" alt="Ruler" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
-          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Ruler.jpg</div>
+
+        <div class="sup-item" draggable="true" data-supply="Ruler" style="width:88px;text-align:center;cursor:grab;">
+          <div style="width:80px;height:64px;background:#a0a0a0;border:2px solid #686868;border-radius:3px;margin:0 auto;pointer-events:none;"></div>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Ruler</div>
+          <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">Well ACTUALLY the last shall be last and the first shall be first.</div>
         </div>
-        <div style="text-align:center;width:120px;cursor:default;">
-          <img src="office-supply-closet/Scissors.jpg" alt="Scissors" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
-          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Scissors.jpg</div>
+
+        <div class="sup-item" draggable="true" data-supply="Scissors" style="width:88px;text-align:center;cursor:grab;">
+          <div style="width:80px;height:64px;background:#d9534f;border:2px solid #a02828;border-radius:3px;margin:0 auto;pointer-events:none;"></div>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Scissors</div>
+          <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">The first shall be last and the last shall be first.</div>
         </div>
-        <div style="text-align:center;width:120px;cursor:default;">
-          <img src="office-supply-closet/Stapler.jpg" alt="Stapler" style="width:110px;height:90px;object-fit:contain;border:1px solid #aca899;background:#f3f3f3;display:block;"/>
-          <div style="font-size:11px;font-family:Tahoma,sans-serif;margin-top:4px;">Stapler.jpg</div>
+
+        <div class="sup-item" draggable="true" data-supply="Stapler" style="width:88px;text-align:center;cursor:grab;">
+          <div style="width:80px;height:64px;background:#5c9e5c;border:2px solid #3a6e3a;border-radius:3px;margin:0 auto;pointer-events:none;"></div>
+          <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">Stapler</div>
+          <div style="font-size:9px;font-family:Tahoma,sans-serif;color:#555;font-style:italic;margin-top:2px;line-height:1.3;pointer-events:none;">I am not last but I am not first.</div>
+        </div>
+
+      </div>
+
+      <!-- Order slots -->
+      <div style="border-top:1px solid #aca899;padding-top:10px;">
+        <div style="font-size:11px;font-family:Tahoma,sans-serif;font-weight:bold;text-align:center;margin-bottom:8px;">Arrange in order:</div>
+        <div id="supplySlots" style="display:flex;gap:8px;justify-content:center;margin-bottom:10px;">
+          <div class="sup-slot" data-slot="0" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">1</span></div>
+          <div class="sup-slot" data-slot="1" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">2</span></div>
+          <div class="sup-slot" data-slot="2" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">3</span></div>
+          <div class="sup-slot" data-slot="3" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">4</span></div>
+          <div class="sup-slot" data-slot="4" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">5</span></div>
+        </div>
+        <div style="text-align:center;">
+          <button onclick="clearSupplySlots()" style="font-size:11px;padding:3px 14px;">Clear</button>
         </div>
       </div>
+
     </div>
     <div class="status-bar"><p class="status-bar-field">6 items</p></div>
+  </div>
+
+  <!-- SUPPLY SOLVED DIALOG -->
+  <div class="window" id="supplySuccessModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9998;width:300px;">
+    <div class="title-bar"><div class="title-bar-text">Access Granted</div><div class="title-bar-controls"><button aria-label="Close" onclick="document.getElementById('supplySuccessModal').style.display='none'"></button></div></div>
+    <div class="window-body" style="padding:20px 16px;font-family:Tahoma,sans-serif;font-size:12px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <span style="font-size:32px;line-height:1;">🔓</span>
+        <div><strong>Cabinet Unlocked!</strong><br><span style="color:#555;">Office supplies correctly sorted.</span></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;border-top:1px solid #aca899;padding-top:10px;">
+        <button onclick="document.getElementById('supplySuccessModal').style.display='none'">OK</button>
+      </div>
+    </div>
   </div>
 
   <!-- COUNTING DOWN THE TOP 10 -->
@@ -1277,6 +1322,68 @@ const timerStart = Date.now();
   });
 })();
 
+
+// ---- Office Supply Puzzle ----
+(function(){
+  const CORRECT = ['Ruler','Calculator','Pencil','Stapler','Scissors'];
+  const COLORS  = {Calculator:'#4a7fc1',Paper:'#f5f5dc',Pencil:'#f0c040',Ruler:'#a0a0a0',Scissors:'#d9534f',Stapler:'#5c9e5c'};
+  let dragging  = null;
+
+  function slotNum(slot){ return parseInt(slot.getAttribute('data-slot'))+1; }
+
+  function renderSlot(slot, supply){
+    if(!supply){
+      slot.innerHTML = `<span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">${slotNum(slot)}</span>`;
+      slot.style.background='#f9f9f9'; slot.style.border='2px dashed #aca899';
+    } else {
+      slot.innerHTML = `<div style="width:66px;height:52px;background:${COLORS[supply]};border-radius:2px;pointer-events:none;"></div><div style="font-size:9px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">${supply}</div>`;
+      slot.style.background='#eef4ff'; slot.style.border='2px solid #7aaad8';
+    }
+  }
+
+  function checkOrder(){
+    const slots = document.querySelectorAll('#supplySlots .sup-slot');
+    const order = Array.from(slots).map(s=>s.getAttribute('data-content')||null);
+    if(order.every(Boolean) && order.join(',')===CORRECT.join(',')){
+      setTimeout(()=>{
+        const m=document.getElementById('supplySuccessModal');
+        m.style.display='block'; m.style.zIndex=9998;
+        localStorage.setItem('officeSupplyPass','solved');
+        updateStatus();
+      },200);
+    }
+  }
+
+  window.clearSupplySlots = function(){
+    document.querySelectorAll('#supplySlots .sup-slot').forEach(s=>{
+      s.removeAttribute('data-content'); renderSlot(s,null);
+    });
+  };
+
+  // Drag from supply grid
+  document.querySelectorAll('.sup-item[draggable="true"]').forEach(item=>{
+    item.addEventListener('dragstart',e=>{ dragging=item.getAttribute('data-supply'); e.dataTransfer.effectAllowed='copy'; });
+    item.addEventListener('dragend',()=>{ dragging=null; });
+  });
+
+  // Drop onto slots
+  document.querySelectorAll('#supplySlots .sup-slot').forEach(slot=>{
+    slot.addEventListener('dragover',e=>{ if(dragging&&dragging!=='Paper') e.preventDefault(); });
+    slot.addEventListener('dragenter',e=>{ if(dragging&&dragging!=='Paper'){ e.preventDefault(); slot.style.background='#ddeeff'; } });
+    slot.addEventListener('dragleave',e=>{ if(!slot.contains(e.relatedTarget)){ const c=slot.getAttribute('data-content'); slot.style.background=c?'#eef4ff':'#f9f9f9'; } });
+    slot.addEventListener('drop',e=>{
+      e.preventDefault();
+      if(!dragging||dragging==='Paper') return;
+      // Remove from any slot already holding this supply
+      document.querySelectorAll('#supplySlots .sup-slot').forEach(s=>{
+        if(s.getAttribute('data-content')===dragging){ s.removeAttribute('data-content'); renderSlot(s,null); }
+      });
+      slot.setAttribute('data-content',dragging);
+      renderSlot(slot,dragging);
+      checkOrder();
+    });
+  });
+})();
 
 // ---- Calendar App ----
 (function(){
