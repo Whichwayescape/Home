@@ -253,7 +253,6 @@
   <div class="desktop-icon" style="top:80px;left:30px" id="iconGames"><div class="icon-img">🎮</div><div class="icon-label">Games</div></div>
   <div class="desktop-icon" style="top:80px;left:130px" id="iconEmails"><div class="icon-img">✉️</div><div class="icon-label">Emails</div></div>
   <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
-  <div class="desktop-icon" style="top:80px;left:330px" id="iconConference"><div class="icon-img">📞</div><div class="icon-label">Conference</div></div>
   <div class="desktop-icon" style="top:80px;left:430px" id="iconFunny"><div class="icon-img">📁</div><div class="icon-label">The Funny Pages</div></div>
   <div class="desktop-icon" style="top:80px;left:530px" id="iconSupplyCloset"><div class="icon-img">📦</div><div class="icon-label">Office Supply Closet</div></div>
 
@@ -293,17 +292,6 @@
         <li><a href="#" onclick="openWin('winNote4');return false;">📄 Note 4</a></li>
         <li><a href="#" onclick="openWin('winNote5');return false;">📄 Note 5</a></li>
       </ul>
-    </div>
-  </div>
-
-  <!-- CONFERENCE -->
-  <div class="window xp-win" id="winConference" style="width:280px;top:150px;left:120px;">
-    <div class="title-bar"><div class="title-bar-text">NetMeeting — Conference Call</div><div class="title-bar-controls"><button aria-label="Close" onclick="closeWin('winConference')"></button></div></div>
-    <div class="window-body">
-      <ul class="tree-view">
-        <li><a href="https://YOUR-ANIMAL-PUZZLE-URL.onrender.com/gm" target="_blank">📞 Join Team Conference</a></li>
-      </ul>
-      <p style="font-size:11px;color:#555;margin-top:6px;">The team is waiting on the line.</p>
     </div>
   </div>
 
@@ -684,6 +672,8 @@
       <div style="font-size:10px;color:#d9534f;text-align:center;margin-bottom:3px;font-weight:bold;">⚠ RED BLOCKS = INSTANT DEATH &nbsp;·&nbsp; New block every 30s &nbsp;·&nbsp; Use W/A/S/D to move</div>
       <canvas id="snakeSecCanvas" width="390" height="280"></canvas>
       <div class="score-bar">Score: <span id="snakeSecScore">0</span> &nbsp;|&nbsp; Death Blocks: <span id="snakeSecBlocks">0</span></div>
+      <div style="text-align:center;margin:4px 0;"><button id="snakeSecHSBtn" style="font-size:11px;padding:3px 10px;cursor:pointer;" onclick="toggleHS('snakeSecHS')">🏆 High Scores</button></div>
+      <div id="snakeSecHS" class="hs-panel"><h4>🏆 High Scores</h4><ul class="hs-list" id="snakeSecHSList"></ul></div>
       <div class="dpad">
         <button class="dpad-up" data-ssdir="UP">▲</button>
         <button class="dpad-left" data-ssdir="LEFT">◀</button>
@@ -703,6 +693,8 @@
       <div style="font-size:10px;color:#d9534f;text-align:center;margin-bottom:3px;font-weight:bold;">⚠ New brick row every 10s &nbsp;·&nbsp; Extra ball every 15s &nbsp;·&nbsp; Don't let bricks hit the bottom!</div>
       <canvas id="bbSecCanvas" width="390" height="280"></canvas>
       <div class="score-bar">Score: <span id="bbSecScore">0</span> &nbsp;|&nbsp; Balls: <span id="bbSecBalls">1</span></div>
+      <div style="text-align:center;margin:4px 0;"><button id="bbSecHSBtn" style="font-size:11px;padding:3px 10px;cursor:pointer;" onclick="toggleHS('bbSecHS')">🏆 High Scores</button></div>
+      <div id="bbSecHS" class="hs-panel"><h4>🏆 High Scores</h4><ul class="hs-list" id="bbSecHSList"></ul></div>
       <div class="pad-controls">
         <button id="padSecLeft">◀ Left</button>
         <button id="padSecRight">Right ▶</button>
@@ -735,8 +727,7 @@
         <div class="sm-opt" onclick="openWin('winGames');closeStart();">🎮 Games</div>
         <div class="sm-opt" onclick="openWin('winEmails');closeStart();">✉️ Emails</div>
         <div class="sm-opt" onclick="openWin('winMeetings');closeStart();">📝 Notes</div>
-        <div class="sm-opt" onclick="openWin('winConference');closeStart();">📞 Conference</div>
-        <div class="sm-opt" onclick="openWin('winFunny');closeStart();">📁 The Funny Pages</div>
+<div class="sm-opt" onclick="openWin('winFunny');closeStart();">📁 The Funny Pages</div>
         <div class="sm-opt" onclick="openLockedRoom();closeStart();">🔒 Locked Room</div>
       </div>
     </div>
@@ -825,7 +816,7 @@ updateStatus();
 // ---- Window management ----
 let topZ=300;
 const tbWins=document.getElementById('tb-open-wins');
-const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winConference:'📞 Conference',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Monday Meeting Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSupplyCloset:'📦 Supply Closet',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break',winCalendar:'📅 Calendar'};
+const winLabels={winGames:'🎮 Games',winEmails:'✉️ Emails',winMeetings:'📝 Notes',winInbox:'📥 Inbox',winSent:'📤 Sent',winNotes:'📋 Monday Meeting Notes',winGoals:'⭐ Goals',winNote1:'📄 Note 1',winNote2:'📄 Note 2',winNote3:'📄 Note 3',winNote4:'📄 Note 4',winNote5:'📄 Note 5',winSnake:'🐍 Snake',winBB:'🧱 Ball Breaker',winFunny:'📁 Funny Pages',winCountdown:'📁 Top 10 Memes',winSupplyCloset:'📦 Supply Closet',winSnakeSec:'🐍💀 Snake Secret',winBBSec:'🧱💀 BB Secret',winTimer:'🕐 Lunch Break',winCalendar:'📅 Calendar'};
 
 // Reset all puzzles to unsolved
 localStorage.clear();
@@ -854,7 +845,6 @@ document.getElementById('iconCalendar').onclick  =()=>{ if(getSolved().every(Boo
 document.getElementById('iconGames').onclick    =()=>openWin('winGames');
 document.getElementById('iconEmails').onclick   =()=>openWin('winEmails');
 document.getElementById('iconMeetings').onclick =()=>openWin('winMeetings');
-document.getElementById('iconConference').onclick=()=>openWin('winConference');
 document.getElementById('iconFunny').onclick    =()=>openWin('winFunny');
 document.getElementById('iconSupplyCloset').onclick=()=>openWin('winSupplyCloset');
 document.querySelectorAll('.xp-win').forEach(w=>w.addEventListener('mousedown',()=>bringToFront(w)));
@@ -996,6 +986,14 @@ function saveInitials(){
     bbHS.push({ini,score:bbState.score}); bbHS.sort((a,b)=>b.score-a.score); bbHS=bbHS.slice(0,6);
     renderBBHS(); document.getElementById('bbHSBtn').style.display='block';
     awaitingBBInit=false; initBBState();
+  } else if(currentGame==='snakeSec'){
+    snakeSecHS.push({ini,score:snakeSecState.score}); snakeSecHS.sort((a,b)=>b.score-a.score); snakeSecHS=snakeSecHS.slice(0,6);
+    renderSnakeSecHS();
+    awaitingSnakeSecInit=false; snakeSecDeathBlocks=[]; resetSnakeSecState();
+  } else if(currentGame==='bbSec'){
+    bbSecHS.push({ini,score:bbSecState.score}); bbSecHS.sort((a,b)=>b.score-a.score); bbSecHS=bbSecHS.slice(0,6);
+    renderBBSecHS();
+    awaitingBBSecInit=false; startBBSec();
   }
   currentGame=null;
   showSecretPrompt(savedGame);
@@ -1103,6 +1101,22 @@ function toggleHS(panelId){
 })();
 
 // ---- Snake Secret Level ----
+let snakeSecHS=[{ini:"Jack",score:50},{ini:"John",score:50},{ini:"Kyle",score:50}];
+let bbSecHS=[{ini:"Jack",score:50},{ini:"John",score:50},{ini:"Kyle",score:50}];
+let awaitingSnakeSecInit=false,awaitingBBSecInit=false;
+function renderSnakeSecHS(){ const el=document.getElementById('snakeSecHSList'); if(el) el.innerHTML=snakeSecHS.slice(0,6).map(e=>`<li><span>${e.ini}</span><span>${e.score}</span></li>`).join(''); }
+function renderBBSecHS(){ const el=document.getElementById('bbSecHSList'); if(el) el.innerHTML=bbSecHS.slice(0,6).map(e=>`<li><span>${e.ini}</span><span>${e.score}</span></li>`).join(''); }
+function checkSnakeSecHS(){
+  if(snakeSecState.score>snakeSecHS[2].score){ awaitingSnakeSecInit=true; currentGame='snakeSec'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
+  else { snakeSecRestartTO=setTimeout(()=>{ snakeSecDeathBlocks=[]; resetSnakeSecState(); },1500); }
+}
+function checkBBSecHS(){
+  if(bbSecState.score>bbSecHS[2].score){ awaitingBBSecInit=true; currentGame='bbSec'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
+  else { bbSecRestartTO=setTimeout(()=>startBBSec(),3000); }
+}
+renderSnakeSecHS();
+renderBBSecHS();
+
 let snakeSecState=null,snakeSecTimer=null,snakeSecDeathBlocks=[],snakeSecBlockInterval=null,snakeSecRestartTO=null;
 
 function startSnakeSec(){
@@ -1153,7 +1167,7 @@ function tickSnakeSec(){
     ctx.fillText('💀 GAME OVER',c.width/2,c.height/2-10);
     ctx.font='12px Tahoma';
     ctx.fillText('Score: '+snakeSecState.score+' | Blocks: '+snakeSecDeathBlocks.length,c.width/2,c.height/2+14);
-    snakeSecRestartTO=setTimeout(()=>{ snakeSecDeathBlocks=[]; resetSnakeSecState(); },1500);
+    checkSnakeSecHS();
     return;
   }
   if(h.x===snakeSecState.food.x&&h.y===snakeSecState.food.y){ snakeSecState.score++; snakeSecState.snake.unshift(h); placeSnakeSecFood(); }
@@ -1254,7 +1268,7 @@ function tickBBSec(){
     ctx.fillText(bbSecState.overMsg,c.width/2,c.height/2+6);
     ctx.fillText('Score: '+bbSecState.score,c.width/2,c.height/2+26);
     const sc=document.getElementById('bbSecScore'); if(sc) sc.textContent=bbSecState.score;
-    stopBBSec(); bbSecRestartTO=setTimeout(()=>startBBSec(),3000); return;
+    stopBBSec(); checkBBSecHS(); return;
   }
   const brickColors=['#e05c5c','#c94040','#b03030','#963030','#7d1010'];
   bbSecState.bricks.forEach(br=>{
@@ -1327,17 +1341,25 @@ const timerStart = Date.now();
 // ---- Office Supply Puzzle ----
 (function(){
   const CORRECT = ['Ruler','Calculator','Pencil','Stapler','Scissors'];
-  const COLORS  = {Calculator:'#4a7fc1',Paper:'#f5f5dc',Pencil:'#f0c040',Ruler:'#a0a0a0',Scissors:'#d9534f',Stapler:'#5c9e5c'};
+  const IMAGES  = {Calculator:'office-supply-closet/Calculator.jpg',Paper:'office-supply-closet/Paper.jpg',Pencil:'office-supply-closet/Pencil.jpg',Ruler:'office-supply-closet/Ruler.jpg',Scissors:'office-supply-closet/Scissors.jpg',Stapler:'office-supply-closet/Stapler.jpg'};
   let dragging  = null;
 
   function slotNum(slot){ return parseInt(slot.getAttribute('data-slot'))+1; }
 
+  function setGridItemUsed(supply, used){
+    const item=document.querySelector(`.sup-item[data-supply="${supply}"]`);
+    if(!item) return;
+    item.draggable=!used;
+    item.style.opacity=used?'0.3':'1';
+    item.style.cursor=used?'default':'grab';
+  }
+
   function renderSlot(slot, supply){
     if(!supply){
-      slot.innerHTML = `<span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">${slotNum(slot)}</span>`;
+      slot.innerHTML=`<span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">${slotNum(slot)}</span>`;
       slot.style.background='#f9f9f9'; slot.style.border='2px dashed #aca899';
     } else {
-      slot.innerHTML = `<div style="width:66px;height:52px;background:${COLORS[supply]};border-radius:2px;pointer-events:none;"></div><div style="font-size:9px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:3px;pointer-events:none;">${supply}</div>`;
+      slot.innerHTML=`<img src="${IMAGES[supply]}" style="width:70px;height:56px;object-fit:contain;display:block;margin:0 auto;pointer-events:none;"/><div style="font-size:9px;font-family:Tahoma,sans-serif;font-weight:bold;margin-top:2px;pointer-events:none;">${supply}</div>`;
       slot.style.background='#eef4ff'; slot.style.border='2px solid #7aaad8';
     }
   }
@@ -1359,6 +1381,8 @@ const timerStart = Date.now();
 
   window.clearSupplySlots = function(){
     document.querySelectorAll('#supplySlots .sup-slot').forEach(s=>{
+      const supply=s.getAttribute('data-content');
+      if(supply) setGridItemUsed(supply,false);
       s.removeAttribute('data-content'); renderSlot(s,null);
     });
   };
@@ -1377,12 +1401,16 @@ const timerStart = Date.now();
     slot.addEventListener('drop',e=>{
       e.preventDefault();
       if(!dragging||dragging==='Paper') return;
-      // Remove from any slot already holding this supply
+      // Restore old occupant's grid item if this slot already had one
+      const oldSupply=slot.getAttribute('data-content');
+      if(oldSupply && oldSupply!==dragging) setGridItemUsed(oldSupply,false);
+      // Remove dragging item from any other slot it was in
       document.querySelectorAll('#supplySlots .sup-slot').forEach(s=>{
-        if(s.getAttribute('data-content')===dragging){ s.removeAttribute('data-content'); renderSlot(s,null); }
+        if(s!==slot && s.getAttribute('data-content')===dragging){ s.removeAttribute('data-content'); renderSlot(s,null); }
       });
       slot.setAttribute('data-content',dragging);
       renderSlot(slot,dragging);
+      setGridItemUsed(dragging,true);
       checkOrder();
     });
   });
