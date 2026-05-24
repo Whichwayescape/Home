@@ -216,8 +216,94 @@
       z-index:100000; width:300px;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body class="xp-desktop">
+
+  <!-- SESSION OVERLAY -->
+  <div id="sessOv" style="position:fixed;inset:0;background:#008080;z-index:999999;display:flex;align-items:center;justify-content:center;">
+
+    <!-- Panel: Welcome -->
+    <div class="window" id="sess-welcome" style="width:370px;display:none;">
+      <div class="title-bar"><div class="title-bar-text">🗂️ Office — Whichway Escape</div></div>
+      <div class="window-body" style="padding:22px 18px 16px;font-family:Tahoma,sans-serif;font-size:12px;">
+        <p style="margin:0 0 6px;font-size:14px;font-weight:bold;">Welcome to the Office!</p>
+        <p style="margin:0 0 18px;color:#333;">Are you starting a new session or joining your team?</p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px;">
+          <button onclick="window._sessShowCreate()" style="padding:6px 20px;">Create New Room</button>
+          <button onclick="window._sessShowJoin()" style="padding:6px 20px;">Join Room</button>
+        </div>
+        <div style="border-top:1px solid #aca899;padding-top:10px;display:flex;justify-content:flex-end;">
+          <button onclick="window._sessSolo()" style="font-size:10px;">Solo / Skip →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Create — pick player count -->
+    <div class="window" id="sess-create" style="width:370px;display:none;">
+      <div class="title-bar"><div class="title-bar-text">🗂️ New Room — Player Count</div></div>
+      <div class="window-body" style="padding:22px 18px 16px;font-family:Tahoma,sans-serif;font-size:12px;">
+        <p style="margin:0 0 14px;font-weight:bold;">How many players are in your group?</p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-bottom:18px;">
+          <button onclick="window._sessSetCount(1)" style="width:40px;">1</button>
+          <button onclick="window._sessSetCount(2)" style="width:40px;">2</button>
+          <button onclick="window._sessSetCount(3)" style="width:40px;">3</button>
+          <button onclick="window._sessSetCount(4)" style="width:40px;">4</button>
+          <button onclick="window._sessSetCount(5)" style="width:40px;">5</button>
+          <button onclick="window._sessSetCount(6)" style="width:40px;">6</button>
+        </div>
+        <div style="border-top:1px solid #aca899;padding-top:10px;display:flex;justify-content:flex-start;">
+          <button onclick="window._sessShowPanel('sess-welcome')" style="font-size:10px;">← Back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Room code display -->
+    <div class="window" id="sess-roomcode" style="width:370px;display:none;">
+      <div class="title-bar"><div class="title-bar-text">🗂️ Room Created</div></div>
+      <div class="window-body" style="padding:22px 18px 16px;font-family:Tahoma,sans-serif;font-size:12px;">
+        <p style="margin:0 0 8px;">Share this code with your team:</p>
+        <div id="sess-code-display" style="font-size:42px;font-weight:bold;letter-spacing:10px;text-align:center;font-family:monospace;padding:14px 0 10px;color:#001488;">----</div>
+        <p style="margin:0 0 12px;color:#666;font-size:10px;text-align:center;">Each teammate opens this page and enters the code to join.</p>
+        <div id="sess-roomcode-status" style="min-height:20px;font-size:11px;color:#555;text-align:center;margin-bottom:10px;"></div>
+        <div style="border-top:1px solid #aca899;padding-top:10px;display:flex;justify-content:flex-end;">
+          <button id="sess-ready-btn" onclick="window._sessCreatorReady()">I'm Ready →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Join — enter code -->
+    <div class="window" id="sess-join" style="width:370px;display:none;">
+      <div class="title-bar"><div class="title-bar-text">🗂️ Join Room</div></div>
+      <div class="window-body" style="padding:22px 18px 16px;font-family:Tahoma,sans-serif;font-size:12px;">
+        <p style="margin:0 0 10px;font-weight:bold;">Enter your team's room code:</p>
+        <div style="display:flex;gap:8px;margin-bottom:6px;align-items:center;">
+          <input id="sess-join-input" maxlength="4" style="flex:1;font-size:24px;font-family:monospace;letter-spacing:8px;text-align:center;text-transform:uppercase;padding:4px;" placeholder="----"
+            onkeydown="if(event.key==='Enter')window._sessJoinSubmit()"/>
+          <button onclick="window._sessJoinSubmit()">Join →</button>
+        </div>
+        <div id="sess-join-err" style="min-height:18px;color:#c00;font-size:10px;text-align:center;margin-bottom:10px;"></div>
+        <div style="border-top:1px solid #aca899;padding-top:10px;display:flex;justify-content:space-between;">
+          <button onclick="window._sessShowPanel('sess-welcome')" style="font-size:10px;">← Back</button>
+          <button onclick="window._sessSolo()" style="font-size:10px;">Solo / Skip →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Player select -->
+    <div class="window" id="sess-playersel" style="width:370px;display:none;">
+      <div class="title-bar"><div class="title-bar-text">🗂️ Who are you?</div></div>
+      <div class="window-body" style="padding:22px 18px 16px;font-family:Tahoma,sans-serif;font-size:12px;">
+        <p style="margin:0 0 12px;font-weight:bold;">Select your player number:</p>
+        <div id="sess-player-btns" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;"></div>
+        <div id="sess-playersel-err" style="min-height:18px;color:#c00;font-size:10px;text-align:center;margin-bottom:4px;"></div>
+        <div style="border-top:1px solid #aca899;padding-top:10px;display:flex;justify-content:flex-start;">
+          <button onclick="window._sessShowPanel('sess-join')" style="font-size:10px;">← Back</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 
   <!-- LOGIN SCREEN -->
   <div id="xpLoginScreen">
@@ -362,6 +448,7 @@
           <div class="sup-slot" data-slot="4" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">5</span></div>
           <div class="sup-slot" data-slot="5" style="width:88px;height:82px;border:2px dashed #aca899;background:#f9f9f9;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;"><span style="font-size:10px;font-family:Tahoma,sans-serif;color:#bbb;">6</span></div>
         </div>
+        <div id="supplyErr" style="display:none;color:#c00;font-size:11px;padding:5px 8px;background:#fff0f0;border:1px solid #f5c0c0;border-radius:2px;text-align:center;margin:4px 8px;"></div>
         <div style="text-align:center;">
           <button onclick="clearSupplySlots()" style="font-size:11px;padding:3px 14px;">Clear</button>
         </div>
@@ -1364,18 +1451,41 @@ const timerStart = Date.now();
     }
   }
 
+  function ensureSupplyShakeCSS(){
+    if(document.getElementById('_supplyShakeCSS')) return;
+    const s=document.createElement('style'); s.id='_supplyShakeCSS';
+    s.textContent='@keyframes _supplyShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-4px)}90%{transform:translateX(4px)}}._supplyShake{animation:_supplyShake 0.5s ease;}';
+    document.head.appendChild(s);
+  }
+
+  function showSupplyError(msg){
+    ensureSupplyShakeCSS();
+    const el=document.getElementById('supplyErr');
+    if(!el) return;
+    el.textContent=msg;
+    el.style.display='block';
+    el.classList.remove('_supplyShake');
+    void el.offsetWidth;
+    el.classList.add('_supplyShake');
+  }
+
   function checkOrder(){
     const slots = document.querySelectorAll('#supplySlots .sup-slot');
     const order = Array.from(slots).map(s=>s.getAttribute('data-content')||null);
     const first5 = order.slice(0,5);
     const sixth = order[5];
     if(first5.join(',')===CORRECT.join(',') && !sixth){
+      const errEl=document.getElementById('supplyErr'); if(errEl) errEl.style.display='none';
       setTimeout(()=>{
-        const m=document.getElementById('supplySuccessModal');
-        m.style.display='block'; m.style.zIndex=9998;
         localStorage.setItem('officeSupplyPass','solved');
         updateStatus();
+        if(window.showSupplySuccessModal) window.showSupplySuccessModal();
+        if(window.onSupplySolved) window.onSupplySolved();
       },200);
+      return;
+    }
+    if(first5.every(Boolean)){
+      showSupplyError('Incorrect');
     }
   }
 
@@ -1385,6 +1495,7 @@ const timerStart = Date.now();
       if(supply) setGridItemUsed(supply,false);
       s.removeAttribute('data-content'); renderSlot(s,null);
     });
+    const errEl=document.getElementById('supplyErr'); if(errEl) errEl.style.display='none';
   };
 
   // Drag from supply grid
@@ -1395,12 +1506,12 @@ const timerStart = Date.now();
 
   // Drop onto slots
   document.querySelectorAll('#supplySlots .sup-slot').forEach(slot=>{
-    slot.addEventListener('dragover',e=>{ if(dragging&&dragging!=='Paper') e.preventDefault(); });
-    slot.addEventListener('dragenter',e=>{ if(dragging&&dragging!=='Paper'){ e.preventDefault(); slot.style.background='#ddeeff'; } });
+    slot.addEventListener('dragover',e=>{ if(dragging) e.preventDefault(); });
+    slot.addEventListener('dragenter',e=>{ if(dragging){ e.preventDefault(); slot.style.background='#ddeeff'; } });
     slot.addEventListener('dragleave',e=>{ if(!slot.contains(e.relatedTarget)){ const c=slot.getAttribute('data-content'); slot.style.background=c?'#eef4ff':'#f9f9f9'; } });
     slot.addEventListener('drop',e=>{
       e.preventDefault();
-      if(!dragging||dragging==='Paper') return;
+      if(!dragging) return;
       // Restore old occupant's grid item if this slot already had one
       const oldSupply=slot.getAttribute('data-content');
       if(oldSupply && oldSupply!==dragging) setGridItemUsed(oldSupply,false);
@@ -1415,6 +1526,14 @@ const timerStart = Date.now();
     });
   });
 })();
+
+// ---- Supply Success Modal Global ----
+window.showSupplySuccessModal = window.showSupplySuccessModal || function(){
+  if(window._supplyShown) return;
+  window._supplyShown = true;
+  var m=document.getElementById('supplySuccessModal');
+  if(m){ m.style.display='block'; m.style.zIndex=9998; }
+};
 
 // ---- Calendar App ----
 (function(){
@@ -1750,6 +1869,217 @@ const timerStart = Date.now();
   window._calWeek=function(y,m,d){_anchor=new Date(y,m,d);_view='week';renderWeek();};
 
   window.initCalendar=function(){_anchor=new Date(2026,2,16);_view='month';renderMonth();};
+})();
+
+// ---- Session System ----
+(function(){
+  'use strict';
+  var SB_URL = 'https://iwvcoakeovyqaidmzjbb.supabase.co';
+  var SB_KEY = 'sb_publishable_TDP0GDiJot7QPrq3-2oRuw_6-I2-XeR';
+  var _sb = null;
+
+  function getSB(){
+    if(!_sb && window.supabase) _sb = window.supabase.createClient(SB_URL, SB_KEY);
+    return _sb;
+  }
+
+  // Clue distribution table: playerCount → array of supply-index arrays per player
+  var DIST = {
+    1: [[0,1,2,3,4,5]],
+    2: [[0,1,2],[3,4,5]],
+    3: [[0,1],[2,3],[4,5]],
+    4: [[0,1],[2,3],[4],[5]],
+    5: [[0,1],[2],[3],[4],[5]],
+    6: [[0],[1],[2],[3],[4],[5]]
+  };
+  var SUPPLIES = ['Calculator','Paper','Pencil','Ruler','Scissors','Stapler'];
+
+  function getMySupplies(pc, pi){
+    var dist = DIST[pc] || DIST[1];
+    var slot = dist[pi] || dist[0];
+    return slot.map(function(i){ return SUPPLIES[i]; });
+  }
+
+  function applyClueVisibility(){
+    var pc = parseInt(sessionStorage.getItem('esc_pc') || '1');
+    var pi = parseInt(sessionStorage.getItem('esc_pi') || '0');
+    if(pc <= 1) return; // 1 player or solo: show all clues
+    var mine = getMySupplies(pc, pi);
+    document.querySelectorAll('.sup-item').forEach(function(item){
+      var sup = item.getAttribute('data-supply');
+      var divs = item.querySelectorAll('div');
+      var clueDiv = divs[1]; // second div is the clue
+      if(!clueDiv) return;
+      if(mine.indexOf(sup) === -1){
+        clueDiv.innerHTML = '<em style="color:#aaa;font-style:italic;">Ask your team!</em>';
+      }
+    });
+  }
+
+  function genCode(){
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var c = '';
+    for(var i=0; i<4; i++) c += chars[Math.floor(Math.random() * chars.length)];
+    return c;
+  }
+
+  // --- Panel helpers ---
+  var PANELS = ['sess-welcome','sess-create','sess-roomcode','sess-join','sess-playersel'];
+
+  window._sessShowPanel = function(id){
+    PANELS.forEach(function(p){
+      var el = document.getElementById(p);
+      if(el) el.style.display = (p === id ? '' : 'none');
+    });
+  };
+
+  window._sessShowCreate = function(){ window._sessShowPanel('sess-create'); };
+  window._sessShowJoin   = function(){ window._sessShowPanel('sess-join'); };
+
+  // --- Solo / bypass ---
+  window._sessSolo = function(){
+    sessionStorage.setItem('esc_rc','solo');
+    sessionStorage.setItem('esc_pi','0');
+    sessionStorage.setItem('esc_pc','1');
+    document.getElementById('sessOv').style.display = 'none';
+  };
+
+  // --- Create room ---
+  window._sessSetCount = async function(n){
+    if(n <= 1){
+      // Single player: no room needed, skip straight in
+      sessionStorage.setItem('esc_rc','solo');
+      sessionStorage.setItem('esc_pi','0');
+      sessionStorage.setItem('esc_pc','1');
+      document.getElementById('sessOv').style.display = 'none';
+      return;
+    }
+    var code = genCode();
+    document.getElementById('sess-code-display').textContent = code;
+    document.getElementById('sess-roomcode-status').textContent = 'Creating room…';
+    window._sessShowPanel('sess-roomcode');
+
+    var client = getSB();
+    var result = await client.from('sessions').insert({ room_code: code, player_count: n, solved_puzzles: {} });
+    if(result.error){
+      document.getElementById('sess-roomcode-status').textContent = '⚠ Could not reach server — playing locally.';
+      sessionStorage.setItem('esc_rc','solo');
+      sessionStorage.setItem('esc_pi','0');
+      sessionStorage.setItem('esc_pc',String(n));
+    } else {
+      sessionStorage.setItem('esc_rc', code);
+      sessionStorage.setItem('esc_pi', '0');
+      sessionStorage.setItem('esc_pc', String(n));
+      document.getElementById('sess-roomcode-status').textContent = 'Room ready! Share the code above.';
+      applyClueVisibility();
+      subscribeRealtime();
+    }
+  };
+
+  window._sessCreatorReady = function(){
+    document.getElementById('sessOv').style.display = 'none';
+  };
+
+  // --- Join room ---
+  window._sessJoinSubmit = async function(){
+    var code = document.getElementById('sess-join-input').value.trim().toUpperCase();
+    var errEl = document.getElementById('sess-join-err');
+    if(code.length !== 4){
+      errEl.textContent = 'Please enter a 4-character code.';
+      return;
+    }
+    errEl.textContent = 'Looking up room…';
+    var client = getSB();
+    var result = await client.from('sessions').select('*').eq('room_code', code).single();
+    if(result.error || !result.data){
+      errEl.textContent = 'Room not found. Check the code and try again.';
+      return;
+    }
+    errEl.textContent = '';
+    var data = result.data;
+    var pc = data.player_count;
+    // Build player buttons 2..N (indices 1..N-1); player 1 is the creator
+    var btnsDiv = document.getElementById('sess-player-btns');
+    btnsDiv.innerHTML = '';
+    for(var i=1; i<pc; i++){
+      (function(idx){
+        var b = document.createElement('button');
+        b.textContent = 'Player ' + (idx+1);
+        b.style.padding = '6px 16px';
+        b.onclick = function(){ window._sessSelectPlayer(code, pc, idx); };
+        btnsDiv.appendChild(b);
+      })(i);
+    }
+    if(pc <= 1){
+      // Edge case: 1-player room, just join as solo
+      window._sessSelectPlayer(code, 1, 0);
+      return;
+    }
+    window._sessShowPanel('sess-playersel');
+  };
+
+  window._sessSelectPlayer = function(code, pc, idx){
+    sessionStorage.setItem('esc_rc', code);
+    sessionStorage.setItem('esc_pc', String(pc));
+    sessionStorage.setItem('esc_pi', String(idx));
+    applyClueVisibility();
+    subscribeRealtime();
+    document.getElementById('sessOv').style.display = 'none';
+  };
+
+  // --- Realtime subscription ---
+  function subscribeRealtime(){
+    var rc = sessionStorage.getItem('esc_rc');
+    if(!rc || rc === 'solo') return;
+    var client = getSB();
+    if(!client) return;
+    client.channel('sess:' + rc)
+      .on('postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'sessions', filter: 'room_code=eq.' + rc },
+        function(payload){
+          var sp = (payload.new && payload.new.solved_puzzles) || {};
+          if(sp.officeSupply && !window._supplyShown){
+            localStorage.setItem('officeSupplyPass','solved');
+            if(typeof updateStatus === 'function') updateStatus();
+            if(window.showSupplySuccessModal) window.showSupplySuccessModal();
+          }
+        })
+      .subscribe();
+  }
+
+  // --- Supply solved hook (called by checkOrder on success) ---
+  window.onSupplySolved = function(){
+    var rc = sessionStorage.getItem('esc_rc');
+    if(!rc || rc === 'solo') return;
+    var client = getSB();
+    if(!client) return;
+    client.from('sessions')
+      .update({ solved_puzzles: { officeSupply: true } })
+      .eq('room_code', rc)
+      .then(function(){});
+  };
+
+  // --- Init ---
+  // ?solo=true bypass
+  if(new URLSearchParams(location.search).get('solo') === 'true'){
+    document.getElementById('sessOv').style.display = 'none';
+    return;
+  }
+
+  // Already set up in this tab (page reload)
+  var _rc = sessionStorage.getItem('esc_rc');
+  var _pi = parseInt(sessionStorage.getItem('esc_pi') || '-1');
+  var _pc = parseInt(sessionStorage.getItem('esc_pc') || '0');
+  if(_rc && _pi >= 0 && _pc > 0){
+    applyClueVisibility();
+    document.getElementById('sessOv').style.display = 'none';
+    subscribeRealtime();
+    return;
+  }
+
+  // First visit — show welcome panel
+  window._sessShowPanel('sess-welcome');
+
 })();
 
 </script>
