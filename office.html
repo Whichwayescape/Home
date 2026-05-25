@@ -334,13 +334,13 @@
     <a href="index.html" style="margin-left:auto;">↩ Return to Parlour</a>
   </div>
 
-  <div class="desktop-icon" style="top:190px;left:30px" id="iconCalendar"><div class="icon-img">📅</div><div class="icon-label">Calendar</div></div>
+  <div class="desktop-icon" style="top:180px;left:30px" id="iconCalendar"><div class="icon-img">📅</div><div class="icon-label">Calendar</div></div>
 
-  <div class="desktop-icon" style="top:80px;left:30px" id="iconGames"><div class="icon-img">🎮</div><div class="icon-label">Games</div></div>
-  <div class="desktop-icon" style="top:80px;left:130px" id="iconEmails"><div class="icon-img">✉️</div><div class="icon-label">Emails</div></div>
-  <div class="desktop-icon" style="top:80px;left:230px" id="iconMeetings"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
-  <div class="desktop-icon" style="top:80px;left:430px" id="iconFunny"><div class="icon-img">📁</div><div class="icon-label">The Funny Pages</div></div>
-  <div class="desktop-icon" style="top:80px;left:530px" id="iconSupplyCloset"><div class="icon-img">📦</div><div class="icon-label">Office Supply Closet</div></div>
+  <div class="desktop-icon" style="top:70px;left:30px" id="iconGames"><div class="icon-img">🎮</div><div class="icon-label">Games</div></div>
+  <div class="desktop-icon" style="top:70px;left:115px" id="iconEmails"><div class="icon-img">✉️</div><div class="icon-label">Emails</div></div>
+  <div class="desktop-icon" style="top:70px;left:200px" id="iconMeetings"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
+  <div class="desktop-icon" style="top:70px;left:285px" id="iconFunny"><div class="icon-img">📁</div><div class="icon-label">The Funny Pages</div></div>
+  <div class="desktop-icon" style="top:70px;left:370px" id="iconSupplyCloset"><div class="icon-img">📦</div><div class="icon-label">Office Supply Closet</div></div>
 
 
   <!-- GAMES -->
@@ -675,7 +675,7 @@
       </div>
       <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">Arrow keys or tap buttons</div>
     </div>
-    <div class="status-bar"><p class="status-bar-field">v1.0</p></div>
+    <div class="status-bar"><p class="status-bar-field">v1.0</p><p class="status-bar-field" style="text-align:right;"><span onclick="openWin('winSnakeSec')" style="cursor:pointer;color:#999;font-size:9px;opacity:0.3;user-select:none;">v2</span></p></div>
   </div>
 
   <!-- BALL BREAKER -->
@@ -692,7 +692,7 @@
       </div>
       <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">Arrow keys or hold buttons</div>
     </div>
-    <div class="status-bar"><p class="status-bar-field">v1.0</p></div>
+    <div class="status-bar"><p class="status-bar-field">v1.0</p><p class="status-bar-field" style="text-align:right;"><span onclick="openWin('winBBSec')" style="cursor:pointer;color:#999;font-size:9px;opacity:0.3;user-select:none;">v2</span></p></div>
   </div>
 
   <!-- PASSWORD MODAL -->
@@ -776,7 +776,7 @@
         <button class="dpad-right" data-ssdir="RIGHT">▶</button>
         <button class="dpad-down" data-ssdir="DOWN">▼</button>
       </div>
-      <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">W/A/S/D keys or tap buttons</div>
+      <div style="text-align:center;font-size:10px;color:#555;margin-top:2px;">Arrow keys or W/A/S/D or tap buttons</div>
     </div>
     <div class="status-bar"><p class="status-bar-field">SECRET LEVEL v1.0</p></div>
   </div>
@@ -882,10 +882,10 @@ document.getElementById("multiPassBtn").onclick=function(){
 };
 function showPasswordModal(){
   const solved=getSolved(), div=document.getElementById('passwordOptions');
-  div.innerHTML='<div class="pw-row" style="border-bottom:1px solid #aca899;margin-bottom:8px;padding-bottom:8px;"><label><strong>Master Password:</strong></label><input type="password" id="pwinput_master" placeholder="Override all"/><button onclick="solveMaster()">Submit</button></div>';
+  div.innerHTML='<div class="pw-row" style="border-bottom:1px solid #aca899;margin-bottom:8px;padding-bottom:8px;"><label><strong>Master Password:</strong></label><input type="password" id="pwinput_master" placeholder="Override all"/><button onclick="solveMaster()">Submit</button><span id="pwerr_master" style="color:#c00;font-size:10px;margin-left:6px;display:none;">✗ Incorrect</span></div>';
   requiredPasswords.forEach((p,i)=>{
     if(solved[i]) div.innerHTML+=`<div class="pw-row pw-row--solved"><strong>${p.label}:</strong> <span>✓ Solved</span></div>`;
-    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="document.getElementById('pwinput_${p.key}').value=''">Clear</button><button onclick="solvePassword('${p.key}')">Submit</button></div>`;
+    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="document.getElementById('pwinput_${p.key}').value=''">Clear</button><button onclick="solvePassword('${p.key}')">Submit</button><span id="pwerr_${p.key}" style="color:#c00;font-size:10px;margin-left:6px;display:none;">✗ Incorrect</span></div>`;
   });
   document.getElementById('passwordModal').style.display='block';
 }
@@ -893,9 +893,15 @@ function solvePassword(key){
   const pwObj=requiredPasswords.find(p=>p.key===key);
   const val=document.getElementById(`pwinput_${key}`).value;
   if(val===pwObj.value){
-    localStorage.setItem(key,"solved"); alert('✓ Correct!'); updateStatus(); showPasswordModal();
+    localStorage.setItem(key,"solved"); updateStatus(); showPasswordModal();
     if(getSolved().every(Boolean)){closePasswordModal();openWin('winCalendar');}
-  } else { alert("Incorrect — try again."); }
+  } else {
+    ensureSupplyShakeCSS();
+    const errEl=document.getElementById('pwerr_'+key);
+    if(errEl){ errEl.style.display='inline'; setTimeout(()=>errEl.style.display='none',3000); }
+    const inp=document.getElementById('pwinput_'+key);
+    if(inp){ inp.classList.remove('_supplyShake'); void inp.offsetWidth; inp.classList.add('_supplyShake'); }
+  }
 }
 function closePasswordModal(){ document.getElementById('passwordModal').style.display='none'; }
 function solveMaster(){
@@ -904,7 +910,13 @@ function solveMaster(){
     requiredPasswords.forEach(p=>localStorage.setItem(p.key,'solved'));
     updateStatus(); closePasswordModal();
     openWin('winCalendar');
-  } else { alert('Incorrect master password.'); }
+  } else {
+    ensureSupplyShakeCSS();
+    const errEl=document.getElementById('pwerr_master');
+    if(errEl){ errEl.style.display='inline'; setTimeout(()=>errEl.style.display='none',3000); }
+    const inp=document.getElementById('pwinput_master');
+    if(inp){ inp.classList.remove('_supplyShake'); void inp.offsetWidth; inp.classList.add('_supplyShake'); }
+  }
 }
 updateStatus();
 
@@ -1001,19 +1013,22 @@ function tickSnake(){
   else { snakeState.snake.unshift(h); snakeState.snake.pop(); }
   const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
   ctx.fillStyle='#7ec850'; snakeState.snake.forEach(s=>{ctx.fillRect(s.x,s.y,20,20);ctx.strokeStyle='#245edb';ctx.strokeRect(s.x,s.y,20,20);});
-  ctx.fillStyle='#d9534f'; ctx.fillRect(snakeState.food.x,snakeState.food.y,20,20);
+  ctx.fillStyle='#1a73e8'; ctx.fillRect(snakeState.food.x,snakeState.food.y,20,20);
   document.getElementById('snakeScore').textContent=snakeState.score;
 }
 function checkSnakeHS(){
-  if(snakeState.score>snakeHS[2].score){ awaitingSnakeInit=true; currentGame='snake'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
-  else { setTimeout(()=>{ resetSnakeState(); },800); }
+  const top=snakeState.score>snakeHS[2].score;
+  if(top) showSecretPrompt('snake');
+  setTimeout(()=>{ resetSnakeState(); }, top?2000:800);
 }
 document.addEventListener('keydown',e=>{
-  if(!snakeState) return;
-  if(e.key==='ArrowUp'&&snakeState.dir!=='DOWN') snakeState.nextDir='UP';
-  if(e.key==='ArrowDown'&&snakeState.dir!=='UP') snakeState.nextDir='DOWN';
-  if(e.key==='ArrowLeft'&&snakeState.dir!=='RIGHT') snakeState.nextDir='LEFT';
-  if(e.key==='ArrowRight'&&snakeState.dir!=='LEFT') snakeState.nextDir='RIGHT';
+  if(!snakeState||snakeState.over) return;
+  const ws=document.getElementById('winSnake'); if(!ws||ws.style.display==='none') return;
+  const wss=document.getElementById('winSnakeSec'); if(wss&&wss.style.display!=='none') return; // secret level takes priority
+  if(e.key==='ArrowUp'&&snakeState.dir!=='DOWN'){snakeState.nextDir='UP';e.preventDefault();}
+  if(e.key==='ArrowDown'&&snakeState.dir!=='UP'){snakeState.nextDir='DOWN';e.preventDefault();}
+  if(e.key==='ArrowLeft'&&snakeState.dir!=='RIGHT'){snakeState.nextDir='LEFT';e.preventDefault();}
+  if(e.key==='ArrowRight'&&snakeState.dir!=='LEFT'){snakeState.nextDir='RIGHT';e.preventDefault();}
 });
 document.querySelectorAll('[data-sdir]').forEach(btn=>{
   const h=e=>{ e.preventDefault(); if(!snakeState) return; const dir=btn.getAttribute('data-sdir'),d=snakeState;
@@ -1057,10 +1072,15 @@ function tickBB(){
   requestAnimationFrame(tickBB);
 }
 function checkBBHS(){
-  if(bbState.score>bbHS[2].score){ awaitingBBInit=true; currentGame='bb'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
-  else { setTimeout(()=>{ initBBState(); },1000); }
+  const top=bbState.score>bbHS[2].score;
+  if(top) showSecretPrompt('bb');
+  setTimeout(()=>{ initBBState(); }, top?2000:1000);
 }
-document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') leftPress=true; if(e.key==='ArrowRight') rightPress=true; });
+document.addEventListener('keydown',e=>{
+  const wbb=document.getElementById('winBB'); if(!wbb||wbb.style.display==='none') return;
+  const wbbs=document.getElementById('winBBSec'); if(wbbs&&wbbs.style.display!=='none') return;
+  if(e.key==='ArrowLeft'){leftPress=true;e.preventDefault();} if(e.key==='ArrowRight'){rightPress=true;e.preventDefault();}
+});
 document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft') leftPress=false; if(e.key==='ArrowRight') rightPress=false; });
 const padL=document.getElementById('padLeft'),padR=document.getElementById('padRight');
 padL.addEventListener('mousedown',()=>leftPress=true); padL.addEventListener('mouseup',()=>leftPress=false); padL.addEventListener('mouseleave',()=>leftPress=false);
@@ -1202,12 +1222,10 @@ let awaitingSnakeSecInit=false,awaitingBBSecInit=false;
 function renderSnakeSecHS(){ const el=document.getElementById('snakeSecHSList'); if(el) el.innerHTML=snakeSecHS.slice(0,6).map(e=>`<li><span>${e.ini}</span><span>${e.score}</span></li>`).join(''); }
 function renderBBSecHS(){ const el=document.getElementById('bbSecHSList'); if(el) el.innerHTML=bbSecHS.slice(0,6).map(e=>`<li><span>${e.ini}</span><span>${e.score}</span></li>`).join(''); }
 function checkSnakeSecHS(){
-  if(snakeSecState.score>snakeSecHS[2].score){ awaitingSnakeSecInit=true; currentGame='snakeSec'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
-  else { snakeSecRestartTO=setTimeout(()=>{ snakeSecDeathBlocks=[]; resetSnakeSecState(); },1500); }
+  snakeSecRestartTO=setTimeout(()=>{ snakeSecDeathBlocks=[]; resetSnakeSecState(); },1500);
 }
 function checkBBSecHS(){
-  if(bbSecState.score>bbSecHS[2].score){ awaitingBBSecInit=true; currentGame='bbSec'; document.getElementById('initialsModal').style.display='block'; document.getElementById('ini1').focus(); }
-  else { bbSecRestartTO=setTimeout(()=>startBBSec(),3000); }
+  bbSecRestartTO=setTimeout(()=>startBBSec(),3000);
 }
 renderSnakeSecHS();
 renderBBSecHS();
@@ -1278,15 +1296,18 @@ function tickSnakeSec(){
   });
   ctx.fillStyle='#7ec850';
   snakeSecState.snake.forEach(s=>{ ctx.fillRect(s.x,s.y,20,20); ctx.strokeStyle='#245edb'; ctx.strokeRect(s.x,s.y,20,20); });
-  ctx.fillStyle='#ffaa00'; ctx.fillRect(snakeSecState.food.x,snakeSecState.food.y,20,20);
+  ctx.fillStyle='#1a73e8'; ctx.fillRect(snakeSecState.food.x,snakeSecState.food.y,20,20);
   const sc=document.getElementById('snakeSecScore'); if(sc) sc.textContent=snakeSecState.score;
 }
 document.addEventListener('keydown',e=>{
-  if(!snakeSecState) return;
-  if((e.key==='w'||e.key==='W')&&snakeSecState.dir!=='DOWN') snakeSecState.nextDir='UP';
-  if((e.key==='s'||e.key==='S')&&snakeSecState.dir!=='UP')   snakeSecState.nextDir='DOWN';
-  if((e.key==='a'||e.key==='A')&&snakeSecState.dir!=='RIGHT') snakeSecState.nextDir='LEFT';
-  if((e.key==='d'||e.key==='D')&&snakeSecState.dir!=='LEFT')  snakeSecState.nextDir='RIGHT';
+  if(!snakeSecState||snakeSecState.over) return;
+  const w=document.getElementById('winSnakeSec'); if(!w||w.style.display==='none') return;
+  const d=snakeSecState; let handled=false;
+  if((e.key==='ArrowUp'   ||e.key==='w'||e.key==='W')&&d.dir!=='DOWN' ){d.nextDir='UP';   handled=true;}
+  if((e.key==='ArrowDown' ||e.key==='s'||e.key==='S')&&d.dir!=='UP'  ){d.nextDir='DOWN';  handled=true;}
+  if((e.key==='ArrowLeft' ||e.key==='a'||e.key==='A')&&d.dir!=='RIGHT'){d.nextDir='LEFT';  handled=true;}
+  if((e.key==='ArrowRight'||e.key==='d'||e.key==='D')&&d.dir!=='LEFT' ){d.nextDir='RIGHT'; handled=true;}
+  if(handled) e.preventDefault();
 });
 document.querySelectorAll('[data-ssdir]').forEach(btn=>{
   const h=e=>{ e.preventDefault(); if(!snakeSecState) return; const dir=btn.getAttribute('data-ssdir'),d=snakeSecState;
@@ -1390,7 +1411,10 @@ if(padSecR){
   padSecR.addEventListener('mousedown',()=>bbSecRightPress=true); padSecR.addEventListener('mouseup',()=>bbSecRightPress=false); padSecR.addEventListener('mouseleave',()=>bbSecRightPress=false);
   padSecR.addEventListener('touchstart',e=>{e.preventDefault();bbSecRightPress=true;},{passive:false}); padSecR.addEventListener('touchend',()=>bbSecRightPress=false);
 }
-document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') bbSecLeftPress=true; if(e.key==='ArrowRight') bbSecRightPress=true; });
+document.addEventListener('keydown',e=>{
+  const wbbs=document.getElementById('winBBSec'); if(!wbbs||wbbs.style.display==='none') return;
+  if(e.key==='ArrowLeft'){bbSecLeftPress=true;e.preventDefault();} if(e.key==='ArrowRight'){bbSecRightPress=true;e.preventDefault();}
+});
 document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft') bbSecLeftPress=false; if(e.key==='ArrowRight') bbSecRightPress=false; });
 
 
