@@ -882,10 +882,10 @@ document.getElementById("multiPassBtn").onclick=function(){
 };
 function showPasswordModal(){
   const solved=getSolved(), div=document.getElementById('passwordOptions');
-  div.innerHTML='<div class="pw-row" style="border-bottom:1px solid #aca899;margin-bottom:8px;padding-bottom:8px;"><label><strong>Master Password:</strong></label><input type="password" id="pwinput_master" placeholder="Override all"/><button onclick="solveMaster()">Submit</button><span id="pwerr_master" style="color:#c00;font-size:10px;margin-left:6px;display:none;">✗ Incorrect</span></div>';
+  div.innerHTML='<div class="pw-row" style="border-bottom:1px solid #aca899;margin-bottom:8px;padding-bottom:8px;"><label><strong>Master Password:</strong></label><input type="password" id="pwinput_master" placeholder="Override all"/><button onclick="solveMaster()">Submit</button><span id="pwerr_master" style="color:#c00;font-size:10px;margin-left:6px;display:none;">Wrong</span></div>';
   requiredPasswords.forEach((p,i)=>{
     if(solved[i]) div.innerHTML+=`<div class="pw-row pw-row--solved"><strong>${p.label}:</strong> <span>✓ Solved</span></div>`;
-    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="document.getElementById('pwinput_${p.key}').value=''">Clear</button><button onclick="solvePassword('${p.key}')">Submit</button><span id="pwerr_${p.key}" style="color:#c00;font-size:10px;margin-left:6px;display:none;">✗ Incorrect</span></div>`;
+    else div.innerHTML+=`<div class="pw-row"><label><strong>${p.label}:</strong></label><input type="password" id="pwinput_${p.key}"/><button onclick="document.getElementById('pwinput_${p.key}').value=''">Clear</button><button onclick="solvePassword('${p.key}')">Submit</button><span id="pwerr_${p.key}" style="color:#c00;font-size:10px;margin-left:6px;display:none;">Wrong</span></div>`;
   });
   document.getElementById('passwordModal').style.display='block';
 }
@@ -1018,8 +1018,7 @@ function tickSnake(){
 }
 function checkSnakeHS(){
   const top=snakeState.score>snakeHS[2].score;
-  if(top) showSecretPrompt('snake');
-  setTimeout(()=>{ resetSnakeState(); }, top?2000:800);
+  setTimeout(()=>{ resetSnakeState(); },800);
 }
 document.addEventListener('keydown',e=>{
   if(!snakeState||snakeState.over) return;
@@ -1073,8 +1072,7 @@ function tickBB(){
 }
 function checkBBHS(){
   const top=bbState.score>bbHS[2].score;
-  if(top) showSecretPrompt('bb');
-  setTimeout(()=>{ initBBState(); }, top?2000:1000);
+  setTimeout(()=>{ initBBState(); },1000);
 }
 document.addEventListener('keydown',e=>{
   const wbb=document.getElementById('winBB'); if(!wbb||wbb.style.display==='none') return;
@@ -1521,7 +1519,7 @@ const timerStart = Date.now();
       return;
     }
     // Show error only once 6 items are placed (one slot intentionally empty)
-    if(filled >= 6){ showSupplyError('Incorrect'); }
+    if(filled >= 6){ showSupplyError('Wrong'); }
   }
 
   window.clearSupplySlots = function(){
